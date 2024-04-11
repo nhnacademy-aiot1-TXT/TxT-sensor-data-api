@@ -1,10 +1,9 @@
-package com.nhnacademy.sensordata.service.impl;
+package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.entity.Temperature;
 import com.nhnacademy.sensordata.entity.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.TemperatureMaxMinWeekly;
-import com.nhnacademy.sensordata.service.TemperatureService;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
@@ -24,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-class TemperatureServiceImplTest {
+class TemperatureServiceTest {
     @Autowired
     private TemperatureService temperatureService;
     @MockBean(name = "influxDBTemplate")
