@@ -1,7 +1,8 @@
 package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.entity.Temperature;
-import com.nhnacademy.sensordata.entity.TemperatureMaxMin;
+import com.nhnacademy.sensordata.entity.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.entity.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,15 @@ public class TemperatureRestController {
     }
 
     @GetMapping("/day")
-    public ResponseEntity<List<TemperatureMaxMin>> getDailyTemperatures() {
-        List<TemperatureMaxMin> temperatures = temperatureService.getDailyTemperatures();
+    public ResponseEntity<List<TemperatureMaxMinDaily>> getDailyTemperatures() {
+        List<TemperatureMaxMinDaily> temperatures = temperatureService.getDailyTemperatures();
+
+        return ResponseEntity.ok(temperatures);
+    }
+
+    @GetMapping("/week")
+    public ResponseEntity<List<TemperatureMaxMinWeekly>> getWeeklyTemperatures() {
+        List<TemperatureMaxMinWeekly> temperatures = temperatureService.getWeeklyTemperatures();
 
         return ResponseEntity.ok(temperatures);
     }

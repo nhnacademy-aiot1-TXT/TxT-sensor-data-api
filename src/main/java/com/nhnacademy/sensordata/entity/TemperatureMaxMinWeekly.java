@@ -1,14 +1,18 @@
 package com.nhnacademy.sensordata.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
 import java.time.Instant;
 
 @Data
-@Measurement(name = "temperature_hourly")
-public class TemperatureMaxMin {
+@NoArgsConstructor
+@AllArgsConstructor
+@Measurement(name = "temperature_daily")
+public class TemperatureMaxMinWeekly {
     @Column(name = "time")
     private Instant time;
     @Column(name = "max_temperature")

@@ -1,12 +1,15 @@
 package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.entity.Temperature;
-import com.nhnacademy.sensordata.entity.TemperatureMaxMin;
+import com.nhnacademy.sensordata.entity.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.entity.TemperatureMaxMinWeekly;
 
 import java.util.List;
 
 public interface TemperatureService {
     Temperature getTemperature();
 
-    List<TemperatureMaxMin> getDailyTemperatures();
+    List<TemperatureMaxMinDaily> getDailyTemperatures();
+
+    List<TemperatureMaxMinWeekly> getWeeklyTemperatures();
 }

@@ -3,3 +3,6 @@ GET http://localhost:8300/api/temperature
 
 ### 온도 일별 조회
 GET http://localhost:8300/api/temperature/day
+
+### 온도 주별 조회
+GET http://localhost:8300/api/temperature/week
