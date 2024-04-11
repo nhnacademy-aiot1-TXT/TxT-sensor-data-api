@@ -1,7 +1,8 @@
 package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.entity.Humidity;
-import com.nhnacademy.sensordata.entity.HumidityMaxMin;
+import com.nhnacademy.sensordata.entity.HumidityMaxMinDaily;
+import com.nhnacademy.sensordata.entity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.service.HumidityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,12 @@ public class HumidityRestController {
     }
 
     @GetMapping("/day")
-    public ResponseEntity<List<HumidityMaxMin>> getDailyHumidity() {
+    public ResponseEntity<List<HumidityMaxMinDaily>> getDailyHumidity() {
         return ResponseEntity.ok(humidityService.getDailyHumidity());
+    }
+
+    @GetMapping("/week")
+    public ResponseEntity<List<HumidityMaxMinWeekly>> getWeeklyHumidity() {
+        return ResponseEntity.ok(humidityService.getWeeklyHumidity());
     }
 }
