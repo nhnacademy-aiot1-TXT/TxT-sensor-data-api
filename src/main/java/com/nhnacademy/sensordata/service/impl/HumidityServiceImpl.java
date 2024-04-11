@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HumidityServiceImpl implements HumidityService {
     private final InfluxDBTemplate<Point> influxDBTemplate;
+    private final InfluxDBResultMapper resultMapper;
 
     @Override
     public Humidity getHumidity() {
@@ -33,8 +34,6 @@ public class HumidityServiceImpl implements HumidityService {
                 .create();
 
         QueryResult queryResult = influxDBTemplate.query(query);
-
-        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
 
         Humidity humidity = resultMapper.toPOJO(queryResult, Humidity.class).get(0);
 
@@ -53,8 +52,6 @@ public class HumidityServiceImpl implements HumidityService {
                 .create();
 
         QueryResult queryResult = influxDBTemplate.query(query);
-
-        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
 
         List<HumidityMaxMinDaily> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinDaily.class);
         humidityMaxMinList = humidityMaxMinList.stream()
@@ -79,8 +76,6 @@ public class HumidityServiceImpl implements HumidityService {
                 .create();
         QueryResult queryResult = influxDBTemplate.query(query);
         QueryResult queryResult2 = influxDBTemplate.query(query2);
-
-        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
 
         List<HumidityMaxMinWeekly> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinWeekly.class);
         HumidityMaxMinDaily humidityLastHour = resultMapper.toPOJO(queryResult2, HumidityMaxMinDaily.class).get(0);
@@ -111,8 +106,6 @@ public class HumidityServiceImpl implements HumidityService {
                 .create();
         QueryResult queryResult = influxDBTemplate.query(query);
         QueryResult queryResult2 = influxDBTemplate.query(query2);
-
-        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
 
         List<HumidityMaxMinMonthly> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinMonthly.class);
         HumidityMaxMinDaily humidityLastHour = resultMapper.toPOJO(queryResult2, HumidityMaxMinDaily.class).get(0);

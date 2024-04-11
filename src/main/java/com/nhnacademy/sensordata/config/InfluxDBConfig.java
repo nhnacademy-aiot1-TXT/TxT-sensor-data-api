@@ -1,6 +1,7 @@
 package com.nhnacademy.sensordata.config;
 
 import org.influxdb.dto.Point;
+import org.influxdb.impl.InfluxDBResultMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -35,5 +36,10 @@ public class InfluxDBConfig {
          * also use an instance of class DefaultInfluxDBTemplate.
          */
         return new DefaultInfluxDBTemplate(connectionFactory);
+    }
+
+    @Bean
+    public InfluxDBResultMapper influxDBResultMapper() {
+        return new InfluxDBResultMapper();
     }
 }
