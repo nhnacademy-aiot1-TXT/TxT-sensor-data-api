@@ -16,7 +16,7 @@ public class TemperatureMaxMinMonthly {
     @Column(name = "time")
     private Instant time;
     @Column(name = "max_temperature")
-    private double maxTemperature;
+    private Double maxTemperature;
     @Column(name = "min_temperature")
-    private double minTemperature;
+    private Double minTemperature;
 }
