@@ -41,9 +41,9 @@ class TemperatureRestControllerTest {
         String place = "test place";
         String topic = "test topic";
         Double value = 20.0;
+        Temperature temperature = new Temperature(time, device, place, topic, value);
 
         // when
-        Temperature temperature = new Temperature(time, device, place, topic, value);
         Mockito.when(temperatureService.getTemperature())
                 .thenReturn(temperature);
 
