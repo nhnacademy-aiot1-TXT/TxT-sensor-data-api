@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.entity.Temperature;
 import com.nhnacademy.sensordata.entity.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.entity.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,13 @@ public class TemperatureRestController {
     @GetMapping("/week")
     public ResponseEntity<List<TemperatureMaxMinWeekly>> getWeeklyTemperatures() {
         List<TemperatureMaxMinWeekly> temperatures = temperatureService.getWeeklyTemperatures();
+
+        return ResponseEntity.ok(temperatures);
+    }
+
+    @GetMapping("/month")
+    public ResponseEntity<List<TemperatureMaxMinMonthly>> getMonthlyTemperatures() {
+        List<TemperatureMaxMinMonthly> temperatures = temperatureService.getMonthlyTemperatures();
 
         return ResponseEntity.ok(temperatures);
     }

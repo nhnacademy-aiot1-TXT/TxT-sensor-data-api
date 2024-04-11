@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.service.impl;
 
 import com.nhnacademy.sensordata.entity.Temperature;
 import com.nhnacademy.sensordata.entity.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.entity.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +72,7 @@ public class TemperatureServiceImpl implements TemperatureService {
     public List<TemperatureMaxMinWeekly> getWeeklyTemperatures() {
         LocalDate today = LocalDate.now();
 
-        Query query = QueryBuilder.newQuery(String.format("SELECT time, max_temperature, min_temperature FROM temperature_daily WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusDays(7), today))
+        Query query = QueryBuilder.newQuery(String.format("SELECT time, max_temperature, min_temperature FROM temperature_daily WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusWeeks(1), today))
                 .forDatabase("tig")
                 .create();
 
@@ -96,6 +97,40 @@ public class TemperatureServiceImpl implements TemperatureService {
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
             temperatures.add(new TemperatureMaxMinWeekly(temperatureMaxMinDaily.getTime(), temperatureMaxMinDaily.getMaxTemperature(), temperatureMaxMinDaily.getMinTemperature()));
+        }
+
+        return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
+    }
+
+    @Override
+    public List<TemperatureMaxMinMonthly> getMonthlyTemperatures() {
+        LocalDate today = LocalDate.now();
+
+        Query query = QueryBuilder.newQuery(String.format("SELECT time, max_temperature, min_temperature FROM temperature_daily WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusMonths(1), today))
+                .forDatabase("tig")
+                .create();
+
+        Query query2 = QueryBuilder.newQuery("SELECT time, max_temperature, min_temperature FROM temperature_hourly order by time desc limit 1")
+                .forDatabase("tig")
+                .create();
+
+        QueryResult queryResult = influxDBTemplate.query(query);
+        QueryResult queryResult2 = influxDBTemplate.query(query2);
+
+        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
+        List<TemperatureMaxMinMonthly> temperatures = resultMapper.toPOJO(queryResult, TemperatureMaxMinMonthly.class);
+        TemperatureMaxMinDaily temperatureMaxMinDaily = resultMapper.toPOJO(queryResult2, TemperatureMaxMinDaily.class).get(0);
+
+        temperatures = temperatures.stream()
+                .peek(humidity -> {
+                    if (Objects.nonNull(humidity)) {
+                        humidity.setTime(humidity.getTime().plus(9, ChronoUnit.HOURS));
+                    }
+                })
+                .collect(Collectors.toList());
+
+        if (Objects.nonNull(temperatureMaxMinDaily)) {
+            temperatures.add(new TemperatureMaxMinMonthly(temperatureMaxMinDaily.getTime(), temperatureMaxMinDaily.getMaxTemperature(), temperatureMaxMinDaily.getMinTemperature()));
         }
 
         return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
