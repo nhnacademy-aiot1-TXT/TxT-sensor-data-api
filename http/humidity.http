@@ -6,3 +6,6 @@ GET localhost:8300/api/humidity/day
 
 ### 주간 데이터
 GET localhost:8300/api/humidity/week
+
+### 월간 데이터
+GET localhost:8300/api/humidity/month

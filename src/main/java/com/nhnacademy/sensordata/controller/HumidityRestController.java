@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.entity.Humidity;
 import com.nhnacademy.sensordata.entity.HumidityMaxMinDaily;
+import com.nhnacademy.sensordata.entity.HumidityMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.service.HumidityService;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,10 @@ public class HumidityRestController {
     @GetMapping("/week")
     public ResponseEntity<List<HumidityMaxMinWeekly>> getWeeklyHumidity() {
         return ResponseEntity.ok(humidityService.getWeeklyHumidity());
+    }
+
+    @GetMapping("/month")
+    public ResponseEntity<List<HumidityMaxMinMonthly>> getMonthlyHumidity() {
+        return ResponseEntity.ok(humidityService.getMonthlyHumidity());
     }
 }

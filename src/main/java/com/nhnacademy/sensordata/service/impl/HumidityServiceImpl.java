@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.service.impl;
 
 import com.nhnacademy.sensordata.entity.Humidity;
 import com.nhnacademy.sensordata.entity.HumidityMaxMinDaily;
+import com.nhnacademy.sensordata.entity.HumidityMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.service.HumidityService;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +71,7 @@ public class HumidityServiceImpl implements HumidityService {
     @Override
     public List<HumidityMaxMinWeekly> getWeeklyHumidity() {
         LocalDate today = LocalDate.now();
-        Query query = QueryBuilder.newQuery(String.format("select * from daily_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusDays(7), today))
+        Query query = QueryBuilder.newQuery(String.format("select * from daily_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusWeeks(1), today))
                 .forDatabase("tig")
                 .create();
         Query query2 = QueryBuilder.newQuery("select * from hourly_extreme_humidity order by time desc")
@@ -94,6 +95,38 @@ public class HumidityServiceImpl implements HumidityService {
 
         if (Objects.nonNull(humidityLastHour)) {
             humidityMaxMinList.add(new HumidityMaxMinWeekly(humidityLastHour.getTime().plus(9, ChronoUnit.HOURS), humidityLastHour.getMaxHumidity(), humidityLastHour.getMinHumidity()));
+        }
+
+        return humidityMaxMinList.isEmpty() ? Collections.emptyList() : humidityMaxMinList;
+    }
+
+    @Override
+    public List<HumidityMaxMinMonthly> getMonthlyHumidity() {
+        LocalDate today = LocalDate.now();
+        Query query = QueryBuilder.newQuery(String.format("select * from daily_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusMonths(1), today))
+                .forDatabase("tig")
+                .create();
+        Query query2 = QueryBuilder.newQuery("select * from hourly_extreme_humidity order by time desc")
+                .forDatabase("tig")
+                .create();
+        QueryResult queryResult = influxDBTemplate.query(query);
+        QueryResult queryResult2 = influxDBTemplate.query(query2);
+
+        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
+
+        List<HumidityMaxMinMonthly> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinMonthly.class);
+        HumidityMaxMinDaily humidityLastHour = resultMapper.toPOJO(queryResult2, HumidityMaxMinDaily.class).get(0);
+
+        humidityMaxMinList = humidityMaxMinList.stream()
+                .peek(humidity -> {
+                    if (Objects.nonNull(humidity)) {
+                        humidity.setTime(humidity.getTime().plus(9, ChronoUnit.HOURS));
+                    }
+                })
+                .collect(Collectors.toList());
+
+        if (Objects.nonNull(humidityLastHour)) {
+            humidityMaxMinList.add(new HumidityMaxMinMonthly(humidityLastHour.getTime().plus(9, ChronoUnit.HOURS), humidityLastHour.getMaxHumidity(), humidityLastHour.getMinHumidity()));
         }
 
         return humidityMaxMinList.isEmpty() ? Collections.emptyList() : humidityMaxMinList;
