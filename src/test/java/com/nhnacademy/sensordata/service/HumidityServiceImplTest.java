@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -46,11 +47,13 @@ class HumidityServiceImplTest {
 
         Humidity resultHumidity = humidityService.getHumidity();
 
-        assertEquals(humidity.getTime(), resultHumidity.getTime());
-        assertEquals(humidity.getDevice(), resultHumidity.getDevice());
-        assertEquals(humidity.getPlace(), resultHumidity.getPlace());
-        assertEquals(humidity.getTopic(), resultHumidity.getTopic());
-        assertEquals(humidity.getValue(), resultHumidity.getValue());
+        assertAll(
+                () -> assertEquals(humidity.getTime(), resultHumidity.getTime()),
+                () -> assertEquals(humidity.getDevice(), resultHumidity.getDevice()),
+                () -> assertEquals(humidity.getPlace(), resultHumidity.getPlace()),
+                () -> assertEquals(humidity.getTopic(), resultHumidity.getTopic()),
+                () -> assertEquals(humidity.getValue(), resultHumidity.getValue())
+        );
     }
 
     @Test
@@ -66,9 +69,11 @@ class HumidityServiceImplTest {
 
         HumidityMaxMinDaily resultHumidity = humidityService.getDailyHumidity().get(0);
 
-        assertEquals(humidityDaily.getTime(), resultHumidity.getTime());
-        assertEquals(humidityDaily.getMaxHumidity(), resultHumidity.getMaxHumidity());
-        assertEquals(humidityDaily.getMinHumidity(), resultHumidity.getMinHumidity());
+        assertAll(
+                () -> assertEquals(humidityDaily.getTime().plus(9, ChronoUnit.HOURS), resultHumidity.getTime()),
+                () -> assertEquals(humidityDaily.getMaxHumidity(), resultHumidity.getMaxHumidity()),
+                () -> assertEquals(humidityDaily.getMinHumidity(), resultHumidity.getMinHumidity())
+        );
     }
 
     @Test
@@ -87,12 +92,14 @@ class HumidityServiceImplTest {
 
         List<HumidityMaxMinWeekly> resultHumidity = humidityService.getWeeklyHumidity();
 
-        assertEquals(humidityWeekly.getTime(), resultHumidity.get(0).getTime());
-        assertEquals(humidityDaily.getTime().plus(9, ChronoUnit.HOURS), resultHumidity.get(1).getTime());
-        assertEquals(humidityWeekly.getMaxHumidity(), resultHumidity.get(0).getMaxHumidity());
-        assertEquals(humidityWeekly.getMinHumidity(), resultHumidity.get(0).getMinHumidity());
-        assertEquals(humidityDaily.getMaxHumidity(), resultHumidity.get(1).getMaxHumidity());
-        assertEquals(humidityDaily.getMinHumidity(), resultHumidity.get(1).getMinHumidity());
+        assertAll(
+                () -> assertEquals(humidityWeekly.getTime().plus(9, ChronoUnit.HOURS), resultHumidity.get(0).getTime()),
+                () -> assertEquals(humidityDaily.getTime().plus(9, ChronoUnit.HOURS), resultHumidity.get(1).getTime()),
+                () -> assertEquals(humidityWeekly.getMaxHumidity(), resultHumidity.get(0).getMaxHumidity()),
+                () -> assertEquals(humidityWeekly.getMinHumidity(), resultHumidity.get(0).getMinHumidity()),
+                () -> assertEquals(humidityDaily.getMaxHumidity(), resultHumidity.get(1).getMaxHumidity()),
+                () -> assertEquals(humidityDaily.getMinHumidity(), resultHumidity.get(1).getMinHumidity())
+        );
     }
 
     @Test
@@ -111,11 +118,13 @@ class HumidityServiceImplTest {
 
         List<HumidityMaxMinMonthly> resultHumidity = humidityService.getMonthlyHumidity();
 
-        assertEquals(humidityMonthly.getTime(), resultHumidity.get(0).getTime());
-        assertEquals(humidityDaily.getTime().plus(9, ChronoUnit.HOURS), resultHumidity.get(1).getTime());
-        assertEquals(humidityMonthly.getMaxHumidity(), resultHumidity.get(0).getMaxHumidity());
-        assertEquals(humidityMonthly.getMinHumidity(), resultHumidity.get(0).getMinHumidity());
-        assertEquals(humidityDaily.getMaxHumidity(), resultHumidity.get(1).getMaxHumidity());
-        assertEquals(humidityDaily.getMinHumidity(), resultHumidity.get(1).getMinHumidity());
+        assertAll(
+                () -> assertEquals(humidityMonthly.getTime().plus(9, ChronoUnit.HOURS), resultHumidity.get(0).getTime()),
+                () -> assertEquals(humidityDaily.getTime().plus(9, ChronoUnit.HOURS), resultHumidity.get(1).getTime()),
+                () -> assertEquals(humidityMonthly.getMaxHumidity(), resultHumidity.get(0).getMaxHumidity()),
+                () -> assertEquals(humidityMonthly.getMinHumidity(), resultHumidity.get(0).getMinHumidity()),
+                () -> assertEquals(humidityDaily.getMaxHumidity(), resultHumidity.get(1).getMaxHumidity()),
+                () -> assertEquals(humidityDaily.getMinHumidity(), resultHumidity.get(1).getMinHumidity())
+        );
     }
 }
