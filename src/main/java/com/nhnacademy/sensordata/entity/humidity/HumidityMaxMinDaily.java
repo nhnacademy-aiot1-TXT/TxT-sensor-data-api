@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity;
+package com.nhnacademy.sensordata.entity.humidity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,9 +1,9 @@
 package com.nhnacademy.sensordata.service;
 
-import com.nhnacademy.sensordata.entity.Temperature;
-import com.nhnacademy.sensordata.entity.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.entity.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.entity.temperature.Temperature;
+import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
+import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;

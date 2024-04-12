@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity;
+package com.nhnacademy.sensordata.entity.temperature;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,9 +1,9 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.Temperature;
-import com.nhnacademy.sensordata.entity.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.entity.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.entity.temperature.Temperature;
+import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
+import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

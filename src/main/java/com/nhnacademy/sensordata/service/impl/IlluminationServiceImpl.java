@@ -1,6 +1,6 @@
 package com.nhnacademy.sensordata.service.impl;
 
-import com.nhnacademy.sensordata.entity.Illumination;
+import com.nhnacademy.sensordata.entity.illumination.Illumination;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import com.nhnacademy.sensordata.utils.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;

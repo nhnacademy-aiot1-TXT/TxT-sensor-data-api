@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity;
+package com.nhnacademy.sensordata.entity.temperature;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,11 +8,12 @@ import org.influxdb.annotation.Measurement;
 
 import java.time.Instant;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "illumination")
-public class Illumination {
+@Measurement(name = "temperature")
+public class Temperature {
     @Column(name = "time")
     private Instant time;
     @Column(name = "device")
@@ -22,5 +23,5 @@ public class Illumination {
     @Column(name = "topic")
     private String topic;
     @Column(name = "value")
-    private Integer value;
+    private Double value;
 }

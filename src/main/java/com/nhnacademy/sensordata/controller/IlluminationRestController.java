@@ -1,6 +1,6 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.Illumination;
+import com.nhnacademy.sensordata.entity.illumination.Illumination;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
