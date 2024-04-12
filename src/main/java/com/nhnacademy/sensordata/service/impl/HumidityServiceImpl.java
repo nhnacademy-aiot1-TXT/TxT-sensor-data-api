@@ -5,13 +5,10 @@ import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.service.HumidityService;
+import com.nhnacademy.sensordata.utils.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
-import org.influxdb.dto.BoundParameterQuery.QueryBuilder;
-import org.influxdb.dto.Point;
-import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
-import org.springframework.data.influxdb.InfluxDBTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,16 +21,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class HumidityServiceImpl implements HumidityService {
-    private final InfluxDBTemplate<Point> influxDBTemplate;
     private final InfluxDBResultMapper resultMapper;
+    private final InfluxDBUtil influxDBUtil;
 
     @Override
     public Humidity getHumidity() {
-        Query query = QueryBuilder.newQuery("select time, device, place, topic, value from humidity order by time desc limit 1")
-                .forDatabase("tig")
-                .create();
-
-        QueryResult queryResult = influxDBTemplate.query(query);
+        QueryResult queryResult = influxDBUtil.processingQuery("select time, device, place, topic, value from humidity order by time desc limit 1");
 
         Humidity humidity = resultMapper.toPOJO(queryResult, Humidity.class).get(0);
 
@@ -47,11 +40,8 @@ public class HumidityServiceImpl implements HumidityService {
     @Override
     public List<HumidityMaxMinDaily> getDailyHumidity() {
         LocalDate today = LocalDate.now();
-        Query query = QueryBuilder.newQuery(String.format("select * from hourly_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusDays(1), today))
-                .forDatabase("tig")
-                .create();
-
-        QueryResult queryResult = influxDBTemplate.query(query);
+        
+        QueryResult queryResult = influxDBUtil.processingQuery(String.format("select * from hourly_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusDays(1), today));
 
         List<HumidityMaxMinDaily> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinDaily.class);
 
@@ -70,14 +60,9 @@ public class HumidityServiceImpl implements HumidityService {
     @Override
     public List<HumidityMaxMinWeekly> getWeeklyHumidity() {
         LocalDate today = LocalDate.now();
-        Query query = QueryBuilder.newQuery(String.format("select * from daily_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusWeeks(1), today))
-                .forDatabase("tig")
-                .create();
-        Query query2 = QueryBuilder.newQuery("select * from hourly_extreme_humidity order by time desc")
-                .forDatabase("tig")
-                .create();
-        QueryResult queryResult = influxDBTemplate.query(query);
-        QueryResult queryResult2 = influxDBTemplate.query(query2);
+
+        QueryResult queryResult = influxDBUtil.processingQuery(String.format("select * from daily_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusWeeks(1), today));
+        QueryResult queryResult2 = influxDBUtil.processingQuery("select * from hourly_extreme_humidity order by time desc");
 
         List<HumidityMaxMinWeekly> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinWeekly.class);
         HumidityMaxMinDaily humidityLastHour = resultMapper.toPOJO(queryResult2, HumidityMaxMinDaily.class).get(0);
@@ -103,14 +88,9 @@ public class HumidityServiceImpl implements HumidityService {
     @Override
     public List<HumidityMaxMinMonthly> getMonthlyHumidity() {
         LocalDate today = LocalDate.now();
-        Query query = QueryBuilder.newQuery(String.format("select * from daily_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusMonths(1), today))
-                .forDatabase("tig")
-                .create();
-        Query query2 = QueryBuilder.newQuery("select * from hourly_extreme_humidity order by time desc")
-                .forDatabase("tig")
-                .create();
-        QueryResult queryResult = influxDBTemplate.query(query);
-        QueryResult queryResult2 = influxDBTemplate.query(query2);
+
+        QueryResult queryResult = influxDBUtil.processingQuery(String.format("select * from daily_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusMonths(1), today));
+        QueryResult queryResult2 = influxDBUtil.processingQuery("select * from hourly_extreme_humidity order by time desc");
 
         List<HumidityMaxMinMonthly> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinMonthly.class);
         HumidityMaxMinDaily humidityLastHour = resultMapper.toPOJO(queryResult2, HumidityMaxMinDaily.class).get(0);

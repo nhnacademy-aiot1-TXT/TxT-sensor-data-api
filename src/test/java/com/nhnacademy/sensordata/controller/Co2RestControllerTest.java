@@ -1,10 +1,10 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.humidity.Humidity;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
-import com.nhnacademy.sensordata.service.HumidityService;
+import com.nhnacademy.sensordata.entity.co2.Co2;
+import com.nhnacademy.sensordata.entity.co2.Co2MaxMinDaily;
+import com.nhnacademy.sensordata.entity.co2.Co2MaxMinMonthly;
+import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
+import com.nhnacademy.sensordata.service.Co2Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,11 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-class HumidityRestControllerTest {
+class Co2RestControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private HumidityService humidityService;
+    private Co2Service co2Service;
 
     @Test
     void getHumidity() throws Exception {
@@ -38,12 +38,12 @@ class HumidityRestControllerTest {
         String device = "test device";
         String place = "test place";
         String topic = "test topic";
-        Double value = 20.0;
-        Humidity humidity = new Humidity(time, device, place, topic, value);
+        Integer value = 20;
+        Co2 co2 = new Co2(time, device, place, topic, value);
 
-        given(humidityService.getHumidity()).willReturn(humidity);
+        given(co2Service.getCo2()).willReturn(co2);
 
-        mockMvc.perform(get("/api/humidity"))
+        mockMvc.perform(get("/api/co2"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -58,60 +58,60 @@ class HumidityRestControllerTest {
     @Test
     void getDailyHumidity() throws Exception {
         Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
-        double maxHumidity = 80.0;
-        double minHumidity = 60.0;
-        HumidityMaxMinDaily humidityMaxMinDaily = new HumidityMaxMinDaily(time, maxHumidity, minHumidity);
-        List<HumidityMaxMinDaily> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
+        Integer maxCo2 = 80;
+        Integer minCo2 = 60;
+        Co2MaxMinDaily co2MaxMinDaily = new Co2MaxMinDaily(time, maxCo2, minCo2);
+        List<Co2MaxMinDaily> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
 
-        given(humidityService.getDailyHumidity()).willReturn(humidityMaxMinList);
+        given(co2Service.getDailyCo2()).willReturn(co2MaxMinList);
 
-        mockMvc.perform(get("/api/humidity/day"))
+        mockMvc.perform(get("/api/co2/day"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
-                .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity)))
-                .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity)))
+                .andExpect(jsonPath("$[0].maxCo2", equalTo(maxCo2)))
+                .andExpect(jsonPath("$[0].minCo2", equalTo(minCo2)))
                 .andReturn();
     }
 
     @Test
     void getWeeklyHumidity() throws Exception {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
-        double maxHumidity = 80.0;
-        double minHumidity = 60.0;
-        HumidityMaxMinWeekly humidityMaxMinDaily = new HumidityMaxMinWeekly(time, maxHumidity, minHumidity);
-        List<HumidityMaxMinWeekly> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
+        Integer maxCo2 = 80;
+        Integer minCo2 = 60;
+        Co2MaxMinWeekly co2MaxMinDaily = new Co2MaxMinWeekly(time, maxCo2, minCo2);
+        List<Co2MaxMinWeekly> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
 
-        given(humidityService.getWeeklyHumidity()).willReturn(humidityMaxMinList);
+        given(co2Service.getWeeklyCo2()).willReturn(co2MaxMinList);
 
-        mockMvc.perform(get("/api/humidity/week"))
+        mockMvc.perform(get("/api/co2/week"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
-                .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity)))
-                .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity)))
+                .andExpect(jsonPath("$[0].maxCo2", equalTo(maxCo2)))
+                .andExpect(jsonPath("$[0].minCo2", equalTo(minCo2)))
                 .andReturn();
     }
 
     @Test
     void getMonthlyHumidity() throws Exception {
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
-        double maxHumidity = 80.0;
-        double minHumidity = 60.0;
-        HumidityMaxMinMonthly humidityMaxMinDaily = new HumidityMaxMinMonthly(time, maxHumidity, minHumidity);
-        List<HumidityMaxMinMonthly> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
+        Integer maxCo2 = 80;
+        Integer minCo2 = 60;
+        Co2MaxMinMonthly co2MaxMinDaily = new Co2MaxMinMonthly(time, maxCo2, minCo2);
+        List<Co2MaxMinMonthly> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
 
-        given(humidityService.getMonthlyHumidity()).willReturn(humidityMaxMinList);
+        given(co2Service.getMonthlyCo2()).willReturn(co2MaxMinList);
 
-        mockMvc.perform(get("/api/humidity/month"))
+        mockMvc.perform(get("/api/co2/month"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
-                .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity)))
-                .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity)))
+                .andExpect(jsonPath("$[0].maxCo2", equalTo(maxCo2)))
+                .andExpect(jsonPath("$[0].minCo2", equalTo(minCo2)))
                 .andReturn();
     }
 }

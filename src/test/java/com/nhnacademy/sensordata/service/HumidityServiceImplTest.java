@@ -4,14 +4,13 @@ import com.nhnacademy.sensordata.entity.humidity.Humidity;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
-import org.influxdb.dto.Point;
+import com.nhnacademy.sensordata.utils.InfluxDBUtil;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.influxdb.InfluxDBTemplate;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -27,10 +26,10 @@ import static org.mockito.BDDMockito.given;
 class HumidityServiceImplTest {
     @Autowired
     private HumidityService humidityService;
-    @MockBean(name = "influxDBTemplate")
-    private InfluxDBTemplate<Point> influxDBTemplate;
     @MockBean
     private InfluxDBResultMapper resultMapper;
+    @MockBean
+    private InfluxDBUtil influxDBUtil;
 
     @Test
     void getHumidity() {
@@ -41,7 +40,7 @@ class HumidityServiceImplTest {
         Double value = 20.0;
         Humidity humidity = new Humidity(time, device, place, topic, value);
 
-        given(influxDBTemplate.query(any())).willReturn(new QueryResult());
+        given(influxDBUtil.processingQuery(any())).willReturn(new QueryResult());
         given(resultMapper.toPOJO(any(), any()))
                 .willReturn(List.of(humidity));
 
@@ -63,7 +62,7 @@ class HumidityServiceImplTest {
         double minHumidity = 60.0;
         HumidityMaxMinDaily humidityDaily = new HumidityMaxMinDaily(time, maxHumidity, minHumidity);
 
-        given(influxDBTemplate.query(any())).willReturn(new QueryResult());
+        given(influxDBUtil.processingQuery(any())).willReturn(new QueryResult());
         given(resultMapper.toPOJO(any(), any()))
                 .willReturn(List.of(humidityDaily));
 
@@ -86,7 +85,7 @@ class HumidityServiceImplTest {
         HumidityMaxMinWeekly humidityWeekly = new HumidityMaxMinWeekly(time, weeklyMaxHumidity, weeklyMinHumidity);
         HumidityMaxMinDaily humidityDaily = new HumidityMaxMinDaily(time, dailyMaxHumidity, dailyMinHumidity);
 
-        given(influxDBTemplate.query(any())).willReturn(new QueryResult());
+        given(influxDBUtil.processingQuery(any())).willReturn(new QueryResult());
         given(resultMapper.toPOJO(any(), eq(HumidityMaxMinWeekly.class))).willReturn(List.of(humidityWeekly));
         given(resultMapper.toPOJO(any(), eq(HumidityMaxMinDaily.class))).willReturn(List.of(humidityDaily));
 
@@ -112,7 +111,7 @@ class HumidityServiceImplTest {
         HumidityMaxMinMonthly humidityMonthly = new HumidityMaxMinMonthly(time, monthlyMaxHumidity, monthlyMinHumidity);
         HumidityMaxMinDaily humidityDaily = new HumidityMaxMinDaily(time, dailyMaxHumidity, dailyMinHumidity);
 
-        given(influxDBTemplate.query(any())).willReturn(new QueryResult());
+        given(influxDBUtil.processingQuery(any())).willReturn(new QueryResult());
         given(resultMapper.toPOJO(any(), eq(HumidityMaxMinMonthly.class))).willReturn(List.of(humidityMonthly));
         given(resultMapper.toPOJO(any(), eq(HumidityMaxMinDaily.class))).willReturn(List.of(humidityDaily));
 
