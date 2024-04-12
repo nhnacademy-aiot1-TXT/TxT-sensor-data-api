@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity;
+package com.nhnacademy.sensordata.entity.humidity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Measurement(name = "daily_extreme_humidity")
-public class HumidityMaxMinWeekly {
+public class HumidityMaxMinMonthly {
     @Column(name = "time")
     private Instant time;
     @Column(name = "max_humidity")
