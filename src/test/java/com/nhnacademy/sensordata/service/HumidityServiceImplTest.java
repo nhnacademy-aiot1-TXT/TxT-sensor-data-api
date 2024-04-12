@@ -1,10 +1,10 @@
 package com.nhnacademy.sensordata.service;
 
-import com.nhnacademy.sensordata.entity.Humidity;
-import com.nhnacademy.sensordata.entity.HumidityMaxMinDaily;
-import com.nhnacademy.sensordata.entity.HumidityMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.HumidityMaxMinWeekly;
-import com.nhnacademy.sensordata.utils.InfluxDBUtil;
+import com.nhnacademy.sensordata.entity.humidity.Humidity;
+import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
+import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
+import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
+import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
 import org.junit.jupiter.api.Test;

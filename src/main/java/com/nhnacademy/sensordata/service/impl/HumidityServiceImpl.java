@@ -1,9 +1,9 @@
 package com.nhnacademy.sensordata.service.impl;
 
-import com.nhnacademy.sensordata.entity.Humidity;
-import com.nhnacademy.sensordata.entity.HumidityMaxMinDaily;
-import com.nhnacademy.sensordata.entity.HumidityMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.HumidityMaxMinWeekly;
+import com.nhnacademy.sensordata.entity.humidity.Humidity;
+import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
+import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
+import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.service.HumidityService;
 import com.nhnacademy.sensordata.utils.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;

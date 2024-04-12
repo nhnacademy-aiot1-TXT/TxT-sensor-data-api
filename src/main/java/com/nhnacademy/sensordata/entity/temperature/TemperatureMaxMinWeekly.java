@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity;
+package com.nhnacademy.sensordata.entity.temperature;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Measurement(name = "temperature_daily")
-public class TemperatureMaxMinMonthly {
+public class TemperatureMaxMinWeekly {
     @Column(name = "time")
     private Instant time;
     @Column(name = "max_temperature")

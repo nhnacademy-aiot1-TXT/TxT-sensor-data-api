@@ -1,20 +1,19 @@
-package com.nhnacademy.sensordata.entity;
+package com.nhnacademy.sensordata.entity.temperature;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
 import java.time.Instant;
 
-@Getter
-@Setter
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "humidity")
-public class Humidity {
+@Measurement(name = "temperature")
+public class Temperature {
     @Column(name = "time")
     private Instant time;
     @Column(name = "device")
