@@ -6,7 +6,6 @@ import com.nhnacademy.sensordata.entity.HumidityMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.service.HumidityService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -29,24 +29,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class HumidityRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private HumidityService humidityService;
 
     @Test
     void getHumidity() throws Exception {
-        // given
         Instant time = Instant.now();
         String device = "test device";
         String place = "test place";
         String topic = "test topic";
         Double value = 20.0;
-
-        // when
         Humidity humidity = new Humidity(time, device, place, topic, value);
-        Mockito.when(humidityService.getHumidity()).thenReturn(humidity);
 
-        // then
+        given(humidityService.getHumidity()).willReturn(humidity);
+
         mockMvc.perform(get("/api/humidity"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -61,17 +57,14 @@ class HumidityRestControllerTest {
 
     @Test
     void getDailyHumidity() throws Exception {
-        // given
         Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
         double maxHumidity = 80.0;
         double minHumidity = 60.0;
-
-        // when
         HumidityMaxMinDaily humidityMaxMinDaily = new HumidityMaxMinDaily(time, maxHumidity, minHumidity);
         List<HumidityMaxMinDaily> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
-        Mockito.when(humidityService.getDailyHumidity()).thenReturn(humidityMaxMinList);
 
-        // then
+        given(humidityService.getDailyHumidity()).willReturn(humidityMaxMinList);
+
         mockMvc.perform(get("/api/humidity/day"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -84,17 +77,14 @@ class HumidityRestControllerTest {
 
     @Test
     void getWeeklyHumidity() throws Exception {
-        // given
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
         double maxHumidity = 80.0;
         double minHumidity = 60.0;
-
-        // when
         HumidityMaxMinWeekly humidityMaxMinDaily = new HumidityMaxMinWeekly(time, maxHumidity, minHumidity);
         List<HumidityMaxMinWeekly> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
-        Mockito.when(humidityService.getWeeklyHumidity()).thenReturn(humidityMaxMinList);
 
-        // then
+        given(humidityService.getWeeklyHumidity()).willReturn(humidityMaxMinList);
+
         mockMvc.perform(get("/api/humidity/week"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -107,17 +97,14 @@ class HumidityRestControllerTest {
 
     @Test
     void getMonthlyHumidity() throws Exception {
-        // given
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
         double maxHumidity = 80.0;
         double minHumidity = 60.0;
-
-        // when
         HumidityMaxMinMonthly humidityMaxMinDaily = new HumidityMaxMinMonthly(time, maxHumidity, minHumidity);
         List<HumidityMaxMinMonthly> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
-        Mockito.when(humidityService.getMonthlyHumidity()).thenReturn(humidityMaxMinList);
 
-        // then
+        given(humidityService.getMonthlyHumidity()).willReturn(humidityMaxMinList);
+
         mockMvc.perform(get("/api/humidity/month"))
                 .andDo(print())
                 .andExpect(status().isOk())
