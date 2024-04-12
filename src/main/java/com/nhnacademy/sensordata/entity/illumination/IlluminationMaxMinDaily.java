@@ -16,7 +16,7 @@ public class IlluminationMaxMinDaily {
     @Column(name = "time")
     private Instant time;
     @Column(name = "max_illumination")
-    private Double maxIllumination;
+    private Integer maxIllumination;
     @Column(name = "min_illumination")
-    private Double minIllumination;
+    private Integer minIllumination;
 }
