@@ -6,7 +6,6 @@ import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,8 +44,8 @@ class TemperatureRestControllerTest {
         Temperature temperature = new Temperature(time, device, place, topic, value);
 
         // when
-        Mockito.when(temperatureService.getTemperature())
-                .thenReturn(temperature);
+        given(temperatureService.getTemperature())
+                .willReturn(temperature);
 
         //then
         mockMvc.perform(get("/api/temperature"))
@@ -69,8 +69,8 @@ class TemperatureRestControllerTest {
         List<TemperatureMaxMinDaily> temperatures = List.of(temperatureMaxMinDaily);
 
         // when
-        Mockito.when(temperatureService.getDailyTemperatures())
-                .thenReturn(temperatures);
+        given(temperatureService.getDailyTemperatures())
+                .willReturn(temperatures);
 
         //then
         mockMvc.perform(get("/api/temperature/day"))
@@ -91,8 +91,8 @@ class TemperatureRestControllerTest {
         List<TemperatureMaxMinWeekly> temperatures = List.of(temperatureMaxMinDaily);
 
         // when
-        Mockito.when(temperatureService.getWeeklyTemperatures())
-                .thenReturn(temperatures);
+        given(temperatureService.getWeeklyTemperatures())
+                .willReturn(temperatures);
 
         //then
         mockMvc.perform(get("/api/temperature/week"))
@@ -113,8 +113,8 @@ class TemperatureRestControllerTest {
         List<TemperatureMaxMinMonthly> temperatures = List.of(temperatureMaxMinDaily);
 
         // when
-        Mockito.when(temperatureService.getMonthlyTemperatures())
-                .thenReturn(temperatures);
+        given(temperatureService.getMonthlyTemperatures())
+                .willReturn(temperatures);
 
         //then
         mockMvc.perform(get("/api/temperature/month"))
