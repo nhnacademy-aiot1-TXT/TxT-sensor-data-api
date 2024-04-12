@@ -54,12 +54,14 @@ public class HumidityServiceImpl implements HumidityService {
         QueryResult queryResult = influxDBTemplate.query(query);
 
         List<HumidityMaxMinDaily> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinDaily.class);
+
         humidityMaxMinList = humidityMaxMinList.stream()
-                .peek(humidity -> {
-                    if (Objects.nonNull(humidity)) {
-                        humidity.setTime(humidity.getTime().plus(9, ChronoUnit.HOURS));
-                    }
-                })
+                .map(humidity -> new HumidityMaxMinDaily(
+                                humidity.getTime().plus(9, ChronoUnit.HOURS),
+                                humidity.getMaxHumidity(),
+                                humidity.getMinHumidity()
+                        )
+                )
                 .collect(Collectors.toList());
 
         return humidityMaxMinList.isEmpty() ? Collections.emptyList() : humidityMaxMinList;
@@ -81,15 +83,18 @@ public class HumidityServiceImpl implements HumidityService {
         HumidityMaxMinDaily humidityLastHour = resultMapper.toPOJO(queryResult2, HumidityMaxMinDaily.class).get(0);
 
         humidityMaxMinList = humidityMaxMinList.stream()
-                .peek(humidity -> {
-                    if (Objects.nonNull(humidity)) {
-                        humidity.setTime(humidity.getTime().plus(9, ChronoUnit.HOURS));
-                    }
-                })
+                .map(humidity -> new HumidityMaxMinWeekly(
+                        humidity.getTime().plus(9, ChronoUnit.HOURS),
+                        humidity.getMaxHumidity(),
+                        humidity.getMinHumidity()
+                ))
                 .collect(Collectors.toList());
 
         if (Objects.nonNull(humidityLastHour)) {
-            humidityMaxMinList.add(new HumidityMaxMinWeekly(humidityLastHour.getTime().plus(9, ChronoUnit.HOURS), humidityLastHour.getMaxHumidity(), humidityLastHour.getMinHumidity()));
+            humidityMaxMinList.add(new HumidityMaxMinWeekly(
+                    humidityLastHour.getTime().plus(9, ChronoUnit.HOURS),
+                    humidityLastHour.getMaxHumidity(),
+                    humidityLastHour.getMinHumidity()));
         }
 
         return humidityMaxMinList.isEmpty() ? Collections.emptyList() : humidityMaxMinList;
@@ -111,15 +116,19 @@ public class HumidityServiceImpl implements HumidityService {
         HumidityMaxMinDaily humidityLastHour = resultMapper.toPOJO(queryResult2, HumidityMaxMinDaily.class).get(0);
 
         humidityMaxMinList = humidityMaxMinList.stream()
-                .peek(humidity -> {
-                    if (Objects.nonNull(humidity)) {
-                        humidity.setTime(humidity.getTime().plus(9, ChronoUnit.HOURS));
-                    }
-                })
+                .map(humidity -> new HumidityMaxMinMonthly(
+                                humidity.getTime().plus(9, ChronoUnit.HOURS),
+                                humidity.getMaxHumidity(),
+                                humidity.getMinHumidity()
+                        )
+                )
                 .collect(Collectors.toList());
 
         if (Objects.nonNull(humidityLastHour)) {
-            humidityMaxMinList.add(new HumidityMaxMinMonthly(humidityLastHour.getTime().plus(9, ChronoUnit.HOURS), humidityLastHour.getMaxHumidity(), humidityLastHour.getMinHumidity()));
+            humidityMaxMinList.add(new HumidityMaxMinMonthly(
+                    humidityLastHour.getTime().plus(9, ChronoUnit.HOURS),
+                    humidityLastHour.getMaxHumidity(),
+                    humidityLastHour.getMinHumidity()));
         }
 
         return humidityMaxMinList.isEmpty() ? Collections.emptyList() : humidityMaxMinList;

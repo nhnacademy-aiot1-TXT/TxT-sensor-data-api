@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.service.impl;
+package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.entity.Humidity;
 import com.nhnacademy.sensordata.entity.HumidityMaxMinDaily;
@@ -8,9 +8,9 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.influxdb.InfluxDBTemplate;
 
 import java.time.Instant;
@@ -24,11 +24,11 @@ import static org.mockito.BDDMockito.given;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class HumidityServiceImplTest {
-    @InjectMocks
-    private HumidityServiceImpl humidityService;
-    @Mock
+    @Autowired
+    private HumidityService humidityService;
+    @MockBean(name = "influxDBTemplate")
     private InfluxDBTemplate<Point> influxDBTemplate;
-    @Mock
+    @MockBean
     private InfluxDBResultMapper resultMapper;
 
     @Test
