@@ -22,5 +22,5 @@ public class Illumination {
     @Column(name = "topic")
     private String topic;
     @Column(name = "value")
-    private Double value;
+    private Integer value;
 }
