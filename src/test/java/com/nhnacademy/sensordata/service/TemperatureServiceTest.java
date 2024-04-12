@@ -4,30 +4,28 @@ import com.nhnacademy.sensordata.entity.temperature.Temperature;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
-import org.influxdb.dto.Point;
+import com.nhnacademy.sensordata.utils.InfluxDBUtil;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.influxdb.InfluxDBTemplate;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class TemperatureServiceTest {
     @Autowired
     private TemperatureService temperatureService;
-    @MockBean(name = "influxDBTemplate")
-    private InfluxDBTemplate<Point> influxDBTemplate;
+    @MockBean
+    private InfluxDBUtil influxDBUtil;
     @MockBean
     private InfluxDBResultMapper resultMapper;
 
@@ -42,7 +40,7 @@ class TemperatureServiceTest {
 
         Temperature temperature = new Temperature(time, device, place, topic, value);
 
-        given(influxDBTemplate.query(any())).willReturn(new QueryResult());
+        given(influxDBUtil.processingQuery(anyString())).willReturn(new QueryResult());
         given(resultMapper.toPOJO(any(), any())).willReturn(List.of(temperature));
 
         // when
@@ -68,7 +66,7 @@ class TemperatureServiceTest {
 
         TemperatureMaxMinDaily temperature = new TemperatureMaxMinDaily(time, maxTemperature, minTemperature);
 
-        given(influxDBTemplate.query(any())).willReturn(new QueryResult());
+        given(influxDBUtil.processingQuery(anyString())).willReturn(new QueryResult());
         given(resultMapper.toPOJO(any(), any())).willReturn(List.of(temperature));
 
         // when
@@ -97,7 +95,7 @@ class TemperatureServiceTest {
         TemperatureMaxMinWeekly temperatureMaxMinWeekly = new TemperatureMaxMinWeekly(time, weeklyMaxTemperature, weeklyMinTemperature);
 
         // when
-        given(influxDBTemplate.query(any())).willReturn(new QueryResult());
+        given(influxDBUtil.processingQuery(anyString())).willReturn(new QueryResult());
         given(resultMapper.toPOJO(any(), eq(TemperatureMaxMinWeekly.class))).willReturn(List.of(temperatureMaxMinWeekly));
         given(resultMapper.toPOJO(any(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperatureMaxMinDaily));
 
@@ -130,7 +128,7 @@ class TemperatureServiceTest {
         TemperatureMaxMinMonthly temperatureMaxMinMonthly = new TemperatureMaxMinMonthly(time, monthlyMaxTemperature, monthlyMinTemperature);
 
         // when
-        given(influxDBTemplate.query(any())).willReturn(new QueryResult());
+        given(influxDBUtil.processingQuery(anyString())).willReturn(new QueryResult());
         given(resultMapper.toPOJO(any(), eq(TemperatureMaxMinMonthly.class))).willReturn(List.of(temperatureMaxMinMonthly));
         given(resultMapper.toPOJO(any(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperatureMaxMinDaily));
 
