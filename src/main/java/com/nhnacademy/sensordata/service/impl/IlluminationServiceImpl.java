@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.service.impl;
 
 import com.nhnacademy.sensordata.entity.illumination.Illumination;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
+import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import com.nhnacademy.sensordata.utils.InfluxDBUtil;
@@ -78,6 +79,39 @@ public class IlluminationServiceImpl implements IlluminationService {
 
         if (Objects.nonNull(illuminationMaxMinDaily)) {
             illuminations.add(new IlluminationMaxMinWeekly(
+                            illuminationMaxMinDaily.getTime().plus(9, ChronoUnit.HOURS),
+                            illuminationMaxMinDaily.getMaxIllumination(),
+                            illuminationMaxMinDaily.getMinIllumination()
+                    )
+            );
+        }
+
+        return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
+    }
+
+    @Override
+    public List<IlluminationMaxMinMonthly> getMonthlyIlluminations() {
+        LocalDate today = LocalDate.now();
+        String dailyQuery = String.format("SELECT time, max_illumination, min_illumination FROM illumination_daily WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusMonths(1), today);
+        String hourlyQuery = "SELECT time, max_illumination, min_illumination FROM illumination_hourly order by time desc limit 1";
+
+        QueryResult dailyQueryResult = influxDBUtil.processingQuery(dailyQuery);
+        QueryResult hourlyQueryResult = influxDBUtil.processingQuery(hourlyQuery);
+
+        List<IlluminationMaxMinMonthly> illuminations = resultMapper.toPOJO(dailyQueryResult, IlluminationMaxMinMonthly.class);
+        IlluminationMaxMinDaily illuminationMaxMinDaily = resultMapper.toPOJO(hourlyQueryResult, IlluminationMaxMinDaily.class).get(0);
+
+        illuminations = illuminations.stream()
+                .map(illumination -> new IlluminationMaxMinMonthly(
+                                illumination.getTime().plus(9, ChronoUnit.HOURS),
+                                illumination.getMaxIllumination(),
+                                illumination.getMinIllumination()
+                        )
+                )
+                .collect(Collectors.toList());
+
+        if (Objects.nonNull(illuminationMaxMinDaily)) {
+            illuminations.add(new IlluminationMaxMinMonthly(
                             illuminationMaxMinDaily.getTime().plus(9, ChronoUnit.HOURS),
                             illuminationMaxMinDaily.getMaxIllumination(),
                             illuminationMaxMinDaily.getMinIllumination()

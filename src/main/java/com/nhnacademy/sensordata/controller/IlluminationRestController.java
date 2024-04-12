@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.entity.illumination.Illumination;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
+import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,13 @@ public class IlluminationRestController {
     @GetMapping("/week")
     public ResponseEntity<List<IlluminationMaxMinWeekly>> getWeeklyIlluminations() {
         List<IlluminationMaxMinWeekly> illuminations = illuminationService.getWeeklyIlluminations();
+
+        return ResponseEntity.ok(illuminations);
+    }
+
+    @GetMapping("/month")
+    public ResponseEntity<List<IlluminationMaxMinMonthly>> getMonthlyIlluminations() {
+        List<IlluminationMaxMinMonthly> illuminations = illuminationService.getMonthlyIlluminations();
 
         return ResponseEntity.ok(illuminations);
     }

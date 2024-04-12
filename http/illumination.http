@@ -4,5 +4,8 @@ GET http://localhost:8300/api/illumination
 ### 조도 일별 조회
 GET http://localhost:8300/api/illumination/day
 
-### 조도 월별 조회
+### 조도 주별 조회
 GET http://localhost:8300/api/illumination/week
+
+### 조도 월별 조회
+GET http://localhost:8300/api/illumination/month
