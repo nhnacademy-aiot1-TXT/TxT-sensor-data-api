@@ -39,6 +39,8 @@ public class HumidityServiceImpl implements HumidityService {
 
     @Override
     public List<HumidityMaxMinDaily> getDailyHumidity() {
+        LocalDate today = LocalDate.now();
+        
         QueryResult queryResult = influxDBUtil.processingQuery(String.format("select * from hourly_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusDays(1), today));
 
         List<HumidityMaxMinDaily> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinDaily.class);
