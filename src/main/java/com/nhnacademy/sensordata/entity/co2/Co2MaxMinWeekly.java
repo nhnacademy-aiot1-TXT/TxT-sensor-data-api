@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity;
+package com.nhnacademy.sensordata.entity.co2;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,8 +17,8 @@ import java.time.Instant;
 public class Co2MaxMinWeekly {
     @Column(name = "time")
     private Instant time;
-    @Column(name = "max_humidity")
-    private double maxHumidity;
-    @Column(name = "min_humidity")
-    private double minHumidity;
+    @Column(name = "max_co2")
+    private Integer maxCo2;
+    @Column(name = "min_co2")
+    private Integer minCo2;
 }

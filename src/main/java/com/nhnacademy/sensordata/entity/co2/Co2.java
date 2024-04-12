@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity;
+package com.nhnacademy.sensordata.entity.co2;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,5 +24,5 @@ public class Co2 {
     @Column(name = "topic")
     private String topic;
     @Column(name = "value")
-    private Double value;
+    private Integer value;
 }
