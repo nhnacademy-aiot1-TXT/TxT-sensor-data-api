@@ -1,7 +1,12 @@
 package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.entity.illumination.Illumination;
+import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
+
+import java.util.List;
 
 public interface IlluminationService {
     Illumination getIllumination();
+
+    List<IlluminationMaxMinDaily> getDailyIlluminations();
 }
