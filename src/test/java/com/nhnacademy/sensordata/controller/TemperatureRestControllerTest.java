@@ -43,10 +43,10 @@ class TemperatureRestControllerTest {
         Double value = 20.0;
         Temperature temperature = new Temperature(time, device, place, topic, value);
 
-        // when
         given(temperatureService.getTemperature())
                 .willReturn(temperature);
 
+        // when
         //then
         mockMvc.perform(get("/api/temperature"))
                 .andDo(print())
@@ -68,11 +68,11 @@ class TemperatureRestControllerTest {
         TemperatureMaxMinDaily temperatureMaxMinDaily = new TemperatureMaxMinDaily(time, maxTemperature, minTemperature);
         List<TemperatureMaxMinDaily> temperatures = List.of(temperatureMaxMinDaily);
 
-        // when
         given(temperatureService.getDailyTemperatures())
                 .willReturn(temperatures);
 
-        //then
+        // when
+        // then
         mockMvc.perform(get("/api/temperature/day"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -90,11 +90,11 @@ class TemperatureRestControllerTest {
         TemperatureMaxMinWeekly temperatureMaxMinDaily = new TemperatureMaxMinWeekly(time, maxTemperature, minTemperature);
         List<TemperatureMaxMinWeekly> temperatures = List.of(temperatureMaxMinDaily);
 
-        // when
         given(temperatureService.getWeeklyTemperatures())
                 .willReturn(temperatures);
 
-        //then
+        // when
+        // then
         mockMvc.perform(get("/api/temperature/week"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -112,11 +112,11 @@ class TemperatureRestControllerTest {
         TemperatureMaxMinMonthly temperatureMaxMinDaily = new TemperatureMaxMinMonthly(time, maxTemperature, minTemperature);
         List<TemperatureMaxMinMonthly> temperatures = List.of(temperatureMaxMinDaily);
 
-        // when
         given(temperatureService.getMonthlyTemperatures())
                 .willReturn(temperatures);
 
-        //then
+        // when
+        // then
         mockMvc.perform(get("/api/temperature/month"))
                 .andDo(print())
                 .andExpect(status().isOk())
