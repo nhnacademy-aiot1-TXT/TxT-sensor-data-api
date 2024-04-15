@@ -7,13 +7,13 @@ import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
 import com.nhnacademy.sensordata.service.Co2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/co2")
 public class Co2RestController {
