@@ -1,10 +1,10 @@
 package com.nhnacademy.sensordata.entity.illumination;
 
+import com.influxdb.annotations.Column;
+import com.influxdb.annotations.Measurement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.influxdb.annotation.Column;
-import org.influxdb.annotation.Measurement;
 
 import java.time.Instant;
 

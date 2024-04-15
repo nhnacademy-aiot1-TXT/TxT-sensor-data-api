@@ -1,23 +1,18 @@
 package com.nhnacademy.sensordata.utils;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.query.FluxTable;
 import lombok.RequiredArgsConstructor;
-import org.influxdb.dto.BoundParameterQuery;
-import org.influxdb.dto.Point;
-import org.influxdb.dto.Query;
-import org.influxdb.dto.QueryResult;
-import org.springframework.data.influxdb.InfluxDBTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class InfluxDBUtil {
-    private final InfluxDBTemplate<Point> influxDBTemplate;
+    private final InfluxDBClient influxDBClient;
 
-    public QueryResult processingQuery(String queryString) {
-        Query query = BoundParameterQuery.QueryBuilder.newQuery(queryString)
-                .forDatabase("tig")
-                .create();
-
-        return influxDBTemplate.query(query);
+    public List<FluxTable> processingQuery(String queryString) {
+        return influxDBClient.getQueryApi().query(queryString);
     }
 }
