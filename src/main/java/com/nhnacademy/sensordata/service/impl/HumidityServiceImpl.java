@@ -1,113 +1,134 @@
 package com.nhnacademy.sensordata.service.impl;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.query.dsl.Flux;
 import com.nhnacademy.sensordata.entity.humidity.Humidity;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.service.HumidityService;
-import com.nhnacademy.sensordata.utils.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+
+import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
 @Service
 @RequiredArgsConstructor
 public class HumidityServiceImpl implements HumidityService {
-    private final InfluxDBUtil influxDBUtil;
+    private final InfluxDBClient influxDBClient;
 
     @Override
     public Humidity getHumidity() {
-//        QueryResult queryResult = influxDBUtil.processingQuery("select time, device, place, topic, value from humidity order by time desc limit 1");
-//
-//        Humidity humidity = resultMapper.toPOJO(queryResult, Humidity.class).get(0);
-//
-//        if (Objects.nonNull(humidity)) {
-//            humidity.setTime(humidity.getTime().plus(9, ChronoUnit.HOURS));
-//        }
-//
-//        return humidity;
-        return null;
+        Flux fluxQuery = Flux.from("TxT-iot")
+                .range(-1L, ChronoUnit.MINUTES)
+                .filter(measurement().equal("temperature"))
+                .filter(or(
+                        field().equal("device"),
+                        field().equal("place"),
+                        field().equal("topic"),
+                        field().equal("value")
+                ))
+                .last()
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .map("({ r with value: float(v: r.value)})")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        return influxDBClient.getQueryApi().query(fluxQuery.toString(), Humidity.class).stream().findFirst().orElse(null);
     }
 
     @Override
     public List<HumidityMaxMinDaily> getDailyHumidity() {
-//        LocalDate today = LocalDate.now();
-//
-//        QueryResult queryResult = influxDBUtil.processingQuery(String.format("select * from hourly_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusDays(1), today));
-//
-//        List<HumidityMaxMinDaily> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinDaily.class);
-//
-//        humidityMaxMinList = humidityMaxMinList.stream()
-//                .map(humidity -> new HumidityMaxMinDaily(
-//                                humidity.getTime().plus(9, ChronoUnit.HOURS),
-//                                humidity.getMaxHumidity(),
-//                                humidity.getMinHumidity()
-//                        )
-//                )
-//                .collect(Collectors.toList());
-//
-//        return humidityMaxMinList.isEmpty() ? Collections.emptyList() : humidityMaxMinList;
-        return null;
+        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
+        Instant endTime = Instant.now();
+
+        Flux query = Flux.from("TxT-iot-old")
+                .range(startTime, endTime)
+                .filter(measurement().equal("humidity_hourly"))
+                .filter(or(
+                        field().equal("max_humidity"),
+                        field().equal("min_humidity")
+                ))
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        return influxDBClient.getQueryApi().query(query.toString(), HumidityMaxMinDaily.class);
     }
 
     @Override
     public List<HumidityMaxMinWeekly> getWeeklyHumidity() {
-        LocalDate today = LocalDate.now();
+        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
+        Instant endTime = Instant.now();
 
-//        QueryResult queryResult = influxDBUtil.processingQuery(String.format("select * from daily_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusWeeks(1), today));
-//        QueryResult queryResult2 = influxDBUtil.processingQuery("select * from hourly_extreme_humidity order by time desc");
-//
-//        List<HumidityMaxMinWeekly> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinWeekly.class);
-//        HumidityMaxMinDaily humidityLastHour = resultMapper.toPOJO(queryResult2, HumidityMaxMinDaily.class).get(0);
-//
-//        humidityMaxMinList = humidityMaxMinList.stream()
-//                .map(humidity -> new HumidityMaxMinWeekly(
-//                        humidity.getTime().plus(9, ChronoUnit.HOURS),
-//                        humidity.getMaxHumidity(),
-//                        humidity.getMinHumidity()
-//                ))
-//                .collect(Collectors.toList());
-//
-//        if (Objects.nonNull(humidityLastHour)) {
-//            humidityMaxMinList.add(new HumidityMaxMinWeekly(
-//                    humidityLastHour.getTime().plus(9, ChronoUnit.HOURS),
-//                    humidityLastHour.getMaxHumidity(),
-//                    humidityLastHour.getMinHumidity()));
-//        }
-//
-//        return humidityMaxMinList.isEmpty() ? Collections.emptyList() : humidityMaxMinList;
-        return null;
+        Flux query = Flux.from("TxT-iot-old")
+                .range(startTime, endTime)
+                .filter(measurement().equal("humidity_daily"))
+                .filter(or(
+                        field().equal("max_humidity"),
+                        field().equal("min_humidity")
+                ))
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
+        Flux lastHourQuery = Flux.from("TxT-iot-old")
+                .range(-1L, ChronoUnit.DAYS)
+                .filter(measurement().equal("humidity_hourly"))
+                .last()
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        List<HumidityMaxMinWeekly> weeklyList = influxDBClient.getQueryApi().query(query.toString(), HumidityMaxMinWeekly.class);
+        HumidityMaxMinDaily lastHour = influxDBClient.getQueryApi().query(lastHourQuery.toString(), HumidityMaxMinDaily.class).get(0);
+        weeklyList.add(new HumidityMaxMinWeekly(lastHour.getTime(), lastHour.getMaxHumidity(), lastHour.getMinHumidity()));
+        return weeklyList;
     }
 
     @Override
     public List<HumidityMaxMinMonthly> getMonthlyHumidity() {
-        LocalDate today = LocalDate.now();
+        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
+        Instant endTime = Instant.now();
 
-//        QueryResult queryResult = influxDBUtil.processingQuery(String.format("select * from daily_extreme_humidity where time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusMonths(1), today));
-//        QueryResult queryResult2 = influxDBUtil.processingQuery("select * from hourly_extreme_humidity order by time desc");
-//
-//        List<HumidityMaxMinMonthly> humidityMaxMinList = resultMapper.toPOJO(queryResult, HumidityMaxMinMonthly.class);
-//        HumidityMaxMinDaily humidityLastHour = resultMapper.toPOJO(queryResult2, HumidityMaxMinDaily.class).get(0);
-//
-//        humidityMaxMinList = humidityMaxMinList.stream()
-//                .map(humidity -> new HumidityMaxMinMonthly(
-//                                humidity.getTime().plus(9, ChronoUnit.HOURS),
-//                                humidity.getMaxHumidity(),
-//                                humidity.getMinHumidity()
-//                        )
-//                )
-//                .collect(Collectors.toList());
-//
-//        if (Objects.nonNull(humidityLastHour)) {
-//            humidityMaxMinList.add(new HumidityMaxMinMonthly(
-//                    humidityLastHour.getTime().plus(9, ChronoUnit.HOURS),
-//                    humidityLastHour.getMaxHumidity(),
-//                    humidityLastHour.getMinHumidity()));
-//        }
-//
-//        return humidityMaxMinList.isEmpty() ? Collections.emptyList() : humidityMaxMinList;
-        return null;
+        Flux query = Flux.from("TxT-iot-old")
+                .range(startTime, endTime)
+                .filter(measurement().equal("humidity_daily"))
+                .filter(or(
+                        field().equal("max_humidity"),
+                        field().equal("min_humidity")
+                ))
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        Flux lastHourQuery = Flux.from("TxT-iot-old")
+                .range(-1L, ChronoUnit.DAYS)
+                .filter(measurement().equal("humidity_hourly"))
+                .last()
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        List<HumidityMaxMinMonthly> monthlyList = influxDBClient.getQueryApi().query(query.toString(), HumidityMaxMinMonthly.class);
+        HumidityMaxMinDaily lastHour = influxDBClient.getQueryApi().query(lastHourQuery.toString(), HumidityMaxMinDaily.class).get(0);
+        monthlyList.add(new HumidityMaxMinMonthly(lastHour.getTime(), lastHour.getMaxHumidity(), lastHour.getMinHumidity()));
+        return monthlyList;
     }
 }

@@ -40,7 +40,7 @@ class HumidityRestControllerTest {
         String device = "test device";
         String place = "test place";
         String topic = "test topic";
-        Double value = 20.0;
+        Float value = 20.0f;
         Humidity humidity = new Humidity(time, device, place, topic, value);
 
         given(humidityService.getHumidity()).willReturn(humidity);
@@ -53,15 +53,15 @@ class HumidityRestControllerTest {
                 .andExpect(jsonPath("$.device", equalTo(device)))
                 .andExpect(jsonPath("$.place", equalTo(place)))
                 .andExpect(jsonPath("$.topic", equalTo(topic)))
-                .andExpect(jsonPath("$.value", equalTo(value)))
+                .andExpect(jsonPath("$.value", equalTo(value.doubleValue())))
                 .andReturn();
     }
 
     @Test
     void getDailyHumidity() throws Exception {
         Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
-        double maxHumidity = 80.0;
-        double minHumidity = 60.0;
+        Float maxHumidity = 80.0f;
+        Float minHumidity = 60.0f;
         HumidityMaxMinDaily humidityMaxMinDaily = new HumidityMaxMinDaily(time, maxHumidity, minHumidity);
         List<HumidityMaxMinDaily> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
@@ -72,16 +72,16 @@ class HumidityRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
-                .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity)))
-                .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity)))
+                .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity.doubleValue())))
+                .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity.doubleValue())))
                 .andReturn();
     }
 
     @Test
     void getWeeklyHumidity() throws Exception {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
-        double maxHumidity = 80.0;
-        double minHumidity = 60.0;
+        Float maxHumidity = 80.0f;
+        Float minHumidity = 60.0f;
         HumidityMaxMinWeekly humidityMaxMinDaily = new HumidityMaxMinWeekly(time, maxHumidity, minHumidity);
         List<HumidityMaxMinWeekly> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
@@ -92,16 +92,16 @@ class HumidityRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
-                .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity)))
-                .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity)))
+                .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity.doubleValue())))
+                .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity.doubleValue())))
                 .andReturn();
     }
 
     @Test
     void getMonthlyHumidity() throws Exception {
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
-        double maxHumidity = 80.0;
-        double minHumidity = 60.0;
+        Float maxHumidity = 80.0f;
+        Float minHumidity = 60.0f;
         HumidityMaxMinMonthly humidityMaxMinDaily = new HumidityMaxMinMonthly(time, maxHumidity, minHumidity);
         List<HumidityMaxMinMonthly> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
@@ -112,8 +112,8 @@ class HumidityRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
-                .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity)))
-                .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity)))
+                .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity.doubleValue())))
+                .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity.doubleValue())))
                 .andReturn();
     }
 }
