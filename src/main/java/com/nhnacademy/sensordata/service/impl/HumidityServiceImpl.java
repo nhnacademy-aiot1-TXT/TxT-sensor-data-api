@@ -26,7 +26,7 @@ public class HumidityServiceImpl implements HumidityService {
     public Humidity getHumidity() {
         Flux fluxQuery = Flux.from("TxT-iot")
                 .range(-1L, ChronoUnit.MINUTES)
-                .filter(measurement().equal("temperature"))
+                .filter(measurement().equal("humidity"))
                 .filter(or(
                         field().equal("device"),
                         field().equal("place"),
