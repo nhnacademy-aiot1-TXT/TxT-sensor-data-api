@@ -42,7 +42,7 @@ class TemperatureRestControllerTest {
         String device = "test device";
         String place = "test place";
         String topic = "test topic";
-        Double value = 20.0;
+        Float value = 20.0f;
         Temperature temperature = new Temperature(time, device, place, topic, value);
 
         given(temperatureService.getTemperature())
@@ -58,15 +58,15 @@ class TemperatureRestControllerTest {
                 .andExpect(jsonPath("$.device", equalTo(device)))
                 .andExpect(jsonPath("$.place", equalTo(place)))
                 .andExpect(jsonPath("$.topic", equalTo(topic)))
-                .andExpect(jsonPath("$.value", equalTo(value)));
+                .andExpect(jsonPath("$.value", equalTo(value.doubleValue())));
     }
 
     @Test
     void getDailyTemperatures() throws Exception {
         // given
         Instant time = Instant.now();
-        Double maxTemperature = 24.0;
-        Double minTemperature = 20.0;
+        Float maxTemperature = 24.0f;
+        Float minTemperature = 20.0f;
         TemperatureMaxMinDaily temperatureMaxMinDaily = new TemperatureMaxMinDaily(time, maxTemperature, minTemperature);
         List<TemperatureMaxMinDaily> temperatures = List.of(temperatureMaxMinDaily);
 
@@ -79,16 +79,16 @@ class TemperatureRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
-                .andExpect(jsonPath("$[0].maxTemperature", equalTo(maxTemperature)))
-                .andExpect(jsonPath("$[0].minTemperature", equalTo(minTemperature)));
+                .andExpect(jsonPath("$[0].maxTemperature", equalTo(maxTemperature.doubleValue())))
+                .andExpect(jsonPath("$[0].minTemperature", equalTo(minTemperature.doubleValue())));
     }
 
     @Test
     void getWeeklyTemperatures() throws Exception {
         // given
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
-        Double maxTemperature = 24.0;
-        Double minTemperature = 20.0;
+        Float maxTemperature = 24.0f;
+        Float minTemperature = 20.0f;
         TemperatureMaxMinWeekly temperatureMaxMinDaily = new TemperatureMaxMinWeekly(time, maxTemperature, minTemperature);
         List<TemperatureMaxMinWeekly> temperatures = List.of(temperatureMaxMinDaily);
 
@@ -101,16 +101,16 @@ class TemperatureRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
-                .andExpect(jsonPath("$[0].maxTemperature", equalTo(maxTemperature)))
-                .andExpect(jsonPath("$[0].minTemperature", equalTo(minTemperature)));
+                .andExpect(jsonPath("$[0].maxTemperature", equalTo(maxTemperature.doubleValue())))
+                .andExpect(jsonPath("$[0].minTemperature", equalTo(minTemperature.doubleValue())));
     }
 
     @Test
     void getMonthlyTemperatures() throws Exception {
         // given
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
-        Double maxTemperature = 24.0;
-        Double minTemperature = 20.0;
+        Float maxTemperature = 24.0f;
+        Float minTemperature = 20.0f;
         TemperatureMaxMinMonthly temperatureMaxMinDaily = new TemperatureMaxMinMonthly(time, maxTemperature, minTemperature);
         List<TemperatureMaxMinMonthly> temperatures = List.of(temperatureMaxMinDaily);
 
@@ -123,7 +123,7 @@ class TemperatureRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
-                .andExpect(jsonPath("$[0].maxTemperature", equalTo(maxTemperature)))
-                .andExpect(jsonPath("$[0].minTemperature", equalTo(minTemperature)));
+                .andExpect(jsonPath("$[0].maxTemperature", equalTo(maxTemperature.doubleValue())))
+                .andExpect(jsonPath("$[0].minTemperature", equalTo(minTemperature.doubleValue())));
     }
 }

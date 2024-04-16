@@ -1,122 +1,167 @@
 package com.nhnacademy.sensordata.service.impl;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.query.dsl.Flux;
 import com.nhnacademy.sensordata.entity.temperature.Temperature;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.service.TemperatureService;
-import com.nhnacademy.sensordata.utils.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
 @Service
 @RequiredArgsConstructor
 public class TemperatureServiceImpl implements TemperatureService {
-    private final InfluxDBUtil influxDBUtil;
+    private final InfluxDBClient influxDBClient;
 
     @Override
     public Temperature getTemperature() {
-        String query = "select time, device, place, topic, value from temperature order by time desc limit 1";
-//        QueryResult queryResult = influxDBUtil.processingQuery(query);
-//
-//        Temperature temperature = resultMapper.toPOJO(queryResult, Temperature.class).get(0);
-//        if (Objects.nonNull(temperature)) {
-//            temperature.setTime(temperature.getTime().plus(9, ChronoUnit.HOURS));
-//        }
-//
-//        return temperature;
-        return null;
+        Flux fluxQuery = Flux.from("TxT-iot")
+                .range(-1L, ChronoUnit.MINUTES)
+                .filter(measurement().equal("temperature"))
+                .filter(or(
+                        field().equal("device"),
+                        field().equal("place"),
+                        field().equal("topic"),
+                        field().equal("value")
+                ))
+                .last()
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        return influxDBClient.getQueryApi()
+                .query(fluxQuery.toString(), Temperature.class)
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public List<TemperatureMaxMinDaily> getDailyTemperatures() {
-        LocalDate today = LocalDate.now();
-        String query = String.format("SELECT time, max_temperature, min_temperature FROM temperature_hourly WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusDays(1), today);
-//        QueryResult queryResult = influxDBUtil.processingQuery(query);
-//
-//        List<TemperatureMaxMinDaily> temperatures = resultMapper.toPOJO(queryResult, TemperatureMaxMinDaily.class);
-//
-//        temperatures = temperatures.stream()
-//                .map(temperature -> new TemperatureMaxMinDaily(
-//                                temperature.getTime().plus(9, ChronoUnit.HOURS),
-//                                temperature.getMaxTemperature(),
-//                                temperature.getMinTemperature()
-//                        )
-//                )
-//                .collect(Collectors.toList());
-//
-//        return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
-        return null;
+        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
+        Instant endTime = Instant.now();
+        Flux fluxQuery = Flux.from("TxT-iot-old")
+                .range(startTime, endTime)
+                .filter(measurement().equal("temperature_hourly"))
+                .filter(or(
+                        field().equal("max_temperature"),
+                        field().equal("min_temperature")
+                ))
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        List<TemperatureMaxMinDaily> temperatures = influxDBClient.getQueryApi().query(fluxQuery.toString(), TemperatureMaxMinDaily.class);
+
+        return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
     }
 
     @Override
     public List<TemperatureMaxMinWeekly> getWeeklyTemperatures() {
-        LocalDate today = LocalDate.now();
-        String dailyQuery = String.format("SELECT time, max_temperature, min_temperature FROM temperature_daily WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusWeeks(1), today);
-        String hourlyQuery = "SELECT time, max_temperature, min_temperature FROM temperature_hourly order by time desc limit 1";
+        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
+        Instant endTime = Instant.now();
+        Flux fluxQueryDaily = Flux.from("TxT-iot-old")
+                .range(startTime, endTime)
+                .filter(measurement().equal("temperature_daily"))
+                .filter(or(
+                        field().equal("max_temperature"),
+                        field().equal("min_temperature")
+                ))
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
 
-//        QueryResult dailyQueryResult = influxDBUtil.processingQuery(dailyQuery);
-//        QueryResult hourlyQueryResult = influxDBUtil.processingQuery(hourlyQuery);
-//
-//        List<TemperatureMaxMinWeekly> temperatures = resultMapper.toPOJO(dailyQueryResult, TemperatureMaxMinWeekly.class);
-//        TemperatureMaxMinDaily temperatureMaxMinDaily = resultMapper.toPOJO(hourlyQueryResult, TemperatureMaxMinDaily.class).get(0);
-//
-//        temperatures = temperatures.stream()
-//                .map(temperature -> new TemperatureMaxMinWeekly(
-//                                temperature.getTime().plus(9, ChronoUnit.HOURS),
-//                                temperature.getMaxTemperature(),
-//                                temperature.getMinTemperature()
-//                        )
-//                )
-//                .collect(Collectors.toList());
-//
-//        if (Objects.nonNull(temperatureMaxMinDaily)) {
-//            temperatures.add(new TemperatureMaxMinWeekly(
-//                            temperatureMaxMinDaily.getTime().plus(9, ChronoUnit.HOURS),
-//                            temperatureMaxMinDaily.getMaxTemperature(),
-//                            temperatureMaxMinDaily.getMinTemperature()
-//                    )
-//            );
-//        }
-//
-//        return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
-        return null;
+        Flux fluxQueryHourly = Flux.from("TxT-iot-old")
+                .range(-1L, ChronoUnit.DAYS)
+                .filter(measurement().equal("temperature_hourly"))
+                .last()
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+
+        List<TemperatureMaxMinWeekly> temperatures = influxDBClient.getQueryApi()
+                .query(fluxQueryDaily.toString(), TemperatureMaxMinWeekly.class);
+        TemperatureMaxMinDaily temperatureMaxMinDaily = influxDBClient.getQueryApi()
+                .query(fluxQueryHourly.toString(), TemperatureMaxMinDaily.class)
+                .stream()
+                .findFirst()
+                .orElse(null);
+
+        if (Objects.nonNull(temperatureMaxMinDaily)) {
+            temperatures.add(new TemperatureMaxMinWeekly(
+                    temperatureMaxMinDaily.getTime(),
+                    temperatureMaxMinDaily.getMaxTemperature(),
+                    temperatureMaxMinDaily.getMinTemperature())
+            );
+        }
+
+        return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
     }
 
     @Override
     public List<TemperatureMaxMinMonthly> getMonthlyTemperatures() {
-        LocalDate today = LocalDate.now();
-        String dailyQuery = String.format("SELECT time, max_temperature, min_temperature FROM temperature_daily WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusMonths(1), today);
-        String hourlyQuery = "SELECT time, max_temperature, min_temperature FROM temperature_hourly order by time desc limit 1";
+        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusMonths(1)));
+        Instant endTime = Instant.now();
+        Flux fluxQueryDaily = Flux.from("TxT-iot-old")
+                .range(startTime, endTime)
+                .filter(measurement().equal("temperature_daily"))
+                .filter(or(
+                        field().equal("max_temperature"),
+                        field().equal("min_temperature")
+                ))
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
 
-//        QueryResult dailyQueryResult = influxDBUtil.processingQuery(dailyQuery);
-//        QueryResult hourlyQueryResult = influxDBUtil.processingQuery(hourlyQuery);
-//
-//        List<TemperatureMaxMinMonthly> temperatures = resultMapper.toPOJO(dailyQueryResult, TemperatureMaxMinMonthly.class);
-//        TemperatureMaxMinDaily temperatureMaxMinDaily = resultMapper.toPOJO(hourlyQueryResult, TemperatureMaxMinDaily.class).get(0);
-//
-//        temperatures = temperatures.stream()
-//                .map(temperature -> new TemperatureMaxMinMonthly(
-//                                temperature.getTime().plus(9, ChronoUnit.HOURS),
-//                                temperature.getMaxTemperature(),
-//                                temperature.getMinTemperature()
-//                        )
-//                )
-//                .collect(Collectors.toList());
-//
-//        if (Objects.nonNull(temperatureMaxMinDaily)) {
-//            temperatures.add(new TemperatureMaxMinMonthly(
-//                            temperatureMaxMinDaily.getTime().plus(9, ChronoUnit.HOURS),
-//                            temperatureMaxMinDaily.getMaxTemperature(),
-//                            temperatureMaxMinDaily.getMinTemperature()
-//                    )
-//            );
-//        }
-//
-//        return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
-        return null;
+        Flux fluxQueryHourly = Flux.from("TxT-iot-old")
+                .range(-1L, ChronoUnit.DAYS)
+                .filter(measurement().equal("temperature_hourly"))
+                .last()
+                .pivot()
+                .withRowKey(new String[]{"_time"})
+                .withColumnKey(new String[]{"_field"})
+                .withValueColumn("_value")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+
+        List<TemperatureMaxMinMonthly> temperatures = influxDBClient.getQueryApi()
+                .query(fluxQueryDaily.toString(), TemperatureMaxMinMonthly.class);
+        TemperatureMaxMinDaily temperatureMaxMinDaily = influxDBClient.getQueryApi()
+                .query(fluxQueryHourly.toString(), TemperatureMaxMinDaily.class)
+                .stream()
+                .findFirst()
+                .orElse(null);
+
+        if (Objects.nonNull(temperatureMaxMinDaily)) {
+            temperatures.add(new TemperatureMaxMinMonthly(
+                    temperatureMaxMinDaily.getTime(),
+                    temperatureMaxMinDaily.getMaxTemperature(),
+                    temperatureMaxMinDaily.getMinTemperature())
+            );
+        }
+
+        return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
     }
 }
