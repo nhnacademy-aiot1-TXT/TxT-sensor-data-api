@@ -11,7 +11,7 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "voc")
+@Measurement(name = "tvoc")
 public class Voc {
     @Column(name = "time")
     private Instant time;
