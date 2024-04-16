@@ -18,7 +18,7 @@ public class HumidityMaxMinDaily {
     @Column(name = "time")
     private Instant time;
     @Column(name = "max_humidity")
-    private double maxHumidity;
+    private Float maxHumidity;
     @Column(name = "min_humidity")
-    private double minHumidity;
+    private Float minHumidity;
 }
