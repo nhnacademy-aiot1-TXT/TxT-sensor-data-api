@@ -23,10 +23,14 @@ import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 @RequiredArgsConstructor
 public class TemperatureServiceImpl implements TemperatureService {
     private final InfluxDBClient influxDBClient;
+    private static final String BUCKET_NAME = "TxT-iot-old";
+    private static final String ROW_KEY = "_time";
+    private static final String COLUMN_KEY = "_field";
+    private static final String COLUMN_VALUE = "_value";
 
     @Override
     public Temperature getTemperature() {
-        Flux fluxQuery = Flux.from("TxT-iot")
+        Flux fluxQuery = Flux.from(BUCKET_NAME)
                 .range(-1L, ChronoUnit.MINUTES)
                 .filter(measurement().equal("temperature"))
                 .filter(or(
@@ -37,9 +41,9 @@ public class TemperatureServiceImpl implements TemperatureService {
                 ))
                 .last()
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
         return influxDBClient.getQueryApi()
@@ -53,7 +57,7 @@ public class TemperatureServiceImpl implements TemperatureService {
     public List<TemperatureMaxMinDaily> getDailyTemperatures() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
         Instant endTime = Instant.now();
-        Flux fluxQuery = Flux.from("TxT-iot-old")
+        Flux fluxQuery = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)
                 .filter(measurement().equal("temperature_hourly"))
                 .filter(or(
@@ -61,9 +65,9 @@ public class TemperatureServiceImpl implements TemperatureService {
                         field().equal("min_temperature")
                 ))
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
         List<TemperatureMaxMinDaily> temperatures = influxDBClient.getQueryApi().query(fluxQuery.toString(), TemperatureMaxMinDaily.class);
@@ -75,7 +79,7 @@ public class TemperatureServiceImpl implements TemperatureService {
     public List<TemperatureMaxMinWeekly> getWeeklyTemperatures() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
         Instant endTime = Instant.now();
-        Flux fluxQueryDaily = Flux.from("TxT-iot-old")
+        Flux fluxQueryDaily = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)
                 .filter(measurement().equal("temperature_daily"))
                 .filter(or(
@@ -83,19 +87,19 @@ public class TemperatureServiceImpl implements TemperatureService {
                         field().equal("min_temperature")
                 ))
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
-        Flux fluxQueryHourly = Flux.from("TxT-iot-old")
+        Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
                 .range(-1L, ChronoUnit.DAYS)
                 .filter(measurement().equal("temperature_hourly"))
                 .last()
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
 
@@ -122,7 +126,7 @@ public class TemperatureServiceImpl implements TemperatureService {
     public List<TemperatureMaxMinMonthly> getMonthlyTemperatures() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusMonths(1)));
         Instant endTime = Instant.now();
-        Flux fluxQueryDaily = Flux.from("TxT-iot-old")
+        Flux fluxQueryDaily = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)
                 .filter(measurement().equal("temperature_daily"))
                 .filter(or(
@@ -130,19 +134,19 @@ public class TemperatureServiceImpl implements TemperatureService {
                         field().equal("min_temperature")
                 ))
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
-        Flux fluxQueryHourly = Flux.from("TxT-iot-old")
+        Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
                 .range(-1L, ChronoUnit.DAYS)
                 .filter(measurement().equal("temperature_hourly"))
                 .last()
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
 

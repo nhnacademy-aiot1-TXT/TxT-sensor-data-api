@@ -1,122 +1,171 @@
 package com.nhnacademy.sensordata.service.impl;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.query.dsl.Flux;
 import com.nhnacademy.sensordata.entity.illumination.Illumination;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
 import com.nhnacademy.sensordata.service.IlluminationService;
-import com.nhnacademy.sensordata.utils.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
 @Service
 @RequiredArgsConstructor
 public class IlluminationServiceImpl implements IlluminationService {
-    private final InfluxDBUtil influxDBUtil;
+    private final InfluxDBClient influxDBClient;
+    private static final String BUCKET_NAME = "TxT-iot-old";
+    private static final String ROW_KEY = "_time";
+    private static final String COLUMN_KEY = "_field";
+    private static final String COLUMN_VALUE = "_value";
 
     @Override
     public Illumination getIllumination() {
-//        String query = "select time, device, place, topic, value from illumination order by time desc limit 1";
-//        QueryResult queryResult = influxDBUtil.processingQuery(query);
-//
-//        Illumination illumination =resultMapper.toPOJO(queryResult, Illumination.class).get(0);
-//        if (Objects.nonNull(illumination)) {
-//            illumination.setTime(illumination.getTime().plus(9, ChronoUnit.HOURS));
-//        }
-//
-//        return illumination;
-        return null;
+        Flux fluxQuery = Flux.from(BUCKET_NAME)
+                .range(-1L, ChronoUnit.DAYS)
+                .filter(measurement().equal("illumination"))
+                .filter(or(
+                        field().equal("device"),
+                        field().equal("place"),
+                        field().equal("topic"),
+                        field().equal("value")
+                ))
+                .last()
+                .pivot()
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        return influxDBClient.getQueryApi()
+                .query(fluxQuery.toString(), Illumination.class)
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public List<IlluminationMaxMinDaily> getDailyIlluminations() {
-//        LocalDate today = LocalDate.now();
-//        String query = String.format("SELECT time, max_illumination, min_illumination FROM illumination_hourly WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusDays(1), today);
-//        QueryResult queryResult = influxDBUtil.processingQuery(query);
-//
-//        List<IlluminationMaxMinDaily> illuminations = resultMapper.toPOJO(queryResult, IlluminationMaxMinDaily.class);
-//
-//        illuminations = illuminations.stream()
-//                .map(illumination -> new IlluminationMaxMinDaily(
-//                                illumination.getTime().plus(9, ChronoUnit.HOURS),
-//                                illumination.getMaxIllumination(),
-//                                illumination.getMinIllumination()
-//                        )
-//                )
-//                .collect(Collectors.toList());
-//
-//        return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
-        return null;
+        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
+        Instant endTime = Instant.now();
+        Flux fluxQuery = Flux.from(BUCKET_NAME)
+                .range(startTime, endTime)
+                .filter(measurement().equal("illumination_hourly"))
+                .filter(or(
+                        field().equal("max_illumination"),
+                        field().equal("min_illumination")
+                ))
+                .pivot()
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        List<IlluminationMaxMinDaily> illuminations = influxDBClient.getQueryApi().query(fluxQuery.toString(), IlluminationMaxMinDaily.class);
+
+        return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
     }
 
     @Override
     public List<IlluminationMaxMinWeekly> getWeeklyIlluminations() {
-        LocalDate today = LocalDate.now();
-        String dailyQuery = String.format("SELECT time, max_illumination, min_illumination FROM illumination_daily WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusWeeks(1), today);
-        String hourlyQuery = "SELECT time, max_illumination, min_illumination FROM illumination_hourly order by time desc limit 1";
+        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
+        Instant endTime = Instant.now();
+        Flux fluxQueryDaily = Flux.from(BUCKET_NAME)
+                .range(startTime, endTime)
+                .filter(measurement().equal("illumination_daily"))
+                .filter(or(
+                        field().equal("max_illumination"),
+                        field().equal("min_illumination")
+                ))
+                .pivot()
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
+                .timeShift(9L, ChronoUnit.HOURS);
 
-//        QueryResult dailyQueryResult = influxDBUtil.processingQuery(dailyQuery);
-//        QueryResult hourlyQueryResult = influxDBUtil.processingQuery(hourlyQuery);
-//
-//        List<IlluminationMaxMinWeekly> illuminations = resultMapper.toPOJO(dailyQueryResult, IlluminationMaxMinWeekly.class);
-//        IlluminationMaxMinDaily illuminationMaxMinDaily = resultMapper.toPOJO(hourlyQueryResult, IlluminationMaxMinDaily.class).get(0);
-//
-//        illuminations = illuminations.stream()
-//                .map(illumination -> new IlluminationMaxMinWeekly(
-//                                illumination.getTime().plus(9, ChronoUnit.HOURS),
-//                                illumination.getMaxIllumination(),
-//                                illumination.getMinIllumination()
-//                        )
-//                )
-//                .collect(Collectors.toList());
-//
-//        if (Objects.nonNull(illuminationMaxMinDaily)) {
-//            illuminations.add(new IlluminationMaxMinWeekly(
-//                            illuminationMaxMinDaily.getTime().plus(9, ChronoUnit.HOURS),
-//                            illuminationMaxMinDaily.getMaxIllumination(),
-//                            illuminationMaxMinDaily.getMinIllumination()
-//                    )
-//            );
-//        }
-//
-//        return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
-        return null;
+        Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
+                .range(-1L, ChronoUnit.DAYS)
+                .filter(measurement().equal("illumination_hourly"))
+                .last()
+                .pivot()
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
+                .timeShift(9L, ChronoUnit.HOURS);
+
+
+        List<IlluminationMaxMinWeekly> illuminations = influxDBClient.getQueryApi()
+                .query(fluxQueryDaily.toString(), IlluminationMaxMinWeekly.class);
+        IlluminationMaxMinDaily illuminationMaxMinDaily = influxDBClient.getQueryApi()
+                .query(fluxQueryHourly.toString(), IlluminationMaxMinDaily.class)
+                .stream()
+                .findFirst()
+                .orElse(null);
+
+        if (Objects.nonNull(illuminationMaxMinDaily)) {
+            illuminations.add(new IlluminationMaxMinWeekly(
+                    illuminationMaxMinDaily.getTime(),
+                    illuminationMaxMinDaily.getMaxIllumination(),
+                    illuminationMaxMinDaily.getMinIllumination())
+            );
+        }
+
+        return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
     }
 
     @Override
     public List<IlluminationMaxMinMonthly> getMonthlyIlluminations() {
-        LocalDate today = LocalDate.now();
-        String dailyQuery = String.format("SELECT time, max_illumination, min_illumination FROM illumination_daily WHERE time >= '%sT15:00:00Z' AND time < '%sT15:00:00Z'", today.minusMonths(1), today);
-        String hourlyQuery = "SELECT time, max_illumination, min_illumination FROM illumination_hourly order by time desc limit 1";
+        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusMonths(1)));
+        Instant endTime = Instant.now();
+        Flux fluxQueryDaily = Flux.from(BUCKET_NAME)
+                .range(startTime, endTime)
+                .filter(measurement().equal("illumination_daily"))
+                .filter(or(
+                        field().equal("max_illumination"),
+                        field().equal("min_illumination")
+                ))
+                .pivot()
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
+                .timeShift(9L, ChronoUnit.HOURS);
 
-//        QueryResult dailyQueryResult = influxDBUtil.processingQuery(dailyQuery);
-//        QueryResult hourlyQueryResult = influxDBUtil.processingQuery(hourlyQuery);
-//
-//        List<IlluminationMaxMinMonthly> illuminations = resultMapper.toPOJO(dailyQueryResult, IlluminationMaxMinMonthly.class);
-//        IlluminationMaxMinDaily illuminationMaxMinDaily = resultMapper.toPOJO(hourlyQueryResult, IlluminationMaxMinDaily.class).get(0);
-//
-//        illuminations = illuminations.stream()
-//                .map(illumination -> new IlluminationMaxMinMonthly(
-//                                illumination.getTime().plus(9, ChronoUnit.HOURS),
-//                                illumination.getMaxIllumination(),
-//                                illumination.getMinIllumination()
-//                        )
-//                )
-//                .collect(Collectors.toList());
-//
-//        if (Objects.nonNull(illuminationMaxMinDaily)) {
-//            illuminations.add(new IlluminationMaxMinMonthly(
-//                            illuminationMaxMinDaily.getTime().plus(9, ChronoUnit.HOURS),
-//                            illuminationMaxMinDaily.getMaxIllumination(),
-//                            illuminationMaxMinDaily.getMinIllumination()
-//                    )
-//            );
-//        }
-//
-//        return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
-        return null;
+        Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
+                .range(-1L, ChronoUnit.DAYS)
+                .filter(measurement().equal("illumination_hourly"))
+                .last()
+                .pivot()
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
+                .timeShift(9L, ChronoUnit.HOURS);
+
+
+        List<IlluminationMaxMinMonthly> illuminations = influxDBClient.getQueryApi()
+                .query(fluxQueryDaily.toString(), IlluminationMaxMinMonthly.class);
+        IlluminationMaxMinDaily illuminationMaxMinDaily = influxDBClient.getQueryApi()
+                .query(fluxQueryHourly.toString(), IlluminationMaxMinDaily.class)
+                .stream()
+                .findFirst()
+                .orElse(null);
+
+        if (Objects.nonNull(illuminationMaxMinDaily)) {
+            illuminations.add(new IlluminationMaxMinMonthly(
+                    illuminationMaxMinDaily.getTime(),
+                    illuminationMaxMinDaily.getMaxIllumination(),
+                    illuminationMaxMinDaily.getMinIllumination())
+            );
+        }
+
+        return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
     }
 }
