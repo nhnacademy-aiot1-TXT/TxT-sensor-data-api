@@ -1,24 +1,25 @@
 package com.nhnacademy.sensordata.service;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.QueryApi;
 import com.nhnacademy.sensordata.entity.temperature.Temperature;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
-import com.nhnacademy.sensordata.utils.InfluxDBUtil;
-import org.influxdb.dto.QueryResult;
-import org.influxdb.impl.InfluxDBResultMapper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @Disabled
@@ -27,9 +28,9 @@ class TemperatureServiceTest {
     @Autowired
     private TemperatureService temperatureService;
     @MockBean
-    private InfluxDBUtil influxDBUtil;
-    @MockBean
-    private InfluxDBResultMapper resultMapper;
+    private InfluxDBClient influxDBClient;
+    @Mock
+    private QueryApi queryApi;
 
     @Test
     void getTemperature() {
@@ -38,12 +39,12 @@ class TemperatureServiceTest {
         String device = "test device";
         String place = "test place";
         String topic = "test topic";
-        Double value = 20.0;
+        Float value = 20.0f;
 
         Temperature temperature = new Temperature(time, device, place, topic, value);
 
-        given(influxDBUtil.processingQuery(anyString())).willReturn(new QueryResult());
-        given(resultMapper.toPOJO(any(), any())).willReturn(List.of(temperature));
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(Temperature.class))).willReturn(List.of(temperature));
 
         // when
         Temperature resultTemperature = temperatureService.getTemperature();
@@ -51,7 +52,7 @@ class TemperatureServiceTest {
         // then
         assertAll(
                 () -> assertNotNull(resultTemperature),
-                () -> assertEquals(time.plus(9, ChronoUnit.HOURS), resultTemperature.getTime()),
+                () -> assertEquals(time, resultTemperature.getTime()),
                 () -> assertEquals(device, resultTemperature.getDevice()),
                 () -> assertEquals(place, resultTemperature.getPlace()),
                 () -> assertEquals(topic, resultTemperature.getTopic()),
@@ -63,13 +64,13 @@ class TemperatureServiceTest {
     void getDailyTemperatures() {
         // given
         Instant time = Instant.now();
-        Double maxTemperature = 24.0;
-        Double minTemperature = 20.0;
+        Float maxTemperature = 24.0f;
+        Float minTemperature = 20.0f;
 
         TemperatureMaxMinDaily temperature = new TemperatureMaxMinDaily(time, maxTemperature, minTemperature);
 
-        given(influxDBUtil.processingQuery(anyString())).willReturn(new QueryResult());
-        given(resultMapper.toPOJO(any(), any())).willReturn(List.of(temperature));
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperature));
 
         // when
         List<TemperatureMaxMinDaily> dailyTemperatures = temperatureService.getDailyTemperatures();
@@ -78,7 +79,7 @@ class TemperatureServiceTest {
         assertAll(
                 () -> assertNotNull(dailyTemperatures),
                 () -> assertFalse(dailyTemperatures.isEmpty()),
-                () -> assertEquals(time.plus(9, ChronoUnit.HOURS), dailyTemperatures.get(0).getTime()),
+                () -> assertEquals(time, dailyTemperatures.get(0).getTime()),
                 () -> assertEquals(maxTemperature, dailyTemperatures.get(0).getMaxTemperature()),
                 () -> assertEquals(minTemperature, dailyTemperatures.get(0).getMinTemperature())
         );
@@ -88,18 +89,18 @@ class TemperatureServiceTest {
     void getWeeklyTemperatures() {
         // given
         Instant time = Instant.now();
-        Double dailyMaxTemperature = 22.0;
-        Double dailyMinTemperature = 18.0;
-        Double weeklyMaxTemperature = 24.0;
-        Double weeklyMinTemperature = 20.0;
+        Float dailyMaxTemperature = 22.0f;
+        Float dailyMinTemperature = 18.0f;
+        Float weeklyMaxTemperature = 24.0f;
+        Float weeklyMinTemperature = 20.0f;
 
         TemperatureMaxMinDaily temperatureMaxMinDaily = new TemperatureMaxMinDaily(time, dailyMaxTemperature, dailyMinTemperature);
         TemperatureMaxMinWeekly temperatureMaxMinWeekly = new TemperatureMaxMinWeekly(time, weeklyMaxTemperature, weeklyMinTemperature);
 
         // when
-        given(influxDBUtil.processingQuery(anyString())).willReturn(new QueryResult());
-        given(resultMapper.toPOJO(any(), eq(TemperatureMaxMinWeekly.class))).willReturn(List.of(temperatureMaxMinWeekly));
-        given(resultMapper.toPOJO(any(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperatureMaxMinDaily));
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(TemperatureMaxMinWeekly.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinWeekly)));
+        given(queryApi.query(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperatureMaxMinDaily));
 
         // then
         List<TemperatureMaxMinWeekly> weeklyTemperatures = temperatureService.getWeeklyTemperatures();
@@ -108,8 +109,8 @@ class TemperatureServiceTest {
                 () -> assertNotNull(weeklyTemperatures),
                 () -> assertFalse(weeklyTemperatures.isEmpty()),
                 () -> assertTrue(weeklyTemperatures.size() >= 2),
-                () -> assertEquals(time.plus(9, ChronoUnit.HOURS), weeklyTemperatures.get(0).getTime()),
-                () -> assertEquals(time.plus(9, ChronoUnit.HOURS), weeklyTemperatures.get(1).getTime()),
+                () -> assertEquals(time, weeklyTemperatures.get(0).getTime()),
+                () -> assertEquals(time, weeklyTemperatures.get(1).getTime()),
                 () -> assertEquals(weeklyMaxTemperature, weeklyTemperatures.get(0).getMaxTemperature()),
                 () -> assertEquals(dailyMaxTemperature, weeklyTemperatures.get(1).getMaxTemperature()),
                 () -> assertEquals(weeklyMinTemperature, weeklyTemperatures.get(0).getMinTemperature()),
@@ -121,18 +122,18 @@ class TemperatureServiceTest {
     void getMonthlyTemperatures() {
         // given
         Instant time = Instant.now();
-        Double dailyMaxTemperature = 22.0;
-        Double dailyMinTemperature = 18.0;
-        Double monthlyMaxTemperature = 24.0;
-        Double monthlyMinTemperature = 20.0;
+        Float dailyMaxTemperature = 22.0f;
+        Float dailyMinTemperature = 18.0f;
+        Float monthlyMaxTemperature = 24.0f;
+        Float monthlyMinTemperature = 20.0f;
 
         TemperatureMaxMinDaily temperatureMaxMinDaily = new TemperatureMaxMinDaily(time, dailyMaxTemperature, dailyMinTemperature);
         TemperatureMaxMinMonthly temperatureMaxMinMonthly = new TemperatureMaxMinMonthly(time, monthlyMaxTemperature, monthlyMinTemperature);
 
         // when
-        given(influxDBUtil.processingQuery(anyString())).willReturn(new QueryResult());
-        given(resultMapper.toPOJO(any(), eq(TemperatureMaxMinMonthly.class))).willReturn(List.of(temperatureMaxMinMonthly));
-        given(resultMapper.toPOJO(any(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperatureMaxMinDaily));
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(TemperatureMaxMinMonthly.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinMonthly)));
+        given(queryApi.query(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperatureMaxMinDaily));
 
         // then
         List<TemperatureMaxMinMonthly> monthlyTemperatures = temperatureService.getMonthlyTemperatures();
@@ -141,8 +142,8 @@ class TemperatureServiceTest {
                 () -> assertNotNull(monthlyTemperatures),
                 () -> assertFalse(monthlyTemperatures.isEmpty()),
                 () -> assertTrue(monthlyTemperatures.size() >= 2),
-                () -> assertEquals(time.plus(9, ChronoUnit.HOURS), monthlyTemperatures.get(0).getTime()),
-                () -> assertEquals(time.plus(9, ChronoUnit.HOURS), monthlyTemperatures.get(1).getTime()),
+                () -> assertEquals(time, monthlyTemperatures.get(0).getTime()),
+                () -> assertEquals(time, monthlyTemperatures.get(1).getTime()),
                 () -> assertEquals(monthlyMaxTemperature, monthlyTemperatures.get(0).getMaxTemperature()),
                 () -> assertEquals(dailyMaxTemperature, monthlyTemperatures.get(1).getMaxTemperature()),
                 () -> assertEquals(monthlyMinTemperature, monthlyTemperatures.get(0).getMinTemperature()),

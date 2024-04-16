@@ -23,5 +23,5 @@ public class Temperature {
     @Column(name = "topic")
     private String topic;
     @Column(name = "value")
-    private Double value;
+    private Float value;
 }
