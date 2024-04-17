@@ -8,12 +8,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * people-count api controller
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/people-count")
 public class PeopleCountRestController {
     private final PeopleCountService peopleCountService;
 
+    /**
+     * 가장 최신 people-count 값 조회 api
+     *
+     * @return 최신 people-count 응답
+     */
     @GetMapping
     public ResponseEntity<PeopleCount> getPeopleCount() {
         return ResponseEntity.ok(peopleCountService.getPeopleCount());
