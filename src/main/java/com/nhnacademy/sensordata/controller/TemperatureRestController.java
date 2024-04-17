@@ -13,12 +13,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Temperature api controller
+ *
+ * @author parksangwon
+ * @version 1.0.0
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/temperature")
 public class TemperatureRestController {
     private final TemperatureService temperatureService;
 
+    /**
+     * 가장 최신 온도를 단일로 조회하는 api
+     *
+     * @return 최신 온도 응답
+     */
     @GetMapping
     public ResponseEntity<Temperature> getTemperature() {
         Temperature temperature = temperatureService.getTemperature();
@@ -26,6 +37,11 @@ public class TemperatureRestController {
         return ResponseEntity.ok(temperature);
     }
 
+    /**
+     * 당일 0시부터 현재 시간까지 1시간 주기로 온도를 조회하는 api
+     *
+     * @return 당일 온도 리스트 응답
+     */
     @GetMapping("/day")
     public ResponseEntity<List<TemperatureMaxMinDaily>> getDailyTemperatures() {
         List<TemperatureMaxMinDaily> temperatures = temperatureService.getDailyTemperatures();
@@ -33,6 +49,11 @@ public class TemperatureRestController {
         return ResponseEntity.ok(temperatures);
     }
 
+    /**
+     * 일주일 전부터 오늘까지 하루 단위로 온도를 조회하는 api
+     *
+     * @return 일주일 온도 리스트 응답
+     */
     @GetMapping("/week")
     public ResponseEntity<List<TemperatureMaxMinWeekly>> getWeeklyTemperatures() {
         List<TemperatureMaxMinWeekly> temperatures = temperatureService.getWeeklyTemperatures();
@@ -40,6 +61,11 @@ public class TemperatureRestController {
         return ResponseEntity.ok(temperatures);
     }
 
+    /**
+     * 한달 전부터 오늘까지 하루 단위로 온도를 조회하는 api
+     *
+     * @return 한달 온도 리스트 응답
+     */
     @GetMapping("/month")
     public ResponseEntity<List<TemperatureMaxMinMonthly>> getMonthlyTemperatures() {
         List<TemperatureMaxMinMonthly> temperatures = temperatureService.getMonthlyTemperatures();

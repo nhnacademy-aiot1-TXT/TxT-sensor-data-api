@@ -19,6 +19,12 @@ import java.util.Objects;
 
 import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
+/**
+ * 온도 서비스 class
+ *
+ * @author parksangwon
+ * @version 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class TemperatureServiceImpl implements TemperatureService {
@@ -28,6 +34,11 @@ public class TemperatureServiceImpl implements TemperatureService {
     private static final String COLUMN_KEY = "_field";
     private static final String COLUMN_VALUE = "_value";
 
+    /**
+     * influxdb에서 최신 온도를 조회 후 반환하는 메서드
+     *
+     * @return 단일 온도
+     */
     @Override
     public Temperature getTemperature() {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
@@ -53,6 +64,11 @@ public class TemperatureServiceImpl implements TemperatureService {
                 .orElse(null);
     }
 
+    /**
+     * influxdb에서 당일 0시부터 1시간 간격으로 현재까지의 온도를 조회 후 반환하는 메서드
+     *
+     * @return 일간 온도 리스트
+     */
     @Override
     public List<TemperatureMaxMinDaily> getDailyTemperatures() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
@@ -75,6 +91,11 @@ public class TemperatureServiceImpl implements TemperatureService {
         return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
     }
 
+    /**
+     * influxdb에서 일주일 전 0시부터 하루 간격으로 현재까지의 온도를 조회 후 반환하는 리스트
+     *
+     * @return 주간 온도 리스트
+     */
     @Override
     public List<TemperatureMaxMinWeekly> getWeeklyTemperatures() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
@@ -122,6 +143,11 @@ public class TemperatureServiceImpl implements TemperatureService {
         return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
     }
 
+    /**
+     * influxdb에서 한달 전 0시부터 하루 간격으로 현재까지의 온도를 조회 후 반환하는 리스트
+     *
+     * @return 월간 온도 리스트
+     */
     @Override
     public List<TemperatureMaxMinMonthly> getMonthlyTemperatures() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusMonths(1)));
