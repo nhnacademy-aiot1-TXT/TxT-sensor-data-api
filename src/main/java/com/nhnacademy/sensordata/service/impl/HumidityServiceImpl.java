@@ -17,6 +17,12 @@ import java.util.List;
 
 import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
+/**
+ * humidity service class
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class HumidityServiceImpl implements HumidityService {
@@ -26,6 +32,11 @@ public class HumidityServiceImpl implements HumidityService {
     private static final String COLUMN_KEY = "_field";
     private static final String COLUMN_VALUE = "_value";
 
+    /**
+     * 가장 최신 humidity 조회 메서드
+     *
+     * @return 단일 humidity
+     */
     @Override
     public Humidity getHumidity() {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
@@ -48,6 +59,11 @@ public class HumidityServiceImpl implements HumidityService {
         return influxDBClient.getQueryApi().query(fluxQuery.toString(), Humidity.class).stream().findFirst().orElse(null);
     }
 
+    /**
+     * 일별(00시 ~ 현재시간) 1시간 간격 humidity list
+     *
+     * @return 일별 humidity list
+     */
     @Override
     public List<HumidityMaxMinDaily> getDailyHumidity() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
@@ -69,6 +85,11 @@ public class HumidityServiceImpl implements HumidityService {
         return influxDBClient.getQueryApi().query(query.toString(), HumidityMaxMinDaily.class);
     }
 
+    /**
+     * 주별(일주일간 1일 간격) humidity list
+     *
+     * @return 주별 humidity list
+     */
     @Override
     public List<HumidityMaxMinWeekly> getWeeklyHumidity() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
@@ -102,6 +123,11 @@ public class HumidityServiceImpl implements HumidityService {
         return weeklyList;
     }
 
+    /**
+     * 월별(한달간 1일 간격) humidity list
+     *
+     * @return 월별 humidity list
+     */
     @Override
     public List<HumidityMaxMinMonthly> getMonthlyHumidity() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
