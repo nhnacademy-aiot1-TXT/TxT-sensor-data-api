@@ -8,6 +8,13 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+
+/**
+ * 조도 단일 조회 measurement class
+ *
+ * @author parksangwon
+ * @version 1.0.0
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
