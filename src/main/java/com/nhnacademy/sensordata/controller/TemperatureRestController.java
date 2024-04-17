@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * Temperature api controller입니다.
+ * Temperature api controller
  *
  * @author parksangwon
  * @version 1.0.0
