@@ -11,6 +11,12 @@ import java.time.temporal.ChronoUnit;
 
 import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
+/**
+ * voc 서비스 class
+ *
+ * @author parksangwon
+ * @version 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class VocServiceImpl implements VocService {
@@ -20,6 +26,11 @@ public class VocServiceImpl implements VocService {
     private static final String COLUMN_KEY = "_field";
     private static final String COLUMN_VALUE = "_value";
 
+    /**
+     * influxdb에서 최신 voc를 조회 후 반환하는 메서드
+     *
+     * @return 단일 온도
+     */
     @Override
     public Voc getVoc() {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
