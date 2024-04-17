@@ -146,7 +146,7 @@ public class TemperatureServiceImpl implements TemperatureService {
     /**
      * influxdb에서 한달 전 0시부터 하루 간격으로 현재까지의 온도를 조회 후 반환하는 리스트
      *
-     * @return
+     * @return 월간 온도 리스트
      */
     @Override
     public List<TemperatureMaxMinMonthly> getMonthlyTemperatures() {
