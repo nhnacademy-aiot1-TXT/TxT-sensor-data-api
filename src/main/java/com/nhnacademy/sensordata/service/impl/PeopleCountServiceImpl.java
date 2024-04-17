@@ -1,27 +1,49 @@
 package com.nhnacademy.sensordata.service.impl;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.query.dsl.Flux;
 import com.nhnacademy.sensordata.entity.people_count.PeopleCount;
 import com.nhnacademy.sensordata.service.PeopleCountService;
-import com.nhnacademy.sensordata.utils.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.temporal.ChronoUnit;
+import java.util.Map;
+
+import static com.influxdb.query.dsl.functions.restriction.Restrictions.field;
+import static com.influxdb.query.dsl.functions.restriction.Restrictions.measurement;
 
 @Service
 @RequiredArgsConstructor
 public class PeopleCountServiceImpl implements PeopleCountService {
-    private final InfluxDBUtil influxDBUtil;
+    private final InfluxDBClient influxDBClient;
+    private static final String BUCKET_NAME = "TxT-iot";
+    private static final String ROW_KEY = "_time";
 
     @Override
     public PeopleCount getPeopleCount() {
-//        QueryResult queryResult = influxDBUtil.processingQuery("select * from people order by time desc limit 1");
-//
-//        PeopleCount peopleCount = resultMapper.toPOJO(queryResult, PeopleCount.class).get(0);
-//
-//        if (Objects.nonNull(peopleCount)) {
-//            peopleCount.setTime(peopleCount.getTime().plus(9, ChronoUnit.HOURS));
-//        }
-//
-//        return peopleCount;
-        return null;
+        Flux inCount = Flux.from(BUCKET_NAME)
+                .range(-5L, ChronoUnit.MINUTES)
+                .filter(measurement().equal("total_in_count"))
+                .filter(field().equal("value"))
+                .map("({ _time: r._time, _value: r._value})")
+                .aggregateWindow(1L, ChronoUnit.MINUTES, "last")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        Flux outCount = Flux.from(BUCKET_NAME)
+                .range(-5L, ChronoUnit.MINUTES)
+                .filter(measurement().equal("total_out_count"))
+                .filter(field().equal("value"))
+                .map("({ _time: r._time, _value: r._value})")
+                .aggregateWindow(1L, ChronoUnit.MINUTES, "last")
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        Flux joinQuery = Flux.join()
+                .withTable("inCount", inCount)
+                .withTable("outCount", outCount)
+                .withOn(ROW_KEY)
+                .rename(Map.of("_value_inCount", "total_in_count", "_value_outCount", "total_out_count"));
+
+        return influxDBClient.getQueryApi().query(joinQuery.toString(), PeopleCount.class).stream().findFirst().orElse(null);
     }
 }
