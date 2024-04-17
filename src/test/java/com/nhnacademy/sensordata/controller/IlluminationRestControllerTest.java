@@ -5,7 +5,6 @@ import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
 import com.nhnacademy.sensordata.service.IlluminationService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,7 +23,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Disabled
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class IlluminationRestControllerTest {

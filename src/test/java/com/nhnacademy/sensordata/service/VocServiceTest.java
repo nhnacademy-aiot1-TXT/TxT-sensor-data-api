@@ -3,7 +3,6 @@ package com.nhnacademy.sensordata.service;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
 import com.nhnacademy.sensordata.entity.voc.Voc;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
-@Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class VocServiceTest {
     @Autowired

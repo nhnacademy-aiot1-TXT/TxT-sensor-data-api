@@ -5,7 +5,6 @@ import com.nhnacademy.sensordata.entity.co2.Co2MaxMinDaily;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinMonthly;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
 import com.nhnacademy.sensordata.service.Co2Service;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,7 +24,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Disabled
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class Co2RestControllerTest {

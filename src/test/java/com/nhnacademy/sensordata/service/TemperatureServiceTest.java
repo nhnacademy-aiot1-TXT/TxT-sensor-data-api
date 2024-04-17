@@ -6,7 +6,6 @@ import com.nhnacademy.sensordata.entity.temperature.Temperature;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
-@Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class TemperatureServiceTest {
     @Autowired

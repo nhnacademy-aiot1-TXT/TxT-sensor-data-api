@@ -6,7 +6,6 @@ import com.nhnacademy.sensordata.entity.illumination.Illumination;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
-@Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class IlluminationServiceTest {
     @Autowired
