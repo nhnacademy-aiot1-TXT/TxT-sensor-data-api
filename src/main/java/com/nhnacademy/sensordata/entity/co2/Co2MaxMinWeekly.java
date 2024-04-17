@@ -9,6 +9,12 @@ import lombok.Setter;
 
 import java.time.Instant;
 
+/**
+ * humidity 주별 조회 measurement class
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor
