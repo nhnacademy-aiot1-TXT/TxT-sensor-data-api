@@ -9,6 +9,12 @@ import lombok.Setter;
 
 import java.time.Instant;
 
+/**
+ * co2 일별 조회 measurement class
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor
