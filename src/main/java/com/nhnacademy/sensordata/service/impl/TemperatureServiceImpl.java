@@ -23,7 +23,7 @@ import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 @RequiredArgsConstructor
 public class TemperatureServiceImpl implements TemperatureService {
     private final InfluxDBClient influxDBClient;
-    private static final String BUCKET_NAME = "TxT-iot-old";
+    private static final String BUCKET_NAME = "TxT-iot";
     private static final String ROW_KEY = "_time";
     private static final String COLUMN_KEY = "_field";
     private static final String COLUMN_VALUE = "_value";
