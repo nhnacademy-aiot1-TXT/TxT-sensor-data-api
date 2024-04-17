@@ -21,10 +21,14 @@ import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 @RequiredArgsConstructor
 public class Co2ServiceImpl implements Co2Service {
     private final InfluxDBClient influxDBClient;
+    private static final String BUCKET_NAME = "TxT-iot";
+    private static final String ROW_KEY = "_time";
+    private static final String COLUMN_KEY = "_field";
+    private static final String COLUMN_VALUE = "_value";
 
     @Override
     public Co2 getCo2() {
-        Flux fluxQuery = Flux.from("TxT-iot")
+        Flux fluxQuery = Flux.from(BUCKET_NAME)
                 .range(-1L, ChronoUnit.MINUTES)
                 .filter(measurement().equal("co2"))
                 .filter(or(
@@ -35,9 +39,9 @@ public class Co2ServiceImpl implements Co2Service {
                 ))
                 .last()
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .map("({ r with value: float(v: r.value)})")
                 .timeShift(9L, ChronoUnit.HOURS);
 
@@ -49,7 +53,7 @@ public class Co2ServiceImpl implements Co2Service {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
         Instant endTime = Instant.now();
 
-        Flux query = Flux.from("TxT-iot-old")
+        Flux query = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)
                 .filter(measurement().equal("co2_hourly"))
                 .filter(or(
@@ -57,9 +61,9 @@ public class Co2ServiceImpl implements Co2Service {
                         field().equal("min_co2")
                 ))
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
         return influxDBClient.getQueryApi().query(query.toString(), Co2MaxMinDaily.class);
@@ -70,7 +74,7 @@ public class Co2ServiceImpl implements Co2Service {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
         Instant endTime = Instant.now();
 
-        Flux query = Flux.from("TxT-iot-old")
+        Flux query = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)
                 .filter(measurement().equal("co2_daily"))
                 .filter(or(
@@ -78,18 +82,18 @@ public class Co2ServiceImpl implements Co2Service {
                         field().equal("min_co2")
                 ))
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
-        Flux lastHourQuery = Flux.from("TxT-iot-old")
+        Flux lastHourQuery = Flux.from(BUCKET_NAME)
                 .range(-1L, ChronoUnit.DAYS)
                 .filter(measurement().equal("co2_hourly"))
                 .last()
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
         List<Co2MaxMinWeekly> weeklyList = influxDBClient.getQueryApi().query(query.toString(), Co2MaxMinWeekly.class);
@@ -103,7 +107,7 @@ public class Co2ServiceImpl implements Co2Service {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
         Instant endTime = Instant.now();
 
-        Flux query = Flux.from("TxT-iot-old")
+        Flux query = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)
                 .filter(measurement().equal("co2_daily"))
                 .filter(or(
@@ -111,19 +115,19 @@ public class Co2ServiceImpl implements Co2Service {
                         field().equal("min_co2")
                 ))
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
-        Flux lastHourQuery = Flux.from("TxT-iot-old")
+        Flux lastHourQuery = Flux.from(BUCKET_NAME)
                 .range(-1L, ChronoUnit.DAYS)
                 .filter(measurement().equal("co2_hourly"))
                 .last()
                 .pivot()
-                .withRowKey(new String[]{"_time"})
-                .withColumnKey(new String[]{"_field"})
-                .withValueColumn("_value")
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
         List<Co2MaxMinMonthly> monthlyList = influxDBClient.getQueryApi().query(query.toString(), Co2MaxMinMonthly.class);
