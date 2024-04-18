@@ -1,10 +1,10 @@
 package com.nhnacademy.sensordata.controller;
 
+import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.measurement.co2.Co2;
 import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinDaily;
 import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinMonthly;
 import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinWeekly;
-import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.service.Co2Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ class Co2RestControllerTest {
 
         given(co2Service.getCo2()).willReturn(co2);
 
-        mockMvc.perform(get("/api/co2"))
+        mockMvc.perform(get("/api/sensor/co2"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -62,7 +62,7 @@ class Co2RestControllerTest {
         given(co2Service.getCo2())
                 .willThrow(new HumidityNotFoundException(message));
 
-        mockMvc.perform(get("/api/co2"))
+        mockMvc.perform(get("/api/sensor/co2"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -79,7 +79,7 @@ class Co2RestControllerTest {
 
         given(co2Service.getDailyCo2()).willReturn(co2MaxMinList);
 
-        mockMvc.perform(get("/api/co2/day"))
+        mockMvc.perform(get("/api/sensor/co2/day"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -99,7 +99,7 @@ class Co2RestControllerTest {
 
         given(co2Service.getWeeklyCo2()).willReturn(co2MaxMinList);
 
-        mockMvc.perform(get("/api/co2/week"))
+        mockMvc.perform(get("/api/sensor/co2/week"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -115,7 +115,7 @@ class Co2RestControllerTest {
         given(co2Service.getWeeklyCo2())
                 .willThrow(new HumidityNotFoundException(message));
 
-        mockMvc.perform(get("/api/co2/week"))
+        mockMvc.perform(get("/api/sensor/co2/week"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -132,7 +132,7 @@ class Co2RestControllerTest {
 
         given(co2Service.getMonthlyCo2()).willReturn(co2MaxMinList);
 
-        mockMvc.perform(get("/api/co2/month"))
+        mockMvc.perform(get("/api/sensor/co2/month"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -148,7 +148,7 @@ class Co2RestControllerTest {
         given(co2Service.getMonthlyCo2())
                 .willThrow(new HumidityNotFoundException(message));
 
-        mockMvc.perform(get("/api/co2/month"))
+        mockMvc.perform(get("/api/sensor/co2/month"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

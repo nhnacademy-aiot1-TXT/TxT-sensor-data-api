@@ -1,7 +1,7 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.measurement.voc.Voc;
 import com.nhnacademy.sensordata.exception.VocNotFoundException;
+import com.nhnacademy.sensordata.measurement.voc.Voc;
 import com.nhnacademy.sensordata.service.VocService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ class VocRestControllerTest {
 
         // when
         // then
-        mockMvc.perform(get("/api/voc"))
+        mockMvc.perform(get("/api/sensor/voc"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.time", equalTo(time.toString())))
@@ -58,7 +58,7 @@ class VocRestControllerTest {
         given(vocService.getVoc())
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/voc"))
+        mockMvc.perform(get("/api/sensor/voc"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
