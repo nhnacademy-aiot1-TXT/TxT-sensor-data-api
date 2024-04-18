@@ -5,6 +5,8 @@ import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.service.HumidityService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +22,9 @@ import java.util.List;
  * @version 1.0.0
  */
 @RestController
-@RequestMapping("/api/humidity")
 @RequiredArgsConstructor
+@RequestMapping("/api/humidity")
+@Tag(name = "Humidity Rest Controller", description = "습도 조회를 위한 API")
 public class HumidityRestController {
     private final HumidityService humidityService;
 
@@ -31,6 +34,7 @@ public class HumidityRestController {
      * @return 최신 humidity 응답
      */
     @GetMapping
+    @Operation(summary = "단일 습도 조회")
     public ResponseEntity<Humidity> getHumidity() {
         return ResponseEntity.ok(humidityService.getHumidity());
     }
@@ -41,6 +45,7 @@ public class HumidityRestController {
      * @return 시간별 humidity list 응답
      */
     @GetMapping("/day")
+    @Operation(summary = "일별 습도 조회")
     public ResponseEntity<List<HumidityMaxMinDaily>> getDailyHumidity() {
         return ResponseEntity.ok(humidityService.getDailyHumidity());
     }
@@ -51,6 +56,7 @@ public class HumidityRestController {
      * @return 일별 humidity list 응답
      */
     @GetMapping("/week")
+    @Operation(summary = "주별 습도 조회")
     public ResponseEntity<List<HumidityMaxMinWeekly>> getWeeklyHumidity() {
         return ResponseEntity.ok(humidityService.getWeeklyHumidity());
     }
@@ -61,6 +67,7 @@ public class HumidityRestController {
      * @return 최신 humidity 응답
      */
     @GetMapping("/month")
+    @Operation(summary = "월별 습도 조회")
     public ResponseEntity<List<HumidityMaxMinMonthly>> getMonthlyHumidity() {
         return ResponseEntity.ok(humidityService.getMonthlyHumidity());
     }
