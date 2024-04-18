@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/humidity")
+@RequestMapping("/api/sensor/humidity")
 @Tag(name = "Humidity Rest Controller", description = "습도 조회를 위한 API")
 public class HumidityRestController {
     private final HumidityService humidityService;

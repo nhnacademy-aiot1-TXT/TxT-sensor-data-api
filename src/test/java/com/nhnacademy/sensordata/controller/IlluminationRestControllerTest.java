@@ -1,10 +1,10 @@
 package com.nhnacademy.sensordata.controller;
 
+import com.nhnacademy.sensordata.exception.IlluminationNotFoundException;
 import com.nhnacademy.sensordata.measurement.illumination.Illumination;
 import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinDaily;
 import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinMonthly;
 import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinWeekly;
-import com.nhnacademy.sensordata.exception.IlluminationNotFoundException;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ class IlluminationRestControllerTest {
                 .willReturn(illumination);
 
         //then
-        mockMvc.perform(get("/api/illumination"))
+        mockMvc.perform(get("/api/sensor/illumination"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -65,7 +65,7 @@ class IlluminationRestControllerTest {
         given(illuminationService.getIllumination())
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/illumination"))
+        mockMvc.perform(get("/api/sensor/illumination"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -86,7 +86,7 @@ class IlluminationRestControllerTest {
                 .willReturn(illuminations);
 
         //then
-        mockMvc.perform(get("/api/illumination/day"))
+        mockMvc.perform(get("/api/sensor/illumination/day"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
@@ -108,7 +108,7 @@ class IlluminationRestControllerTest {
                 .willReturn(illuminations);
 
         //then
-        mockMvc.perform(get("/api/illumination/week"))
+        mockMvc.perform(get("/api/sensor/illumination/week"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
@@ -123,7 +123,7 @@ class IlluminationRestControllerTest {
         given(illuminationService.getWeeklyIlluminations())
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/illumination/week"))
+        mockMvc.perform(get("/api/sensor/illumination/week"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -145,7 +145,7 @@ class IlluminationRestControllerTest {
                 .willReturn(illuminations);
 
         //then
-        mockMvc.perform(get("/api/illumination/month"))
+        mockMvc.perform(get("/api/sensor/illumination/month"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
@@ -160,7 +160,7 @@ class IlluminationRestControllerTest {
         given(illuminationService.getMonthlyIlluminations())
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/illumination/month"))
+        mockMvc.perform(get("/api/sensor/illumination/month"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

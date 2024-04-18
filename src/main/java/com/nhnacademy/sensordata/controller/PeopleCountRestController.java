@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/people-count")
+@RequestMapping("/api/sensor/people-count")
 @Tag(name = "PeopleCount Rest Controller", description = "people-count 조회를 위한 API")
 public class PeopleCountRestController {
     private final PeopleCountService peopleCountService;

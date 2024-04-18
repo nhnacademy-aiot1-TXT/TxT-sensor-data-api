@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/illumination")
+@RequestMapping("/api/sensor/illumination")
 @Tag(name = "Illumination Rest Controller", description = "조도 조회를 위한 API")
 public class IlluminationRestController {
     private final IlluminationService illuminationService;

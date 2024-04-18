@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/voc")
+@RequestMapping("/api/sensor/voc")
 @Tag(name = "Voc Rest Controller", description = "voc 조회를 위한 API")
 public class VocRestController {
     private final VocService vocService;

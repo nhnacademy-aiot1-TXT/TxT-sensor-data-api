@@ -1,10 +1,10 @@
 package com.nhnacademy.sensordata.controller;
 
+import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import com.nhnacademy.sensordata.measurement.temperature.Temperature;
 import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
-import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ class TemperatureRestControllerTest {
 
         // when
         //then
-        mockMvc.perform(get("/api/temperature"))
+        mockMvc.perform(get("/api/sensor/temperature"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -67,7 +67,7 @@ class TemperatureRestControllerTest {
         given(temperatureService.getTemperature())
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/temperature"))
+        mockMvc.perform(get("/api/sensor/temperature"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -88,7 +88,7 @@ class TemperatureRestControllerTest {
 
         // when
         // then
-        mockMvc.perform(get("/api/temperature/day"))
+        mockMvc.perform(get("/api/sensor/temperature/day"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
@@ -110,7 +110,7 @@ class TemperatureRestControllerTest {
 
         // when
         // then
-        mockMvc.perform(get("/api/temperature/week"))
+        mockMvc.perform(get("/api/sensor/temperature/week"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
@@ -125,7 +125,7 @@ class TemperatureRestControllerTest {
         given(temperatureService.getWeeklyTemperatures())
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/temperature/week"))
+        mockMvc.perform(get("/api/sensor/temperature/week"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -146,7 +146,7 @@ class TemperatureRestControllerTest {
 
         // when
         // then
-        mockMvc.perform(get("/api/temperature/month"))
+        mockMvc.perform(get("/api/sensor/temperature/month"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
@@ -161,7 +161,7 @@ class TemperatureRestControllerTest {
         given(temperatureService.getMonthlyTemperatures())
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/temperature/month"))
+        mockMvc.perform(get("/api/sensor/temperature/month"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
