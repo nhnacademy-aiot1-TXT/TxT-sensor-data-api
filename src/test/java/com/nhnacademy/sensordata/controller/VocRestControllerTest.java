@@ -1,12 +1,14 @@
 package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.entity.voc.Voc;
+import com.nhnacademy.sensordata.exception.VocNotFoundException;
 import com.nhnacademy.sensordata.service.VocService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
@@ -15,8 +17,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -48,5 +49,19 @@ class VocRestControllerTest {
                 .andExpect(jsonPath("$.place", equalTo(place)))
                 .andExpect(jsonPath("$.topic", equalTo(topic)))
                 .andExpect(jsonPath("$.value", equalTo(value)));
+    }
+
+    @Test
+    void getVocException() throws Exception {
+        String message = "voc를 찾을 수 없습니다.";
+        VocNotFoundException exception = new VocNotFoundException(message);
+        given(vocService.getVoc())
+                .willThrow(exception);
+
+        mockMvc.perform(get("/api/voc"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
     }
 }

@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.service.impl;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.dsl.Flux;
 import com.nhnacademy.sensordata.entity.voc.Voc;
+import com.nhnacademy.sensordata.exception.VocNotFoundException;
 import com.nhnacademy.sensordata.service.VocService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,6 @@ public class VocServiceImpl implements VocService {
                 .query(fluxQuery.toString(), Voc.class)
                 .stream()
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new VocNotFoundException("voc를 찾을 수 없습니다."));
     }
 }
