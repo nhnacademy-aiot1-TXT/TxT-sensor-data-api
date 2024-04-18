@@ -10,8 +10,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+/**
+ * TemperatureRestController에서 발생하는 Exception 처리 Advice
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @RestControllerAdvice(basePackageClasses = {TemperatureRestController.class})
 public class TemperatureAdvice {
+    /**
+     * TemperatureNotFoundException Handler
+     *
+     * @param exception TemperatureNotFoundException
+     * @return ApiExceptionDto(현재시간, exception message)를 담은 ResponseEntity
+     */
     @ExceptionHandler(value = {TemperatureNotFoundException.class})
     public ResponseEntity<ApiExceptionDto> temperatureNotFoundExceptionHandler(TemperatureNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

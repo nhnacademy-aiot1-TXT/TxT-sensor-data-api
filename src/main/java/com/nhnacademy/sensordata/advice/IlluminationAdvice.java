@@ -10,8 +10,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+/**
+ * IlluminationRestController에서 발생하는 Exception 처리 Advice
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @RestControllerAdvice(basePackageClasses = {IlluminationRestController.class})
 public class IlluminationAdvice {
+    /**
+     * IlluminationNotFoundException Handler
+     *
+     * @param exception IlluminationNotFoundException
+     * @return ApiExceptionDto(현재시간, exception message)를 담은 ResponseEntity
+     */
     @ExceptionHandler(value = {IlluminationNotFoundException.class})
     public ResponseEntity<ApiExceptionDto> temperatureNotFoundExceptionHandler(IlluminationNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
