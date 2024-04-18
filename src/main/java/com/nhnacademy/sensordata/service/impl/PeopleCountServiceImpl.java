@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.service.impl;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.dsl.Flux;
 import com.nhnacademy.sensordata.entity.people_count.PeopleCount;
+import com.nhnacademy.sensordata.exception.PeopleCountNotFoundException;
 import com.nhnacademy.sensordata.service.PeopleCountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,10 @@ public class PeopleCountServiceImpl implements PeopleCountService {
                 .withOn(ROW_KEY)
                 .rename(Map.of("_value_inCount", "total_in_count", "_value_outCount", "total_out_count"));
 
-        return influxDBClient.getQueryApi().query(joinQuery.toString(), PeopleCount.class).stream().findFirst().orElse(null);
+        return influxDBClient.getQueryApi()
+                .query(joinQuery.toString(), PeopleCount.class)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new PeopleCountNotFoundException("People Count 정보를 찾을 수 없습니다."));
     }
 }
