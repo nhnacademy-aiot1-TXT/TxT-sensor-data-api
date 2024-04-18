@@ -13,6 +13,12 @@ import java.util.Map;
 import static com.influxdb.query.dsl.functions.restriction.Restrictions.field;
 import static com.influxdb.query.dsl.functions.restriction.Restrictions.measurement;
 
+/**
+ * people-count service class
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class PeopleCountServiceImpl implements PeopleCountService {
@@ -20,6 +26,11 @@ public class PeopleCountServiceImpl implements PeopleCountService {
     private static final String BUCKET_NAME = "TxT-iot";
     private static final String ROW_KEY = "_time";
 
+    /**
+     * 가장 최신 people-count 조회 메서드
+     *
+     * @return 단일 people-count
+     */
     @Override
     public PeopleCount getPeopleCount() {
         Flux inCount = Flux.from(BUCKET_NAME)
