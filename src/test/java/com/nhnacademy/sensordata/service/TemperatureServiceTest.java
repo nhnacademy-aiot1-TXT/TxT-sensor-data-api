@@ -6,6 +6,7 @@ import com.nhnacademy.sensordata.entity.temperature.Temperature;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,6 +58,14 @@ class TemperatureServiceTest {
                 () -> assertEquals(topic, resultTemperature.getTopic()),
                 () -> assertEquals(value, resultTemperature.getValue())
         );
+    }
+
+    @Test
+    void getTemperatureException() {
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(Temperature.class))).willReturn(Collections.emptyList());
+
+        assertThrows(TemperatureNotFoundException.class, () -> temperatureService.getTemperature());
     }
 
     @Test
@@ -117,6 +127,21 @@ class TemperatureServiceTest {
     }
 
     @Test
+    void getWeeklyTemperaturesException() {
+        Instant time = Instant.now();
+        Float weeklyMaxTemperature = 24.0f;
+        Float weeklyMinTemperature = 20.0f;
+
+        TemperatureMaxMinWeekly temperatureMaxMinWeekly = new TemperatureMaxMinWeekly(time, weeklyMaxTemperature, weeklyMinTemperature);
+
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(TemperatureMaxMinWeekly.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinWeekly)));
+        given(queryApi.query(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(Collections.emptyList());
+
+        assertThrows(TemperatureNotFoundException.class, () -> temperatureService.getWeeklyTemperatures());
+    }
+
+    @Test
     void getMonthlyTemperatures() {
         // given
         Instant time = Instant.now();
@@ -147,5 +172,20 @@ class TemperatureServiceTest {
                 () -> assertEquals(monthlyMinTemperature, monthlyTemperatures.get(0).getMinTemperature()),
                 () -> assertEquals(dailyMinTemperature, monthlyTemperatures.get(1).getMinTemperature())
         );
+    }
+
+    @Test
+    void getMonthlyTemperaturesException() {
+        Instant time = Instant.now();
+        Float weeklyMaxTemperature = 24.0f;
+        Float weeklyMinTemperature = 20.0f;
+
+        TemperatureMaxMinMonthly temperatureMaxMinMonthly = new TemperatureMaxMinMonthly(time, weeklyMaxTemperature, weeklyMinTemperature);
+
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(TemperatureMaxMinMonthly.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinMonthly)));
+        given(queryApi.query(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(Collections.emptyList());
+
+        assertThrows(TemperatureNotFoundException.class, () -> temperatureService.getMonthlyTemperatures());
     }
 }

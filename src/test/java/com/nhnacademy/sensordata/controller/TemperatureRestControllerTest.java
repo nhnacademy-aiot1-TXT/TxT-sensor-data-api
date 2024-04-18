@@ -4,6 +4,7 @@ import com.nhnacademy.sensordata.entity.temperature.Temperature;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,20 @@ class TemperatureRestControllerTest {
     }
 
     @Test
+    void getTemperatureException() throws Exception {
+        String message = "온도를 찾을 수 없습니다.";
+        TemperatureNotFoundException exception = new TemperatureNotFoundException(message);
+        given(temperatureService.getTemperature())
+                .willThrow(exception);
+
+        mockMvc.perform(get("/api/temperature"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
+    }
+
+    @Test
     void getDailyTemperatures() throws Exception {
         // given
         Instant time = Instant.now();
@@ -104,6 +119,20 @@ class TemperatureRestControllerTest {
     }
 
     @Test
+    void getWeeklyTemperaturesException() throws Exception {
+        String message = "온도를 찾을 수 없습니다.";
+        TemperatureNotFoundException exception = new TemperatureNotFoundException(message);
+        given(temperatureService.getWeeklyTemperatures())
+                .willThrow(exception);
+
+        mockMvc.perform(get("/api/temperature/week"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
+    }
+
+    @Test
     void getMonthlyTemperatures() throws Exception {
         // given
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
@@ -123,5 +152,19 @@ class TemperatureRestControllerTest {
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
                 .andExpect(jsonPath("$[0].maxTemperature", equalTo(maxTemperature.doubleValue())))
                 .andExpect(jsonPath("$[0].minTemperature", equalTo(minTemperature.doubleValue())));
+    }
+
+    @Test
+    void getMonthlyTemperaturesException() throws Exception {
+        String message = "온도를 찾을 수 없습니다.";
+        TemperatureNotFoundException exception = new TemperatureNotFoundException(message);
+        given(temperatureService.getMonthlyTemperatures())
+                .willThrow(exception);
+
+        mockMvc.perform(get("/api/temperature/month"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
     }
 }
