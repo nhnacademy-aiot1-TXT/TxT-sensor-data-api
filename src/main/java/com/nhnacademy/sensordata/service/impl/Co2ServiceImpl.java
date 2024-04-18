@@ -17,6 +17,12 @@ import java.util.List;
 
 import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
+/**
+ * co2 service class
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class Co2ServiceImpl implements Co2Service {
@@ -26,6 +32,11 @@ public class Co2ServiceImpl implements Co2Service {
     private static final String COLUMN_KEY = "_field";
     private static final String COLUMN_VALUE = "_value";
 
+    /**
+     * 가장 최신 co2 조회 메서드
+     *
+     * @return 단일 co2
+     */
     @Override
     public Co2 getCo2() {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
@@ -48,6 +59,11 @@ public class Co2ServiceImpl implements Co2Service {
         return influxDBClient.getQueryApi().query(fluxQuery.toString(), Co2.class).stream().findFirst().orElse(null);
     }
 
+    /**
+     * 일별(00시 ~ 현재시간) 1시간 간격 co2 list
+     *
+     * @return 일별 co2 list
+     */
     @Override
     public List<Co2MaxMinDaily> getDailyCo2() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
@@ -69,6 +85,11 @@ public class Co2ServiceImpl implements Co2Service {
         return influxDBClient.getQueryApi().query(query.toString(), Co2MaxMinDaily.class);
     }
 
+    /**
+     * 주별(일주일간 1일 간격) co2 list
+     *
+     * @return 주별 co2 list
+     */
     @Override
     public List<Co2MaxMinWeekly> getWeeklyCo2() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
@@ -102,6 +123,11 @@ public class Co2ServiceImpl implements Co2Service {
         return weeklyList;
     }
 
+    /**
+     * 월별(한달간 1일 간격) co2 list
+     *
+     * @return 월별 co2 list
+     */
     @Override
     public List<Co2MaxMinMonthly> getMonthlyCo2() {
         Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
