@@ -1,6 +1,6 @@
 package com.nhnacademy.sensordata.service;
 
-import com.nhnacademy.sensordata.entity.people_count.PeopleCount;
+import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
 
 /**
  * people-count service interface

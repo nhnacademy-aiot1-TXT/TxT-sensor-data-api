@@ -1,6 +1,6 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.voc.Voc;
+import com.nhnacademy.sensordata.measurement.voc.Voc;
 import com.nhnacademy.sensordata.exception.VocNotFoundException;
 import com.nhnacademy.sensordata.service.VocService;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity.humidity;
+package com.nhnacademy.sensordata.measurement.humidity;
 
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
@@ -10,7 +10,7 @@ import lombok.Setter;
 import java.time.Instant;
 
 /**
- * humidity 단일 조회 measurement class
+ * humidity 주별 조회 measurement class
  *
  * @author jongsikk
  * @version 1.0.0
@@ -19,16 +19,12 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "humidity")
-public class Humidity {
+@Measurement(name = "humidity_daily")
+public class HumidityMaxMinWeekly {
     @Column(name = "time")
     private Instant time;
-    @Column(name = "device")
-    private String device;
-    @Column(name = "place")
-    private String place;
-    @Column(name = "topic")
-    private String topic;
-    @Column(name = "value")
-    private Float value;
+    @Column(name = "max_humidity")
+    private Float maxHumidity;
+    @Column(name = "min_humidity")
+    private Float minHumidity;
 }

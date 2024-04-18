@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity.voc;
+package com.nhnacademy.sensordata.measurement.voc;
 
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;

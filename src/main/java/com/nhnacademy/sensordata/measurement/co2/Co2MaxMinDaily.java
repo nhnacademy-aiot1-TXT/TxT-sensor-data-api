@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity.co2;
+package com.nhnacademy.sensordata.measurement.co2;
 
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;

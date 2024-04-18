@@ -1,9 +1,9 @@
 package com.nhnacademy.sensordata.service;
 
-import com.nhnacademy.sensordata.entity.co2.Co2;
-import com.nhnacademy.sensordata.entity.co2.Co2MaxMinDaily;
-import com.nhnacademy.sensordata.entity.co2.Co2MaxMinMonthly;
-import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.co2.Co2;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinDaily;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinWeekly;
 
 import java.util.List;
 

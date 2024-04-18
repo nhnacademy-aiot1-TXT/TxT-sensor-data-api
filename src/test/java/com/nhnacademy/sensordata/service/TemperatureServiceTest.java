@@ -2,10 +2,10 @@ package com.nhnacademy.sensordata.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
-import com.nhnacademy.sensordata.entity.temperature.Temperature;
-import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.temperature.Temperature;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

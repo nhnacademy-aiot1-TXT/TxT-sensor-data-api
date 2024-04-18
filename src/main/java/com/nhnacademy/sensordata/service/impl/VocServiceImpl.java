@@ -2,7 +2,7 @@ package com.nhnacademy.sensordata.service.impl;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.dsl.Flux;
-import com.nhnacademy.sensordata.entity.voc.Voc;
+import com.nhnacademy.sensordata.measurement.voc.Voc;
 import com.nhnacademy.sensordata.exception.VocNotFoundException;
 import com.nhnacademy.sensordata.service.VocService;
 import lombok.RequiredArgsConstructor;

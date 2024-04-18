@@ -1,6 +1,6 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.people_count.PeopleCount;
+import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
 import com.nhnacademy.sensordata.exception.PeopleCountNotFoundException;
 import com.nhnacademy.sensordata.service.PeopleCountService;
 import org.junit.jupiter.api.Test;

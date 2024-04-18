@@ -1,9 +1,9 @@
 package com.nhnacademy.sensordata.service;
 
-import com.nhnacademy.sensordata.entity.temperature.Temperature;
-import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.temperature.Temperature;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
 
 import java.util.List;
 

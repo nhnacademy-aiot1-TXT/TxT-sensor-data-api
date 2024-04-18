@@ -2,7 +2,7 @@ package com.nhnacademy.sensordata.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
-import com.nhnacademy.sensordata.entity.people_count.PeopleCount;
+import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
 import com.nhnacademy.sensordata.exception.PeopleCountNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

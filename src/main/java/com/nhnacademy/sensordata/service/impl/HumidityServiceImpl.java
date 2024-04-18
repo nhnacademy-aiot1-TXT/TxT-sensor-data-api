@@ -2,10 +2,10 @@ package com.nhnacademy.sensordata.service.impl;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.dsl.Flux;
-import com.nhnacademy.sensordata.entity.humidity.Humidity;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.humidity.Humidity;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinDaily;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.service.HumidityService;
 import lombok.RequiredArgsConstructor;

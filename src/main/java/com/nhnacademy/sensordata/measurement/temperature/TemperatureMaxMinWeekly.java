@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity.temperature;
+package com.nhnacademy.sensordata.measurement.temperature;
 
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
