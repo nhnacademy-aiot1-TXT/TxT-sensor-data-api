@@ -4,6 +4,7 @@ import com.nhnacademy.sensordata.entity.illumination.Illumination;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
+import com.nhnacademy.sensordata.exception.IlluminationNotFoundException;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,20 @@ class IlluminationRestControllerTest {
     }
 
     @Test
+    void getIlluminationException() throws Exception {
+        String message = "조도를 찾을 수 없습니다.";
+        IlluminationNotFoundException exception = new IlluminationNotFoundException(message);
+        given(illuminationService.getIllumination())
+                .willThrow(exception);
+
+        mockMvc.perform(get("/api/illumination"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
+    }
+
+    @Test
     void getDailyIlluminations() throws Exception {
         // given
         Instant time = Instant.now();
@@ -102,6 +117,21 @@ class IlluminationRestControllerTest {
     }
 
     @Test
+    void getWeeklyIlluminationsException() throws Exception {
+        String message = "조도를 찾을 수 없습니다.";
+        IlluminationNotFoundException exception = new IlluminationNotFoundException(message);
+        given(illuminationService.getWeeklyIlluminations())
+                .willThrow(exception);
+
+        mockMvc.perform(get("/api/illumination/week"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
+
+    }
+
+    @Test
     void getMonthlyIlluminations() throws Exception {
         // given
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
@@ -121,5 +151,19 @@ class IlluminationRestControllerTest {
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
                 .andExpect(jsonPath("$[0].maxIllumination", equalTo(maxIllumination)))
                 .andExpect(jsonPath("$[0].minIllumination", equalTo(minIllumination)));
+    }
+
+    @Test
+    void getMonthlyIlluminationsException() throws Exception {
+        String message = "조도를 찾을 수 없습니다.";
+        IlluminationNotFoundException exception = new IlluminationNotFoundException(message);
+        given(illuminationService.getMonthlyIlluminations())
+                .willThrow(exception);
+
+        mockMvc.perform(get("/api/illumination/month"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
     }
 }

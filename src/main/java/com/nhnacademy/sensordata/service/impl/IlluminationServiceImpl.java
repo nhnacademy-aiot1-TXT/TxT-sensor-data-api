@@ -6,6 +6,7 @@ import com.nhnacademy.sensordata.entity.illumination.Illumination;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
+import com.nhnacademy.sensordata.exception.IlluminationNotFoundException;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class IlluminationServiceImpl implements IlluminationService {
                 .query(fluxQuery.toString(), Illumination.class)
                 .stream()
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
     }
 
     /**
@@ -130,7 +131,7 @@ public class IlluminationServiceImpl implements IlluminationService {
                 .query(fluxQueryHourly.toString(), IlluminationMaxMinDaily.class)
                 .stream()
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(illuminationMaxMinDaily)) {
             illuminations.add(new IlluminationMaxMinWeekly(
@@ -182,7 +183,7 @@ public class IlluminationServiceImpl implements IlluminationService {
                 .query(fluxQueryHourly.toString(), IlluminationMaxMinDaily.class)
                 .stream()
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(illuminationMaxMinDaily)) {
             illuminations.add(new IlluminationMaxMinMonthly(
