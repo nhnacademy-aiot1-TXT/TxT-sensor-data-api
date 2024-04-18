@@ -6,6 +6,7 @@ import com.nhnacademy.sensordata.entity.humidity.Humidity;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
+import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -52,6 +53,14 @@ class HumidityServiceImplTest {
                 () -> assertEquals(humidity.getTopic(), resultHumidity.getTopic()),
                 () -> assertEquals(humidity.getValue(), resultHumidity.getValue())
         );
+    }
+
+    @Test
+    void getHumidityException() {
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(Humidity.class))).willReturn(Collections.emptyList());
+
+        assertThrows(HumidityNotFoundException.class, () -> humidityService.getHumidity());
     }
 
     @Test
@@ -100,6 +109,14 @@ class HumidityServiceImplTest {
     }
 
     @Test
+    void getWeeklyHumidityException() {
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(HumidityMaxMinDaily.class))).willReturn(Collections.emptyList());
+
+        assertThrows(HumidityNotFoundException.class, () -> humidityService.getWeeklyHumidity());
+    }
+
+    @Test
     void getMonthlyHumidity() {
         Instant time = Instant.now();
         float monthlyMaxHumidity = 80.0f;
@@ -123,5 +140,13 @@ class HumidityServiceImplTest {
                 () -> assertEquals(humidityDaily.getMaxHumidity(), resultHumidity.get(1).getMaxHumidity()),
                 () -> assertEquals(humidityDaily.getMinHumidity(), resultHumidity.get(1).getMinHumidity())
         );
+    }
+
+    @Test
+    void getMonthlyHumidityException() {
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(HumidityMaxMinDaily.class))).willReturn(Collections.emptyList());
+
+        assertThrows(HumidityNotFoundException.class, () -> humidityService.getMonthlyHumidity());
     }
 }
