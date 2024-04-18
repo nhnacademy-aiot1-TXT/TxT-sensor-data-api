@@ -2,6 +2,9 @@ package com.nhnacademy.sensordata.exception;
 
 /**
  * 온도를 찾을 수 없을 때 발생하는 예외 class
+ *
+ * @author parksangwon
+ * @version 1.0.0
  */
 public class TemperatureNotFoundException extends RuntimeException {
     /**
