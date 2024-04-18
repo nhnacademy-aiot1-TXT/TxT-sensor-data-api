@@ -61,8 +61,8 @@ public class HumidityServiceImpl implements HumidityService {
 
         return influxDBClient.getQueryApi()
                 .query(fluxQuery.toString(), Humidity.class)
-                .stream().
-                findFirst()
+                .stream()
+                .findFirst()
                 .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
     }
 
@@ -89,7 +89,8 @@ public class HumidityServiceImpl implements HumidityService {
                 .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
-        List<HumidityMaxMinDaily> dailyList = influxDBClient.getQueryApi().query(query.toString(), HumidityMaxMinDaily.class);
+        List<HumidityMaxMinDaily> dailyList = influxDBClient.getQueryApi()
+                .query(query.toString(), HumidityMaxMinDaily.class);
 
         return dailyList.isEmpty() ? Collections.emptyList() : dailyList;
     }
@@ -116,6 +117,7 @@ public class HumidityServiceImpl implements HumidityService {
                 .withColumnKey(new String[]{COLUMN_KEY})
                 .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
+
         Flux lastHourQuery = Flux.from(BUCKET_NAME)
                 .range(-1L, ChronoUnit.DAYS)
                 .filter(measurement().equal("humidity_hourly"))
@@ -126,7 +128,9 @@ public class HumidityServiceImpl implements HumidityService {
                 .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
-        List<HumidityMaxMinWeekly> weeklyList = influxDBClient.getQueryApi().query(query.toString(), HumidityMaxMinWeekly.class);
+        List<HumidityMaxMinWeekly> weeklyList = influxDBClient.getQueryApi()
+                .query(query.toString(), HumidityMaxMinWeekly.class);
+
         HumidityMaxMinDaily lastHour = influxDBClient.getQueryApi()
                 .query(lastHourQuery.toString(), HumidityMaxMinDaily.class)
                 .stream()
