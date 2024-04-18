@@ -5,6 +5,8 @@ import com.nhnacademy.sensordata.entity.co2.Co2MaxMinDaily;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinMonthly;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
 import com.nhnacademy.sensordata.service.Co2Service;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/co2")
+@Tag(name = "Co2 Rest Controller", description = "Co2 조회를 위한 API")
 public class Co2RestController {
     private final Co2Service co2Service;
 
@@ -31,6 +34,7 @@ public class Co2RestController {
      * @return 최신 co2 응답
      */
     @GetMapping
+    @Operation(summary = "단일 Co2 조회")
     public ResponseEntity<Co2> getHumidity() {
         return ResponseEntity.ok(co2Service.getCo2());
     }
@@ -41,6 +45,7 @@ public class Co2RestController {
      * @return 시간별 co2 list 응답
      */
     @GetMapping("/day")
+    @Operation(summary = "일별 Co2 조회")
     public ResponseEntity<List<Co2MaxMinDaily>> getDailyHumidity() {
         return ResponseEntity.ok(co2Service.getDailyCo2());
     }
@@ -51,6 +56,7 @@ public class Co2RestController {
      * @return 일별 co2 list 응답
      */
     @GetMapping("/week")
+    @Operation(summary = "주별 Co2 조회")
     public ResponseEntity<List<Co2MaxMinWeekly>> getWeeklyHumidity() {
         return ResponseEntity.ok(co2Service.getWeeklyCo2());
     }
@@ -61,6 +67,7 @@ public class Co2RestController {
      * @return 최신 co2 응답
      */
     @GetMapping("/month")
+    @Operation(summary = "월별 Co2 조회")
     public ResponseEntity<List<Co2MaxMinMonthly>> getMonthlyHumidity() {
         return ResponseEntity.ok(co2Service.getMonthlyCo2());
     }
