@@ -4,6 +4,7 @@ import com.nhnacademy.sensordata.entity.co2.Co2;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinDaily;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinMonthly;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
+import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.service.Co2Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,19 @@ class Co2RestControllerTest {
     }
 
     @Test
+    void getCo2Exception() throws Exception {
+        String message = "Co2를 찾을수 없습니다.";
+        given(co2Service.getCo2())
+                .willThrow(new HumidityNotFoundException(message));
+
+        mockMvc.perform(get("/api/co2"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
+    }
+
+    @Test
     void getDailyHumidity() throws Exception {
         Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
         Integer maxCo2 = 80;
@@ -96,6 +110,19 @@ class Co2RestControllerTest {
     }
 
     @Test
+    void getWeeklyCo2Exception() throws Exception {
+        String message = "Co2를 찾을수 없습니다.";
+        given(co2Service.getWeeklyCo2())
+                .willThrow(new HumidityNotFoundException(message));
+
+        mockMvc.perform(get("/api/co2/week"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
+    }
+
+    @Test
     void getMonthlyHumidity() throws Exception {
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
         Integer maxCo2 = 80;
@@ -113,5 +140,18 @@ class Co2RestControllerTest {
                 .andExpect(jsonPath("$[0].maxCo2", equalTo(maxCo2)))
                 .andExpect(jsonPath("$[0].minCo2", equalTo(minCo2)))
                 .andReturn();
+    }
+
+    @Test
+    void getMonthlyCo2Exception() throws Exception {
+        String message = "Co2를 찾을수 없습니다.";
+        given(co2Service.getMonthlyCo2())
+                .willThrow(new HumidityNotFoundException(message));
+
+        mockMvc.perform(get("/api/co2/month"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", equalTo(message)));
     }
 }
