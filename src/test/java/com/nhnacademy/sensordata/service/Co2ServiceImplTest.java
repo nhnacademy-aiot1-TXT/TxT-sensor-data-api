@@ -6,6 +6,7 @@ import com.nhnacademy.sensordata.entity.co2.Co2;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinDaily;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinMonthly;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
+import com.nhnacademy.sensordata.exception.Co2NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -53,6 +54,14 @@ class Co2ServiceImplTest {
                 () -> assertEquals(co2.getTopic(), resultCo2.getTopic()),
                 () -> assertEquals(co2.getValue(), resultCo2.getValue())
         );
+    }
+
+    @Test
+    void getCo2Exception() {
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(Co2.class))).willReturn(Collections.emptyList());
+
+        assertThrows(Co2NotFoundException.class, () -> co2Service.getCo2());
     }
 
     @Test
@@ -101,6 +110,14 @@ class Co2ServiceImplTest {
     }
 
     @Test
+    void getWeeklyCo2Exception() {
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(Co2MaxMinDaily.class))).willReturn(Collections.emptyList());
+
+        assertThrows(Co2NotFoundException.class, () -> co2Service.getWeeklyCo2());
+    }
+
+    @Test
     void getMonthlyCo2() {
         Instant time = Instant.now();
         Integer monthlyMaxCo2 = 80;
@@ -126,5 +143,11 @@ class Co2ServiceImplTest {
         );
     }
 
+    @Test
+    void getMonthlyCo2Exception() {
+        given(influxDBClient.getQueryApi()).willReturn(queryApi);
+        given(queryApi.query(anyString(), eq(Co2MaxMinDaily.class))).willReturn(Collections.emptyList());
 
+        assertThrows(Co2NotFoundException.class, () -> co2Service.getMonthlyCo2());
+    }
 }
