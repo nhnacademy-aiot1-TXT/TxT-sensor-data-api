@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/co2")
+@RequestMapping("/api/sensor/co2")
 @Tag(name = "Co2 Rest Controller", description = "Co2 조회를 위한 API")
 public class Co2RestController {
     private final Co2Service co2Service;

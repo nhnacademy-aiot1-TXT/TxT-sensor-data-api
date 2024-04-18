@@ -1,11 +1,11 @@
 ### 단일 데이터
-GET localhost:8300/api/co2
+GET localhost:8300/api/sensor/co2
 
 ### 일간 데이터
-GET localhost:8300/api/co2/day
+GET localhost:8300/api/sensor/co2/day
 
 ### 주간 데이터
-GET localhost:8300/api/co2/week
+GET localhost:8300/api/sensor/co2/week
 
 ### 월간 데이터
-GET localhost:8300/api/co2/month
+GET localhost:8300/api/sensor/co2/month

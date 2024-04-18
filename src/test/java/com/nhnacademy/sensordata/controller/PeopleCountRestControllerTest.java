@@ -1,7 +1,7 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
 import com.nhnacademy.sensordata.exception.PeopleCountNotFoundException;
+import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
 import com.nhnacademy.sensordata.service.PeopleCountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ class PeopleCountRestControllerTest {
 
         given(peopleCountService.getPeopleCount()).willReturn(peopleCount);
 
-        mockMvc.perform(get("/api/people-count"))
+        mockMvc.perform(get("/api/sensor/people-count"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -52,7 +52,7 @@ class PeopleCountRestControllerTest {
         given(peopleCountService.getPeopleCount())
                 .willThrow(new PeopleCountNotFoundException(message));
 
-        mockMvc.perform(get("/api/people-count"))
+        mockMvc.perform(get("/api/sensor/people-count"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
