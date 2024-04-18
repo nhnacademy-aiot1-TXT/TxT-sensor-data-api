@@ -10,8 +10,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+/**
+ * PeopleCountRestController에서 발생하는 Exception 처리 Advice
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @RestControllerAdvice(basePackageClasses = {PeopleCountRestController.class})
 public class PeopleCountAdvice {
+    /**
+     * PeopleCountNotFoundException Handler
+     *
+     * @param exception PeopleCountNotFoundException
+     * @return ApiExceptionDto(현재시간, exception message)를 담은 ResponseEntity
+     */
     @ExceptionHandler(value = {PeopleCountNotFoundException.class})
     public ResponseEntity<ApiExceptionDto> peopleCountNotFoundExceptionHandler(PeopleCountNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
