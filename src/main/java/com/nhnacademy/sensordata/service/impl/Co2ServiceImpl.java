@@ -6,6 +6,7 @@ import com.nhnacademy.sensordata.entity.co2.Co2;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinDaily;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinMonthly;
 import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
+import com.nhnacademy.sensordata.exception.Co2NotFoundException;
 import com.nhnacademy.sensordata.service.Co2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
@@ -56,7 +59,11 @@ public class Co2ServiceImpl implements Co2Service {
                 .map("({ r with value: float(v: r.value)})")
                 .timeShift(9L, ChronoUnit.HOURS);
 
-        return influxDBClient.getQueryApi().query(fluxQuery.toString(), Co2.class).stream().findFirst().orElse(null);
+        return influxDBClient.getQueryApi()
+                .query(fluxQuery.toString(), Co2.class)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
     }
 
     /**
@@ -107,6 +114,7 @@ public class Co2ServiceImpl implements Co2Service {
                 .withColumnKey(new String[]{COLUMN_KEY})
                 .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
+
         Flux lastHourQuery = Flux.from(BUCKET_NAME)
                 .range(-1L, ChronoUnit.DAYS)
                 .filter(measurement().equal("co2_hourly"))
@@ -117,10 +125,20 @@ public class Co2ServiceImpl implements Co2Service {
                 .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
-        List<Co2MaxMinWeekly> weeklyList = influxDBClient.getQueryApi().query(query.toString(), Co2MaxMinWeekly.class);
-        Co2MaxMinWeekly lastHour = influxDBClient.getQueryApi().query(lastHourQuery.toString(), Co2MaxMinWeekly.class).get(0);
-        weeklyList.add(new Co2MaxMinWeekly(lastHour.getTime(), lastHour.getMaxCo2(), lastHour.getMinCo2()));
-        return weeklyList;
+        List<Co2MaxMinWeekly> weeklyList = influxDBClient.getQueryApi()
+                .query(query.toString(), Co2MaxMinWeekly.class);
+
+        Co2MaxMinWeekly lastHour = influxDBClient.getQueryApi()
+                .query(lastHourQuery.toString(), Co2MaxMinWeekly.class)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
+
+        if (Objects.nonNull(lastHour)) {
+            weeklyList.add(new Co2MaxMinWeekly(lastHour.getTime(), lastHour.getMaxCo2(), lastHour.getMinCo2()));
+        }
+
+        return weeklyList.isEmpty() ? Collections.emptyList() : weeklyList;
     }
 
     /**
@@ -156,9 +174,19 @@ public class Co2ServiceImpl implements Co2Service {
                 .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
-        List<Co2MaxMinMonthly> monthlyList = influxDBClient.getQueryApi().query(query.toString(), Co2MaxMinMonthly.class);
-        Co2MaxMinDaily lastHour = influxDBClient.getQueryApi().query(lastHourQuery.toString(), Co2MaxMinDaily.class).get(0);
-        monthlyList.add(new Co2MaxMinMonthly(lastHour.getTime(), lastHour.getMaxCo2(), lastHour.getMinCo2()));
-        return monthlyList;
+        List<Co2MaxMinMonthly> monthlyList = influxDBClient.getQueryApi()
+                .query(query.toString(), Co2MaxMinMonthly.class);
+
+        Co2MaxMinDaily lastHour = influxDBClient.getQueryApi()
+                .query(lastHourQuery.toString(), Co2MaxMinDaily.class)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
+
+        if (Objects.nonNull(lastHour)) {
+            monthlyList.add(new Co2MaxMinMonthly(lastHour.getTime(), lastHour.getMaxCo2(), lastHour.getMinCo2()));
+        }
+
+        return monthlyList.isEmpty() ? Collections.emptyList() : monthlyList;
     }
 }
