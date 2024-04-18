@@ -1,0 +1,2 @@
+### voc 단일 조회
+GET http://localhost:8300/api/voc
