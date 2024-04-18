@@ -21,10 +21,10 @@ import java.util.List;
  * @author parksangwon
  * @version 1.0.0
  */
-@Tag(name = "Temperature Rest Controller", description = "온도 조회를 위한 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/temperature")
+@Tag(name = "Temperature Rest Controller", description = "온도 조회를 위한 API")
 public class TemperatureRestController {
     private final TemperatureService temperatureService;
 

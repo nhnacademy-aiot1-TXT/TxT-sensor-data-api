@@ -5,6 +5,8 @@ import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
 import com.nhnacademy.sensordata.service.IlluminationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/illumination")
+@Tag(name = "Illumination Rest Controller", description = "조도 조회를 위한 API")
 public class IlluminationRestController {
     private final IlluminationService illuminationService;
 
@@ -31,6 +34,7 @@ public class IlluminationRestController {
      * @return 최신 조도 응답
      */
     @GetMapping
+    @Operation(summary = "조도 단일 조회")
     public ResponseEntity<Illumination> getIllumination() {
         Illumination illumination = illuminationService.getIllumination();
 
@@ -43,6 +47,7 @@ public class IlluminationRestController {
      * @return 당일 조도 리스트 응답
      */
     @GetMapping("/day")
+    @Operation(summary = "조도 일간 조회")
     public ResponseEntity<List<IlluminationMaxMinDaily>> getDailyIlluminations() {
         List<IlluminationMaxMinDaily> illuminations = illuminationService.getDailyIlluminations();
 
@@ -55,6 +60,7 @@ public class IlluminationRestController {
      * @return 일주일 조도 리스트 응답
      */
     @GetMapping("/week")
+    @Operation(summary = "조도 주간 조회")
     public ResponseEntity<List<IlluminationMaxMinWeekly>> getWeeklyIlluminations() {
         List<IlluminationMaxMinWeekly> illuminations = illuminationService.getWeeklyIlluminations();
 
@@ -67,6 +73,7 @@ public class IlluminationRestController {
      * @return 한달 조도 리스트 응답
      */
     @GetMapping("/month")
+    @Operation(summary = "조도 월간 조회")
     public ResponseEntity<List<IlluminationMaxMinMonthly>> getMonthlyIlluminations() {
         List<IlluminationMaxMinMonthly> illuminations = illuminationService.getMonthlyIlluminations();
 
