@@ -2,10 +2,10 @@ package com.nhnacademy.sensordata.service.impl;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.dsl.Flux;
-import com.nhnacademy.sensordata.entity.illumination.Illumination;
-import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
-import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.illumination.Illumination;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinDaily;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinWeekly;
 import com.nhnacademy.sensordata.exception.IlluminationNotFoundException;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import lombok.RequiredArgsConstructor;

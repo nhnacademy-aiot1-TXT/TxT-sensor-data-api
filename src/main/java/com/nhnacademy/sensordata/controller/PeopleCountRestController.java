@@ -1,6 +1,6 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.people_count.PeopleCount;
+import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
 import com.nhnacademy.sensordata.service.PeopleCountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,9 +1,9 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.co2.Co2;
-import com.nhnacademy.sensordata.entity.co2.Co2MaxMinDaily;
-import com.nhnacademy.sensordata.entity.co2.Co2MaxMinMonthly;
-import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.co2.Co2;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinDaily;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinWeekly;
 import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.service.Co2Service;
 import org.junit.jupiter.api.Test;

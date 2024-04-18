@@ -2,10 +2,10 @@ package com.nhnacademy.sensordata.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
-import com.nhnacademy.sensordata.entity.humidity.Humidity;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.humidity.Humidity;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinDaily;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinWeekly;
 import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -1,25 +1,26 @@
-package com.nhnacademy.sensordata.entity.illumination;
+package com.nhnacademy.sensordata.measurement.humidity;
 
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 
-
 /**
- * 조도 단일 조회 measurement class
+ * humidity 단일 조회 measurement class
  *
- * @author parksangwon
+ * @author jongsikk
  * @version 1.0.0
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "illumination")
-public class Illumination {
+@Measurement(name = "humidity")
+public class Humidity {
     @Column(name = "time")
     private Instant time;
     @Column(name = "device")
@@ -29,5 +30,5 @@ public class Illumination {
     @Column(name = "topic")
     private String topic;
     @Column(name = "value")
-    private Integer value;
+    private Float value;
 }

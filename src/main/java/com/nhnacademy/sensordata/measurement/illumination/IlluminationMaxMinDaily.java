@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity.illumination;
+package com.nhnacademy.sensordata.measurement.illumination;
 
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
@@ -10,7 +10,7 @@ import java.time.Instant;
 
 
 /**
- * 조도 월별 조회 measurement class
+ * 조도 일별 조회 measurement class
  *
  * @author parksangwon
  * @version 1.0.0
@@ -18,8 +18,8 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "illumination_daily")
-public class IlluminationMaxMinMonthly {
+@Measurement(name = "illumination_hourly")
+public class IlluminationMaxMinDaily {
     @Column(name = "time")
     private Instant time;
     @Column(name = "max_illumination")

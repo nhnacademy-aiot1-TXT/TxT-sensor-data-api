@@ -1,9 +1,9 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.temperature.Temperature;
-import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.temperature.Temperature;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,6 +1,6 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.voc.Voc;
+import com.nhnacademy.sensordata.measurement.voc.Voc;
 import com.nhnacademy.sensordata.service.VocService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -2,10 +2,10 @@ package com.nhnacademy.sensordata.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
-import com.nhnacademy.sensordata.entity.co2.Co2;
-import com.nhnacademy.sensordata.entity.co2.Co2MaxMinDaily;
-import com.nhnacademy.sensordata.entity.co2.Co2MaxMinMonthly;
-import com.nhnacademy.sensordata.entity.co2.Co2MaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.co2.Co2;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinDaily;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinWeekly;
 import com.nhnacademy.sensordata.exception.Co2NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -2,7 +2,7 @@ package com.nhnacademy.sensordata.service.impl;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.dsl.Flux;
-import com.nhnacademy.sensordata.entity.people_count.PeopleCount;
+import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
 import com.nhnacademy.sensordata.exception.PeopleCountNotFoundException;
 import com.nhnacademy.sensordata.service.PeopleCountService;
 import lombok.RequiredArgsConstructor;

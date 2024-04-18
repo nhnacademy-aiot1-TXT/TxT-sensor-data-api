@@ -1,9 +1,9 @@
 package com.nhnacademy.sensordata.controller;
 
-import com.nhnacademy.sensordata.entity.illumination.Illumination;
-import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinDaily;
-import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.illumination.IlluminationMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.illumination.Illumination;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinDaily;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinWeekly;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

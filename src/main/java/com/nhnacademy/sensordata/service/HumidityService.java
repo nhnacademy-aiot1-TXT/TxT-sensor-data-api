@@ -1,9 +1,9 @@
 package com.nhnacademy.sensordata.service;
 
-import com.nhnacademy.sensordata.entity.humidity.Humidity;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinDaily;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinMonthly;
-import com.nhnacademy.sensordata.entity.humidity.HumidityMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.humidity.Humidity;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinDaily;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinMonthly;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinWeekly;
 
 import java.util.List;
 

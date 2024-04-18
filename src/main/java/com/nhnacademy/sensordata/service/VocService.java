@@ -1,6 +1,6 @@
 package com.nhnacademy.sensordata.service;
 
-import com.nhnacademy.sensordata.entity.voc.Voc;
+import com.nhnacademy.sensordata.measurement.voc.Voc;
 
 /**
  * voc 서비스 interface

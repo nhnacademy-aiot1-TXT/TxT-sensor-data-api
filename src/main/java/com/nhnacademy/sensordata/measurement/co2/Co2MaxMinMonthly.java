@@ -1,4 +1,4 @@
-package com.nhnacademy.sensordata.entity.co2;
+package com.nhnacademy.sensordata.measurement.co2;
 
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
@@ -10,7 +10,7 @@ import lombok.Setter;
 import java.time.Instant;
 
 /**
- * humidity 주별 조회 measurement class
+ * co2 월별 조회 measurement class
  *
  * @author jongsikk
  * @version 1.0.0
@@ -20,7 +20,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Measurement(name = "co2_daily")
-public class Co2MaxMinWeekly {
+public class Co2MaxMinMonthly {
     @Column(name = "time")
     private Instant time;
     @Column(name = "max_co2")

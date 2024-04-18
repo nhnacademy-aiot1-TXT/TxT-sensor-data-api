@@ -2,7 +2,7 @@ package com.nhnacademy.sensordata.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
-import com.nhnacademy.sensordata.entity.voc.Voc;
+import com.nhnacademy.sensordata.measurement.voc.Voc;
 import com.nhnacademy.sensordata.exception.VocNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
