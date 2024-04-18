@@ -6,6 +6,7 @@ import com.nhnacademy.sensordata.entity.temperature.Temperature;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class TemperatureServiceImpl implements TemperatureService {
                 .query(fluxQuery.toString(), Temperature.class)
                 .stream()
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
     }
 
     /**
@@ -86,7 +87,8 @@ public class TemperatureServiceImpl implements TemperatureService {
                 .withValueColumn(COLUMN_VALUE)
                 .timeShift(9L, ChronoUnit.HOURS);
 
-        List<TemperatureMaxMinDaily> temperatures = influxDBClient.getQueryApi().query(fluxQuery.toString(), TemperatureMaxMinDaily.class);
+        List<TemperatureMaxMinDaily> temperatures = influxDBClient.getQueryApi()
+                .query(fluxQuery.toString(), TemperatureMaxMinDaily.class);
 
         return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
     }
@@ -130,7 +132,7 @@ public class TemperatureServiceImpl implements TemperatureService {
                 .query(fluxQueryHourly.toString(), TemperatureMaxMinDaily.class)
                 .stream()
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
             temperatures.add(new TemperatureMaxMinWeekly(
@@ -182,7 +184,7 @@ public class TemperatureServiceImpl implements TemperatureService {
                 .query(fluxQueryHourly.toString(), TemperatureMaxMinDaily.class)
                 .stream()
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
             temperatures.add(new TemperatureMaxMinMonthly(

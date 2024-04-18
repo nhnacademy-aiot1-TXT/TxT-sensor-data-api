@@ -5,6 +5,8 @@ import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.service.TemperatureService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import java.util.List;
  * @author parksangwon
  * @version 1.0.0
  */
+@Tag(name = "Temperature Rest Controller", description = "온도 조회를 위한 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/temperature")
@@ -31,6 +34,7 @@ public class TemperatureRestController {
      * @return 최신 온도 응답
      */
     @GetMapping
+    @Operation(summary = "온도 단일 조회")
     public ResponseEntity<Temperature> getTemperature() {
         Temperature temperature = temperatureService.getTemperature();
 
@@ -43,6 +47,7 @@ public class TemperatureRestController {
      * @return 당일 온도 리스트 응답
      */
     @GetMapping("/day")
+    @Operation(summary = "온도 일간 조회")
     public ResponseEntity<List<TemperatureMaxMinDaily>> getDailyTemperatures() {
         List<TemperatureMaxMinDaily> temperatures = temperatureService.getDailyTemperatures();
 
@@ -55,6 +60,7 @@ public class TemperatureRestController {
      * @return 일주일 온도 리스트 응답
      */
     @GetMapping("/week")
+    @Operation(summary = "온도 주간 조회")
     public ResponseEntity<List<TemperatureMaxMinWeekly>> getWeeklyTemperatures() {
         List<TemperatureMaxMinWeekly> temperatures = temperatureService.getWeeklyTemperatures();
 
@@ -67,6 +73,7 @@ public class TemperatureRestController {
      * @return 한달 온도 리스트 응답
      */
     @GetMapping("/month")
+    @Operation(summary = "온도 월간 조회")
     public ResponseEntity<List<TemperatureMaxMinMonthly>> getMonthlyTemperatures() {
         List<TemperatureMaxMinMonthly> temperatures = temperatureService.getMonthlyTemperatures();
 
