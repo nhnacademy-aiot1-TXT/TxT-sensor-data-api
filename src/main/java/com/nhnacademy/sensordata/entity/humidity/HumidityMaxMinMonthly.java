@@ -9,11 +9,17 @@ import lombok.Setter;
 
 import java.time.Instant;
 
+/**
+ * humidity 월별 조회 measurement class
+ *
+ * @author jongsikk
+ * @version 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "daily_extreme_humidity")
+@Measurement(name = "humidity_daily")
 public class HumidityMaxMinMonthly {
     @Column(name = "time")
     private Instant time;
