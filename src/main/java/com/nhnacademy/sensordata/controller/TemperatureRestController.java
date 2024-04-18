@@ -5,6 +5,7 @@ import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinDaily;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinMonthly;
 import com.nhnacademy.sensordata.entity.temperature.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.service.TemperatureService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author parksangwon
  * @version 1.0.0
  */
+@Tag(name = "Temperature Rest Controller", description = "온도 조회를 위한 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/temperature")
