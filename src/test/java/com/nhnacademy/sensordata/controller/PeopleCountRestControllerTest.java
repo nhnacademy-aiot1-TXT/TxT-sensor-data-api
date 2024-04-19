@@ -30,9 +30,9 @@ class PeopleCountRestControllerTest {
     @Test
     void getPeopleCount() throws Exception {
         Instant time = Instant.now();
-        Integer inCount = 6;
-        Integer outCount = 4;
-        PeopleCount peopleCount = new PeopleCount(time, inCount, outCount);
+        Integer count = 6;
+        ;
+        PeopleCount peopleCount = new PeopleCount(time, count);
 
         given(peopleCountService.getPeopleCount()).willReturn(peopleCount);
 
@@ -41,8 +41,7 @@ class PeopleCountRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.time", equalTo(time.toString())))
-                .andExpect(jsonPath("$.inCount", equalTo(inCount)))
-                .andExpect(jsonPath("$.outCount", equalTo(outCount)))
+                .andExpect(jsonPath("$.inCount", equalTo(count)))
                 .andReturn();
     }
 
