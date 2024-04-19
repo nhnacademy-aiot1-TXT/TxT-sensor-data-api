@@ -2,8 +2,8 @@ package com.nhnacademy.sensordata.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
-import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
 import com.nhnacademy.sensordata.exception.PeopleCountNotFoundException;
+import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +31,8 @@ class PeopleCountServiceImplTest {
     @Test
     void getPeopleCount() {
         Instant time = Instant.now();
-        Integer inCount = 6;
-        Integer outCount = 4;
-        PeopleCount peopleCount = new PeopleCount(time, inCount, outCount);
+        Integer count = 6;
+        PeopleCount peopleCount = new PeopleCount(time, count);
 
         given(influxDBClient.getQueryApi()).willReturn(queryApi);
         given(queryApi.query(anyString(), eq(PeopleCount.class))).willReturn(List.of(peopleCount));
@@ -42,8 +41,7 @@ class PeopleCountServiceImplTest {
 
         assertAll(
                 () -> assertEquals(peopleCount.getTime(), resultPeopleCount.getTime()),
-                () -> assertEquals(peopleCount.getInCount(), resultPeopleCount.getInCount()),
-                () -> assertEquals(peopleCount.getOutCount(), resultPeopleCount.getOutCount())
+                () -> assertEquals(peopleCount.getCount(), resultPeopleCount.getCount())
         );
     }
 
