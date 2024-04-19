@@ -31,7 +31,6 @@ class PeopleCountRestControllerTest {
     void getPeopleCount() throws Exception {
         Instant time = Instant.now();
         Integer count = 6;
-        ;
         PeopleCount peopleCount = new PeopleCount(time, count);
 
         given(peopleCountService.getPeopleCount()).willReturn(peopleCount);
