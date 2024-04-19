@@ -41,7 +41,7 @@ class PeopleCountRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.time", equalTo(time.toString())))
-                .andExpect(jsonPath("$.inCount", equalTo(count)))
+                .andExpect(jsonPath("$.count", equalTo(count)))
                 .andReturn();
     }
 
