@@ -19,12 +19,10 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "people")
+@Measurement(name = "people_total_count")
 public class PeopleCount {
     @Column(name = "time")
     private Instant time;
-    @Column(name = "total_in_count")
-    private Integer inCount;
-    @Column(name = "total_out_count")
-    private Integer outCount;
+    @Column(name = "value")
+    private Integer count;
 }
