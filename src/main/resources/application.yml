@@ -26,3 +26,7 @@ influxdb:
   token: noC68n9KNe6HJd20B9HFaRf68SuYV2lLVdGuuj1aFZb9xaJ4wlkL7Wxf02_ajEVxgw8PupjrTAwQo7kX6K65fA==
   url: http://133.186.217.132:8086
   org: TXT
+eureka:
+  client:
+    fetch-registry: 'true'
+    register-with-eureka: 'true'
