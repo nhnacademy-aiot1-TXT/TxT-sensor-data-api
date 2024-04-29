@@ -1,18 +1,15 @@
 package com.nhnacademy.sensordata.service;
 
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.QueryApi;
 import com.nhnacademy.sensordata.exception.PeopleCountNotFoundException;
 import com.nhnacademy.sensordata.measurement.people_count.PeopleCount;
+import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -24,9 +21,7 @@ class PeopleCountServiceImplTest {
     @Autowired
     private PeopleCountService peopleCountService;
     @MockBean
-    private InfluxDBClient influxDBClient;
-    @Mock
-    private QueryApi queryApi;
+    private InfluxDBUtil influxDBUtil;
 
     @Test
     void getPeopleCount() {
@@ -34,8 +29,7 @@ class PeopleCountServiceImplTest {
         Integer count = 6;
         PeopleCount peopleCount = new PeopleCount(time, count);
 
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(PeopleCount.class))).willReturn(List.of(peopleCount));
+        given(influxDBUtil.getSensorData(anyString(), eq(PeopleCount.class))).willReturn(Optional.of(peopleCount));
 
         PeopleCount resultPeopleCount = peopleCountService.getPeopleCount();
 
@@ -47,8 +41,7 @@ class PeopleCountServiceImplTest {
 
     @Test
     void getPeopleCountException() {
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(PeopleCount.class))).willReturn(Collections.emptyList());
+        given(influxDBUtil.getSensorData(anyString(), eq(PeopleCount.class))).willReturn(Optional.empty());
 
         assertThrows(PeopleCountNotFoundException.class, () -> peopleCountService.getPeopleCount());
     }
