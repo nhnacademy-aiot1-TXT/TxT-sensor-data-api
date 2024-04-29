@@ -1,24 +1,22 @@
 package com.nhnacademy.sensordata.service.impl;
 
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.query.dsl.Flux;
+import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.measurement.humidity.Humidity;
 import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinDaily;
 import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinMonthly;
 import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinWeekly;
-import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.service.HumidityService;
+import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
 /**
  * humidity service class
@@ -29,11 +27,9 @@ import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 @Service
 @RequiredArgsConstructor
 public class HumidityServiceImpl implements HumidityService {
-    private final InfluxDBClient influxDBClient;
-    private static final String BUCKET_NAME = "TxT-iot";
-    private static final String ROW_KEY = "_time";
-    private static final String COLUMN_KEY = "_field";
-    private static final String COLUMN_VALUE = "_value";
+    private final InfluxDBUtil influxDBUtil;
+    private static final String COLLECTION_TYPE = "humidity";
+    private static final String MIDNIGHT_UNIX_TIME = "%sT15:00:00Z";
 
     /**
      * 가장 최신 humidity 조회 메서드
@@ -42,27 +38,7 @@ public class HumidityServiceImpl implements HumidityService {
      */
     @Override
     public Humidity getHumidity() {
-        Flux fluxQuery = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.MINUTES)
-                .filter(measurement().equal("humidity"))
-                .filter(or(
-                        field().equal("device"),
-                        field().equal("place"),
-                        field().equal("topic"),
-                        field().equal("value")
-                ))
-                .last()
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .map("({ r with value: float(v: r.value)})")
-                .timeShift(9L, ChronoUnit.HOURS);
-
-        return influxDBClient.getQueryApi()
-                .query(fluxQuery.toString(), Humidity.class)
-                .stream()
-                .findFirst()
+        return influxDBUtil.getSensorData(COLLECTION_TYPE, Humidity.class)
                 .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
     }
 
@@ -73,24 +49,12 @@ public class HumidityServiceImpl implements HumidityService {
      */
     @Override
     public List<HumidityMaxMinDaily> getDailyHumidity() {
-        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
-        Instant endTime = Instant.now();
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        Flux query = Flux.from(BUCKET_NAME)
-                .range(startTime, endTime)
-                .filter(measurement().equal("humidity_hourly"))
-                .filter(or(
-                        field().equal("max_humidity"),
-                        field().equal("min_humidity")
-                ))
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
-
-        List<HumidityMaxMinDaily> dailyList = influxDBClient.getQueryApi()
-                .query(query.toString(), HumidityMaxMinDaily.class);
+        List<HumidityMaxMinDaily> dailyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", HumidityMaxMinDaily.class);
 
         return dailyList.isEmpty() ? Collections.emptyList() : dailyList;
     }
@@ -102,39 +66,14 @@ public class HumidityServiceImpl implements HumidityService {
      */
     @Override
     public List<HumidityMaxMinWeekly> getWeeklyHumidity() {
-        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
-        Instant endTime = Instant.now();
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusWeeks(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        Flux query = Flux.from(BUCKET_NAME)
-                .range(startTime, endTime)
-                .filter(measurement().equal("humidity_daily"))
-                .filter(or(
-                        field().equal("max_humidity"),
-                        field().equal("min_humidity")
-                ))
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
+        List<HumidityMaxMinWeekly> weeklyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", HumidityMaxMinWeekly.class);
 
-        Flux lastHourQuery = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.DAYS)
-                .filter(measurement().equal("humidity_hourly"))
-                .last()
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
-
-        List<HumidityMaxMinWeekly> weeklyList = influxDBClient.getQueryApi()
-                .query(query.toString(), HumidityMaxMinWeekly.class);
-
-        HumidityMaxMinDaily lastHour = influxDBClient.getQueryApi()
-                .query(lastHourQuery.toString(), HumidityMaxMinDaily.class)
-                .stream()
-                .findFirst()
+        HumidityMaxMinDaily lastHour = influxDBUtil.getLastSensorData(COLLECTION_TYPE, HumidityMaxMinDaily.class)
                 .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
 
         if (Objects.nonNull(lastHour)) {
@@ -151,39 +90,14 @@ public class HumidityServiceImpl implements HumidityService {
      */
     @Override
     public List<HumidityMaxMinMonthly> getMonthlyHumidity() {
-        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
-        Instant endTime = Instant.now();
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusMonths(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        Flux query = Flux.from(BUCKET_NAME)
-                .range(startTime, endTime)
-                .filter(measurement().equal("humidity_daily"))
-                .filter(or(
-                        field().equal("max_humidity"),
-                        field().equal("min_humidity")
-                ))
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
+        List<HumidityMaxMinMonthly> monthlyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", HumidityMaxMinMonthly.class);
 
-        Flux lastHourQuery = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.DAYS)
-                .filter(measurement().equal("humidity_hourly"))
-                .last()
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
-
-        List<HumidityMaxMinMonthly> monthlyList = influxDBClient.getQueryApi()
-                .query(query.toString(), HumidityMaxMinMonthly.class);
-
-        HumidityMaxMinDaily lastHour = influxDBClient.getQueryApi()
-                .query(lastHourQuery.toString(), HumidityMaxMinDaily.class)
-                .stream()
-                .findFirst()
+        HumidityMaxMinDaily lastHour = influxDBUtil.getLastSensorData(COLLECTION_TYPE, HumidityMaxMinDaily.class)
                 .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
 
         if (Objects.nonNull(lastHour)) {
