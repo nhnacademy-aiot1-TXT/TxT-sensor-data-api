@@ -1,18 +1,15 @@
 package com.nhnacademy.sensordata.service;
 
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.QueryApi;
-import com.nhnacademy.sensordata.measurement.voc.Voc;
 import com.nhnacademy.sensordata.exception.VocNotFoundException;
+import com.nhnacademy.sensordata.measurement.voc.Voc;
+import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -24,9 +21,7 @@ class VocServiceTest {
     @Autowired
     private VocService vocService;
     @MockBean
-    private InfluxDBClient influxDBClient;
-    @Mock
-    private QueryApi queryApi;
+    private InfluxDBUtil influxDBUtil;
 
     @Test
     void getVoc() {
@@ -39,8 +34,7 @@ class VocServiceTest {
 
         Voc voc = new Voc(time, device, place, topic, value);
 
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(Voc.class))).willReturn(List.of(voc));
+        given(influxDBUtil.getSensorData(anyString(), eq(Voc.class))).willReturn(Optional.of(voc));
 
         Voc resultVoc = vocService.getVoc();
 
@@ -55,8 +49,7 @@ class VocServiceTest {
 
     @Test
     void getVocException() {
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(Voc.class))).willReturn(Collections.emptyList());
+        given(influxDBUtil.getSensorData(anyString(), eq(Voc.class))).willReturn(Optional.empty());
 
         assertThrows(VocNotFoundException.class, () -> vocService.getVoc());
     }
