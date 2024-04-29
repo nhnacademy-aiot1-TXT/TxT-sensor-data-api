@@ -1,26 +1,23 @@
 package com.nhnacademy.sensordata.service;
 
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.QueryApi;
+import com.nhnacademy.sensordata.exception.Co2NotFoundException;
 import com.nhnacademy.sensordata.measurement.co2.Co2;
 import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinDaily;
 import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinMonthly;
 import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinWeekly;
-import com.nhnacademy.sensordata.exception.Co2NotFoundException;
+import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
 
@@ -29,9 +26,7 @@ class Co2ServiceImplTest {
     @Autowired
     private Co2Service co2Service;
     @MockBean
-    private InfluxDBClient influxDBClient;
-    @Mock
-    private QueryApi queryApi;
+    private InfluxDBUtil influxDBUtil;
 
     @Test
     void getCo2() {
@@ -42,8 +37,7 @@ class Co2ServiceImplTest {
         Integer value = 20;
         Co2 co2 = new Co2(time, device, place, topic, value);
 
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(Co2.class))).willReturn(List.of(co2));
+        given(influxDBUtil.getSensorData(anyString(), eq(Co2.class))).willReturn(Optional.of(co2));
 
         Co2 resultCo2 = co2Service.getCo2();
 
@@ -58,8 +52,7 @@ class Co2ServiceImplTest {
 
     @Test
     void getCo2Exception() {
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(Co2.class))).willReturn(Collections.emptyList());
+        given(influxDBUtil.getSensorData(anyString(), eq(Co2.class))).willReturn(Optional.empty());
 
         assertThrows(Co2NotFoundException.class, () -> co2Service.getCo2());
     }
@@ -71,8 +64,7 @@ class Co2ServiceImplTest {
         Integer minCo2 = 60;
         Co2MaxMinDaily co2Daily = new Co2MaxMinDaily(time, maxCo2, minCo2);
 
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(Co2MaxMinDaily.class))).willReturn(List.of(co2Daily));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(Co2MaxMinDaily.class))).willReturn(List.of(co2Daily));
 
         Co2MaxMinDaily resultCo2 = co2Service.getDailyCo2().get(0);
 
@@ -93,9 +85,8 @@ class Co2ServiceImplTest {
         Co2MaxMinWeekly co2Weekly = new Co2MaxMinWeekly(time, weeklyMaxCo2, weeklyMinCo2);
         Co2MaxMinDaily co2Daily = new Co2MaxMinDaily(time, dailyMaxCo2, dailyMinCo2);
 
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(Co2MaxMinWeekly.class))).willReturn(new ArrayList<>(List.of(co2Weekly)));
-        given(queryApi.query(anyString(), eq(Co2MaxMinDaily.class))).willReturn(new ArrayList<>(List.of(co2Daily)));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(Co2MaxMinWeekly.class))).willReturn(new ArrayList<>(List.of(co2Weekly)));
+        given(influxDBUtil.getLastSensorData(anyString(), eq(Co2MaxMinDaily.class))).willReturn(Optional.of(co2Daily));
 
         List<Co2MaxMinWeekly> resultCo2 = co2Service.getWeeklyCo2();
 
@@ -111,8 +102,7 @@ class Co2ServiceImplTest {
 
     @Test
     void getWeeklyCo2Exception() {
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(Co2MaxMinDaily.class))).willReturn(Collections.emptyList());
+        given(influxDBUtil.getLastSensorData(anyString(), eq(Co2MaxMinDaily.class))).willReturn(Optional.empty());
 
         assertThrows(Co2NotFoundException.class, () -> co2Service.getWeeklyCo2());
     }
@@ -127,9 +117,8 @@ class Co2ServiceImplTest {
         Co2MaxMinMonthly co2Monthly = new Co2MaxMinMonthly(time, monthlyMaxCo2, monthlyMinCo2);
         Co2MaxMinDaily co2Daily = new Co2MaxMinDaily(time, dailyMaxCo2, dailyMinCo2);
 
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(Co2MaxMinMonthly.class))).willReturn(new ArrayList<>(List.of(co2Monthly)));
-        given(queryApi.query(anyString(), eq(Co2MaxMinDaily.class))).willReturn(new ArrayList<>(List.of(co2Daily)));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(Co2MaxMinMonthly.class))).willReturn(new ArrayList<>(List.of(co2Monthly)));
+        given(influxDBUtil.getLastSensorData(anyString(), eq(Co2MaxMinDaily.class))).willReturn(Optional.of(co2Daily));
 
         List<Co2MaxMinMonthly> resultCo2 = co2Service.getMonthlyCo2();
 
@@ -145,8 +134,7 @@ class Co2ServiceImplTest {
 
     @Test
     void getMonthlyCo2Exception() {
-        given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(Co2MaxMinDaily.class))).willReturn(Collections.emptyList());
+        given(influxDBUtil.getLastSensorData(anyString(), eq(Co2MaxMinDaily.class))).willReturn(Optional.empty());
 
         assertThrows(Co2NotFoundException.class, () -> co2Service.getMonthlyCo2());
     }
