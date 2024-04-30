@@ -2,9 +2,7 @@ package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import com.nhnacademy.sensordata.measurement.temperature.Temperature;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMin;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,8 +78,8 @@ class TemperatureRestControllerTest {
         Instant time = Instant.now();
         Float maxTemperature = 24.0f;
         Float minTemperature = 20.0f;
-        TemperatureMaxMinDaily temperatureMaxMinDaily = new TemperatureMaxMinDaily(time, maxTemperature, minTemperature);
-        List<TemperatureMaxMinDaily> temperatures = List.of(temperatureMaxMinDaily);
+        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, maxTemperature, minTemperature);
+        List<TemperatureMaxMin> temperatures = List.of(temperatureMaxMinDaily);
 
         given(temperatureService.getDailyTemperatures())
                 .willReturn(temperatures);
@@ -102,8 +100,8 @@ class TemperatureRestControllerTest {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
         Float maxTemperature = 24.0f;
         Float minTemperature = 20.0f;
-        TemperatureMaxMinWeekly temperatureMaxMinDaily = new TemperatureMaxMinWeekly(time, maxTemperature, minTemperature);
-        List<TemperatureMaxMinWeekly> temperatures = List.of(temperatureMaxMinDaily);
+        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, maxTemperature, minTemperature);
+        List<TemperatureMaxMin> temperatures = List.of(temperatureMaxMinDaily);
 
         given(temperatureService.getWeeklyTemperatures())
                 .willReturn(temperatures);
@@ -138,8 +136,8 @@ class TemperatureRestControllerTest {
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
         Float maxTemperature = 24.0f;
         Float minTemperature = 20.0f;
-        TemperatureMaxMinMonthly temperatureMaxMinDaily = new TemperatureMaxMinMonthly(time, maxTemperature, minTemperature);
-        List<TemperatureMaxMinMonthly> temperatures = List.of(temperatureMaxMinDaily);
+        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, maxTemperature, minTemperature);
+        List<TemperatureMaxMin> temperatures = List.of(temperatureMaxMinDaily);
 
         given(temperatureService.getMonthlyTemperatures())
                 .willReturn(temperatures);
