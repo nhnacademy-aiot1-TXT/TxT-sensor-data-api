@@ -1,9 +1,7 @@
 package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.measurement.humidity.Humidity;
-import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMin;
 
 import java.util.List;
 
@@ -26,19 +24,19 @@ public interface HumidityService {
      *
      * @return 일별 humidity list
      */
-    List<HumidityMaxMinDaily> getDailyHumidity();
+    List<HumidityMaxMin> getDailyHumidity();
 
     /**
      * 주별(일주일간 1일 간격) humidity list 조회 메서드
      *
      * @return 주별 humidity list
      */
-    List<HumidityMaxMinWeekly> getWeeklyHumidity();
+    List<HumidityMaxMin> getWeeklyHumidity();
 
     /**
      * 월별(한달간 1일 간격) humidity list 조회 메서드
      *
      * @return 월별 humidity list
      */
-    List<HumidityMaxMinMonthly> getMonthlyHumidity();
+    List<HumidityMaxMin> getMonthlyHumidity();
 }
