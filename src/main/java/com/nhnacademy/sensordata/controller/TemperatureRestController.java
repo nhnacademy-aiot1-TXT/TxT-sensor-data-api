@@ -1,9 +1,7 @@
 package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.measurement.temperature.Temperature;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMin;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,8 +46,8 @@ public class TemperatureRestController {
      */
     @GetMapping("/day")
     @Operation(summary = "온도 일간 조회")
-    public ResponseEntity<List<TemperatureMaxMinDaily>> getDailyTemperatures() {
-        List<TemperatureMaxMinDaily> temperatures = temperatureService.getDailyTemperatures();
+    public ResponseEntity<List<TemperatureMaxMin>> getDailyTemperatures() {
+        List<TemperatureMaxMin> temperatures = temperatureService.getDailyTemperatures();
 
         return ResponseEntity.ok(temperatures);
     }
@@ -61,8 +59,8 @@ public class TemperatureRestController {
      */
     @GetMapping("/week")
     @Operation(summary = "온도 주간 조회")
-    public ResponseEntity<List<TemperatureMaxMinWeekly>> getWeeklyTemperatures() {
-        List<TemperatureMaxMinWeekly> temperatures = temperatureService.getWeeklyTemperatures();
+    public ResponseEntity<List<TemperatureMaxMin>> getWeeklyTemperatures() {
+        List<TemperatureMaxMin> temperatures = temperatureService.getWeeklyTemperatures();
 
         return ResponseEntity.ok(temperatures);
     }
@@ -74,8 +72,8 @@ public class TemperatureRestController {
      */
     @GetMapping("/month")
     @Operation(summary = "온도 월간 조회")
-    public ResponseEntity<List<TemperatureMaxMinMonthly>> getMonthlyTemperatures() {
-        List<TemperatureMaxMinMonthly> temperatures = temperatureService.getMonthlyTemperatures();
+    public ResponseEntity<List<TemperatureMaxMin>> getMonthlyTemperatures() {
+        List<TemperatureMaxMin> temperatures = temperatureService.getMonthlyTemperatures();
 
         return ResponseEntity.ok(temperatures);
     }
