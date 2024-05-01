@@ -71,7 +71,7 @@ public class Co2ServiceImpl implements Co2Service {
 
         List<Co2MaxMin> weeklyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", Co2MaxMin.class);
 
-        Co2MaxMin lastHour = influxDBUtil.getLastSensorData(COLLECTION_TYPE, Co2MaxMin.class)
+        Co2MaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, Co2MaxMin.class)
                 .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
 
         if (Objects.nonNull(lastHour)) {
@@ -95,7 +95,7 @@ public class Co2ServiceImpl implements Co2Service {
 
         List<Co2MaxMin> monthlyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", Co2MaxMin.class);
 
-        Co2MaxMin lastHour = influxDBUtil.getLastSensorData(COLLECTION_TYPE, Co2MaxMin.class)
+        Co2MaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, Co2MaxMin.class)
                 .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
 
         if (Objects.nonNull(lastHour)) {

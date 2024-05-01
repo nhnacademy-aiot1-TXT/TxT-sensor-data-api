@@ -71,7 +71,7 @@ public class IlluminationServiceImpl implements IlluminationService {
 
         List<IlluminationMaxMin> illuminations = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", IlluminationMaxMin.class);
         ;
-        IlluminationMaxMin illuminationMaxMinDaily = influxDBUtil.getLastSensorData(COLLECTION_TYPE, IlluminationMaxMin.class)
+        IlluminationMaxMin illuminationMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, IlluminationMaxMin.class)
                 .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(illuminationMaxMinDaily)) {
@@ -98,7 +98,7 @@ public class IlluminationServiceImpl implements IlluminationService {
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
         List<IlluminationMaxMin> illuminations = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", IlluminationMaxMin.class);
-        IlluminationMaxMin illuminationMaxMinDaily = influxDBUtil.getLastSensorData(COLLECTION_TYPE, IlluminationMaxMin.class)
+        IlluminationMaxMin illuminationMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, IlluminationMaxMin.class)
                 .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(illuminationMaxMinDaily)) {

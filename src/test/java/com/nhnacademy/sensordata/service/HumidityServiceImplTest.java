@@ -83,7 +83,7 @@ class HumidityServiceImplTest {
         HumidityMaxMin humidityDaily = new HumidityMaxMin(time, dailyMaxHumidity, dailyMinHumidity);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(new ArrayList<>(List.of(humidityWeekly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
+        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
 
         List<HumidityMaxMin> resultHumidity = humidityService.getWeeklyHumidity();
 
@@ -99,7 +99,7 @@ class HumidityServiceImplTest {
 
     @Test
     void getWeeklyHumidityException() {
-        given(influxDBUtil.getLastSensorData(anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
 
         assertThrows(HumidityNotFoundException.class, () -> humidityService.getWeeklyHumidity());
     }
@@ -115,7 +115,7 @@ class HumidityServiceImplTest {
         HumidityMaxMin humidityDaily = new HumidityMaxMin(time, dailyMaxHumidity, dailyMinHumidity);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(new ArrayList<>(List.of(humidityMonthly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
+        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
 
         List<HumidityMaxMin> resultHumidity = humidityService.getMonthlyHumidity();
 
@@ -131,7 +131,7 @@ class HumidityServiceImplTest {
 
     @Test
     void getMonthlyHumidityException() {
-        given(influxDBUtil.getLastSensorData(anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
 
         assertThrows(HumidityNotFoundException.class, () -> humidityService.getMonthlyHumidity());
     }
