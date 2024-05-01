@@ -14,6 +14,12 @@ import java.util.Optional;
 
 import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
+/**
+ * influxDB에 접근하기 위한 util 클래스
+ *
+ * @author parksangwon
+ * @version 1.0.0
+ */
 @Component
 @RequiredArgsConstructor
 public class InfluxDBUtil {
@@ -25,6 +31,14 @@ public class InfluxDBUtil {
     private static final String MAX = "max_";
     private static final String MIN = "min_";
 
+    /**
+     * 수집 종류에 대한 단일 조회
+     *
+     * @param <M>            the type parameter
+     * @param collectionType the collection type
+     * @param clazz          the clazz
+     * @return the sensor data
+     */
     public <M> Optional<M> getSensorData(String collectionType, Class<M> clazz) {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
                 .range(-1L, ChronoUnit.MINUTES)
@@ -48,6 +62,15 @@ public class InfluxDBUtil {
                 .findFirst();
     }
 
+    /**
+     * 수집 종류에 대한 일간 마지막 값 조회
+     *
+     * @param <M>            the type parameter
+     * @param start          the start
+     * @param collectionType the collection type
+     * @param clazz          the clazz
+     * @return the last sensor data
+     */
     @Cacheable(
             value = "getLastSensorData",
             key = "#collectionType.concat('-').concat(#start.toString())",
@@ -72,6 +95,17 @@ public class InfluxDBUtil {
     }
 
 
+    /**
+     * 수집 종류에 대한 주간/월간 리스트 조회
+     *
+     * @param <M>            the type parameter
+     * @param startTime      the start time
+     * @param endTime        the end time
+     * @param collectionType the collection type
+     * @param intervalType   the interval type
+     * @param clazz          the clazz
+     * @return the sensor data list
+     */
     @Caching(cacheable = {
             @Cacheable(
                     value = "getSensorDataList",
