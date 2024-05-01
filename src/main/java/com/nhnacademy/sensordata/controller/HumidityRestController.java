@@ -1,9 +1,7 @@
 package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.measurement.humidity.Humidity;
-import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMin;
 import com.nhnacademy.sensordata.service.HumidityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,7 +44,7 @@ public class HumidityRestController {
      */
     @GetMapping("/day")
     @Operation(summary = "일별 습도 조회")
-    public ResponseEntity<List<HumidityMaxMinDaily>> getDailyHumidity() {
+    public ResponseEntity<List<HumidityMaxMin>> getDailyHumidity() {
         return ResponseEntity.ok(humidityService.getDailyHumidity());
     }
 
@@ -57,7 +55,7 @@ public class HumidityRestController {
      */
     @GetMapping("/week")
     @Operation(summary = "주별 습도 조회")
-    public ResponseEntity<List<HumidityMaxMinWeekly>> getWeeklyHumidity() {
+    public ResponseEntity<List<HumidityMaxMin>> getWeeklyHumidity() {
         return ResponseEntity.ok(humidityService.getWeeklyHumidity());
     }
 
@@ -68,7 +66,7 @@ public class HumidityRestController {
      */
     @GetMapping("/month")
     @Operation(summary = "월별 습도 조회")
-    public ResponseEntity<List<HumidityMaxMinMonthly>> getMonthlyHumidity() {
+    public ResponseEntity<List<HumidityMaxMin>> getMonthlyHumidity() {
         return ResponseEntity.ok(humidityService.getMonthlyHumidity());
     }
 }

@@ -3,7 +3,7 @@ package com.nhnacademy.sensordata.util;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
 import com.nhnacademy.sensordata.measurement.temperature.Temperature;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMin;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,17 +66,17 @@ class InfluxDBUtilTest {
         Instant time = Instant.now();
         Float maxValue = 25.0f;
         Float minValue = 20.0f;
-        TemperatureMaxMinDaily temperatureMaxMinDaily = new TemperatureMaxMinDaily();
+        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin();
 
         temperatureMaxMinDaily.setTime(time);
         temperatureMaxMinDaily.setMaxTemperature(maxValue);
         temperatureMaxMinDaily.setMinTemperature(minValue);
 
         given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperatureMaxMinDaily));
+        given(queryApi.query(anyString(), eq(TemperatureMaxMin.class))).willReturn(List.of(temperatureMaxMinDaily));
 
-        Optional<TemperatureMaxMinDaily> temperatureOptional = influxDBUtil.getLastSensorData("temperature", TemperatureMaxMinDaily.class);
-        TemperatureMaxMinDaily result = temperatureOptional.orElseThrow();
+        Optional<TemperatureMaxMin> temperatureOptional = influxDBUtil.getLastSensorData("temperature", TemperatureMaxMin.class);
+        TemperatureMaxMin result = temperatureOptional.orElseThrow();
 
         assertAll(
                 () -> assertNotNull(temperatureOptional),
@@ -92,17 +92,17 @@ class InfluxDBUtilTest {
         Instant time = Instant.now();
         Float maxValue = 25.0f;
         Float minValue = 20.0f;
-        TemperatureMaxMinDaily temperatureMaxMinDaily = new TemperatureMaxMinDaily();
+        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin();
 
         temperatureMaxMinDaily.setTime(time);
         temperatureMaxMinDaily.setMaxTemperature(maxValue);
         temperatureMaxMinDaily.setMinTemperature(minValue);
 
         given(influxDBClient.getQueryApi()).willReturn(queryApi);
-        given(queryApi.query(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperatureMaxMinDaily));
+        given(queryApi.query(anyString(), eq(TemperatureMaxMin.class))).willReturn(List.of(temperatureMaxMinDaily));
 
-        List<TemperatureMaxMinDaily> temperatureMaxMinDailies = influxDBUtil.getSensorDataList(Instant.now().minus(1L, ChronoUnit.DAYS), Instant.now(), "temperature", "_daily", TemperatureMaxMinDaily.class);
-        TemperatureMaxMinDaily result = temperatureMaxMinDailies.get(0);
+        List<TemperatureMaxMin> temperatureMaxMinDailies = influxDBUtil.getSensorDataList(Instant.now().minus(1L, ChronoUnit.DAYS), Instant.now(), "temperature", "_daily", TemperatureMaxMin.class);
+        TemperatureMaxMin result = temperatureMaxMinDailies.get(0);
 
         assertAll(
                 () -> assertNotNull(temperatureMaxMinDailies),

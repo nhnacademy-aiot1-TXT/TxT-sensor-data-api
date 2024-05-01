@@ -2,9 +2,7 @@ package com.nhnacademy.sensordata.service.impl;
 
 import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import com.nhnacademy.sensordata.measurement.temperature.Temperature;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMin;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
@@ -48,13 +46,13 @@ public class TemperatureServiceImpl implements TemperatureService {
      * @return 일간 온도 리스트
      */
     @Override
-    public List<TemperatureMaxMinDaily> getDailyTemperatures() {
+    public List<TemperatureMaxMin> getDailyTemperatures() {
         Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        List<TemperatureMaxMinDaily> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", TemperatureMaxMinDaily.class);
+        List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", TemperatureMaxMin.class);
 
         return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
     }
@@ -65,18 +63,18 @@ public class TemperatureServiceImpl implements TemperatureService {
      * @return 주간 온도 리스트
      */
     @Override
-    public List<TemperatureMaxMinWeekly> getWeeklyTemperatures() {
+    public List<TemperatureMaxMin> getWeeklyTemperatures() {
         Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusWeeks(1)));
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        List<TemperatureMaxMinWeekly> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", TemperatureMaxMinWeekly.class);
-        TemperatureMaxMinDaily temperatureMaxMinDaily = influxDBUtil.getLastSensorData(COLLECTION_TYPE, TemperatureMaxMinDaily.class)
+        List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", TemperatureMaxMin.class);
+        TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(COLLECTION_TYPE, TemperatureMaxMin.class)
                 .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
-            temperatures.add(new TemperatureMaxMinWeekly(
+            temperatures.add(new TemperatureMaxMin(
                     temperatureMaxMinDaily.getTime(),
                     temperatureMaxMinDaily.getMaxTemperature(),
                     temperatureMaxMinDaily.getMinTemperature())
@@ -92,18 +90,18 @@ public class TemperatureServiceImpl implements TemperatureService {
      * @return 월간 온도 리스트
      */
     @Override
-    public List<TemperatureMaxMinMonthly> getMonthlyTemperatures() {
+    public List<TemperatureMaxMin> getMonthlyTemperatures() {
         Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusMonths(1)));
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        List<TemperatureMaxMinMonthly> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", TemperatureMaxMinMonthly.class);
-        TemperatureMaxMinDaily temperatureMaxMinDaily = influxDBUtil.getLastSensorData(COLLECTION_TYPE, TemperatureMaxMinDaily.class)
+        List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", TemperatureMaxMin.class);
+        TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(COLLECTION_TYPE, TemperatureMaxMin.class)
                 .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
-            temperatures.add(new TemperatureMaxMinMonthly(
+            temperatures.add(new TemperatureMaxMin(
                     temperatureMaxMinDaily.getTime(),
                     temperatureMaxMinDaily.getMaxTemperature(),
                     temperatureMaxMinDaily.getMinTemperature())

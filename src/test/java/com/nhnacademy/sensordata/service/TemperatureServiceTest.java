@@ -2,9 +2,7 @@ package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import com.nhnacademy.sensordata.measurement.temperature.Temperature;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMin;
 import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,12 +66,12 @@ class TemperatureServiceTest {
         Float maxTemperature = 24.0f;
         Float minTemperature = 20.0f;
 
-        TemperatureMaxMinDaily temperature = new TemperatureMaxMinDaily(time, maxTemperature, minTemperature);
+        TemperatureMaxMin temperature = new TemperatureMaxMin(time, maxTemperature, minTemperature);
 
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(List.of(temperature));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMin.class))).willReturn(List.of(temperature));
 
         // when
-        List<TemperatureMaxMinDaily> dailyTemperatures = temperatureService.getDailyTemperatures();
+        List<TemperatureMaxMin> dailyTemperatures = temperatureService.getDailyTemperatures();
 
         // then
         assertAll(
@@ -94,15 +92,15 @@ class TemperatureServiceTest {
         Float weeklyMaxTemperature = 24.0f;
         Float weeklyMinTemperature = 20.0f;
 
-        TemperatureMaxMinDaily temperatureMaxMinDaily = new TemperatureMaxMinDaily(time, dailyMaxTemperature, dailyMinTemperature);
-        TemperatureMaxMinWeekly temperatureMaxMinWeekly = new TemperatureMaxMinWeekly(time, weeklyMaxTemperature, weeklyMinTemperature);
+        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, dailyMaxTemperature, dailyMinTemperature);
+        TemperatureMaxMin temperatureMaxMinWeekly = new TemperatureMaxMin(time, weeklyMaxTemperature, weeklyMinTemperature);
 
         // when
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMinWeekly.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinWeekly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(Optional.of(temperatureMaxMinDaily));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMin.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinWeekly)));
+        given(influxDBUtil.getLastSensorData(anyString(), eq(TemperatureMaxMin.class))).willReturn(Optional.of(temperatureMaxMinDaily));
 
         // then
-        List<TemperatureMaxMinWeekly> weeklyTemperatures = temperatureService.getWeeklyTemperatures();
+        List<TemperatureMaxMin> weeklyTemperatures = temperatureService.getWeeklyTemperatures();
 
         assertAll(
                 () -> assertNotNull(weeklyTemperatures),
@@ -123,10 +121,10 @@ class TemperatureServiceTest {
         Float weeklyMaxTemperature = 24.0f;
         Float weeklyMinTemperature = 20.0f;
 
-        TemperatureMaxMinWeekly temperatureMaxMinWeekly = new TemperatureMaxMinWeekly(time, weeklyMaxTemperature, weeklyMinTemperature);
+        TemperatureMaxMin temperatureMaxMinWeekly = new TemperatureMaxMin(time, weeklyMaxTemperature, weeklyMinTemperature);
 
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMinWeekly.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinWeekly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMin.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinWeekly)));
+        given(influxDBUtil.getLastSensorData(anyString(), eq(TemperatureMaxMin.class))).willReturn(Optional.empty());
 
         assertThrows(TemperatureNotFoundException.class, () -> temperatureService.getWeeklyTemperatures());
     }
@@ -140,15 +138,15 @@ class TemperatureServiceTest {
         Float monthlyMaxTemperature = 24.0f;
         Float monthlyMinTemperature = 20.0f;
 
-        TemperatureMaxMinDaily temperatureMaxMinDaily = new TemperatureMaxMinDaily(time, dailyMaxTemperature, dailyMinTemperature);
-        TemperatureMaxMinMonthly temperatureMaxMinMonthly = new TemperatureMaxMinMonthly(time, monthlyMaxTemperature, monthlyMinTemperature);
+        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, dailyMaxTemperature, dailyMinTemperature);
+        TemperatureMaxMin temperatureMaxMinMonthly = new TemperatureMaxMin(time, monthlyMaxTemperature, monthlyMinTemperature);
 
         // when
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMinMonthly.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinMonthly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(Optional.of(temperatureMaxMinDaily));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMin.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinMonthly)));
+        given(influxDBUtil.getLastSensorData(anyString(), eq(TemperatureMaxMin.class))).willReturn(Optional.of(temperatureMaxMinDaily));
 
         // then
-        List<TemperatureMaxMinMonthly> monthlyTemperatures = temperatureService.getMonthlyTemperatures();
+        List<TemperatureMaxMin> monthlyTemperatures = temperatureService.getMonthlyTemperatures();
 
         assertAll(
                 () -> assertNotNull(monthlyTemperatures),
@@ -169,10 +167,10 @@ class TemperatureServiceTest {
         Float weeklyMaxTemperature = 24.0f;
         Float weeklyMinTemperature = 20.0f;
 
-        TemperatureMaxMinMonthly temperatureMaxMinMonthly = new TemperatureMaxMinMonthly(time, weeklyMaxTemperature, weeklyMinTemperature);
+        TemperatureMaxMin temperatureMaxMinMonthly = new TemperatureMaxMin(time, weeklyMaxTemperature, weeklyMinTemperature);
 
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMinMonthly.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinMonthly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(TemperatureMaxMinDaily.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMin.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinMonthly)));
+        given(influxDBUtil.getLastSensorData(anyString(), eq(TemperatureMaxMin.class))).willReturn(Optional.empty());
 
         assertThrows(TemperatureNotFoundException.class, () -> temperatureService.getMonthlyTemperatures());
     }
