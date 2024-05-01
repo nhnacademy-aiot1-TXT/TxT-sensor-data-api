@@ -2,9 +2,7 @@ package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.measurement.humidity.Humidity;
-import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMin;
 import com.nhnacademy.sensordata.service.HumidityService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +72,8 @@ class HumidityRestControllerTest {
         Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
         Float maxHumidity = 80.0f;
         Float minHumidity = 60.0f;
-        HumidityMaxMinDaily humidityMaxMinDaily = new HumidityMaxMinDaily(time, maxHumidity, minHumidity);
-        List<HumidityMaxMinDaily> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
+        HumidityMaxMin humidityMaxMinDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
+        List<HumidityMaxMin> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
         given(humidityService.getDailyHumidity()).willReturn(humidityMaxMinList);
 
@@ -94,8 +92,8 @@ class HumidityRestControllerTest {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
         Float maxHumidity = 80.0f;
         Float minHumidity = 60.0f;
-        HumidityMaxMinWeekly humidityMaxMinDaily = new HumidityMaxMinWeekly(time, maxHumidity, minHumidity);
-        List<HumidityMaxMinWeekly> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
+        HumidityMaxMin humidityMaxMinDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
+        List<HumidityMaxMin> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
         given(humidityService.getWeeklyHumidity()).willReturn(humidityMaxMinList);
 
@@ -127,8 +125,8 @@ class HumidityRestControllerTest {
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
         Float maxHumidity = 80.0f;
         Float minHumidity = 60.0f;
-        HumidityMaxMinMonthly humidityMaxMinDaily = new HumidityMaxMinMonthly(time, maxHumidity, minHumidity);
-        List<HumidityMaxMinMonthly> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
+        HumidityMaxMin humidityMaxMinDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
+        List<HumidityMaxMin> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
         given(humidityService.getMonthlyHumidity()).willReturn(humidityMaxMinList);
 

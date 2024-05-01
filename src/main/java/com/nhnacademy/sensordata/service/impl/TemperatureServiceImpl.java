@@ -1,24 +1,20 @@
 package com.nhnacademy.sensordata.service.impl;
 
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.query.dsl.Flux;
-import com.nhnacademy.sensordata.measurement.temperature.Temperature;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
 import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
+import com.nhnacademy.sensordata.measurement.temperature.Temperature;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMin;
 import com.nhnacademy.sensordata.service.TemperatureService;
+import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
 /**
  * 온도 서비스 class
@@ -29,11 +25,9 @@ import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 @Service
 @RequiredArgsConstructor
 public class TemperatureServiceImpl implements TemperatureService {
-    private final InfluxDBClient influxDBClient;
-    private static final String BUCKET_NAME = "TxT-iot";
-    private static final String ROW_KEY = "_time";
-    private static final String COLUMN_KEY = "_field";
-    private static final String COLUMN_VALUE = "_value";
+    private final InfluxDBUtil influxDBUtil;
+    private static final String COLLECTION_TYPE = "temperature";
+    private static final String MIDNIGHT_UNIX_TIME = "%sT15:00:00Z";
 
     /**
      * influxdb에서 최신 온도를 조회 후 반환하는 메서드
@@ -42,26 +36,7 @@ public class TemperatureServiceImpl implements TemperatureService {
      */
     @Override
     public Temperature getTemperature() {
-        Flux fluxQuery = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.MINUTES)
-                .filter(measurement().equal("temperature"))
-                .filter(or(
-                        field().equal("device"),
-                        field().equal("place"),
-                        field().equal("topic"),
-                        field().equal("value")
-                ))
-                .last()
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
-
-        return influxDBClient.getQueryApi()
-                .query(fluxQuery.toString(), Temperature.class)
-                .stream()
-                .findFirst()
+        return influxDBUtil.getSensorData(COLLECTION_TYPE, Temperature.class)
                 .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
     }
 
@@ -71,24 +46,13 @@ public class TemperatureServiceImpl implements TemperatureService {
      * @return 일간 온도 리스트
      */
     @Override
-    public List<TemperatureMaxMinDaily> getDailyTemperatures() {
-        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
-        Instant endTime = Instant.now();
-        Flux fluxQuery = Flux.from(BUCKET_NAME)
-                .range(startTime, endTime)
-                .filter(measurement().equal("temperature_hourly"))
-                .filter(or(
-                        field().equal("max_temperature"),
-                        field().equal("min_temperature")
-                ))
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
+    public List<TemperatureMaxMin> getDailyTemperatures() {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        List<TemperatureMaxMinDaily> temperatures = influxDBClient.getQueryApi()
-                .query(fluxQuery.toString(), TemperatureMaxMinDaily.class);
+        List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", TemperatureMaxMin.class);
 
         return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
     }
@@ -99,43 +63,18 @@ public class TemperatureServiceImpl implements TemperatureService {
      * @return 주간 온도 리스트
      */
     @Override
-    public List<TemperatureMaxMinWeekly> getWeeklyTemperatures() {
-        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
-        Instant endTime = Instant.now();
-        Flux fluxQueryDaily = Flux.from(BUCKET_NAME)
-                .range(startTime, endTime)
-                .filter(measurement().equal("temperature_daily"))
-                .filter(or(
-                        field().equal("max_temperature"),
-                        field().equal("min_temperature")
-                ))
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
+    public List<TemperatureMaxMin> getWeeklyTemperatures() {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusWeeks(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.DAYS)
-                .filter(measurement().equal("temperature_hourly"))
-                .last()
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
-
-
-        List<TemperatureMaxMinWeekly> temperatures = influxDBClient.getQueryApi()
-                .query(fluxQueryDaily.toString(), TemperatureMaxMinWeekly.class);
-        TemperatureMaxMinDaily temperatureMaxMinDaily = influxDBClient.getQueryApi()
-                .query(fluxQueryHourly.toString(), TemperatureMaxMinDaily.class)
-                .stream()
-                .findFirst()
+        List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", TemperatureMaxMin.class);
+        TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, TemperatureMaxMin.class)
                 .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
-            temperatures.add(new TemperatureMaxMinWeekly(
+            temperatures.add(new TemperatureMaxMin(
                     temperatureMaxMinDaily.getTime(),
                     temperatureMaxMinDaily.getMaxTemperature(),
                     temperatureMaxMinDaily.getMinTemperature())
@@ -151,43 +90,18 @@ public class TemperatureServiceImpl implements TemperatureService {
      * @return 월간 온도 리스트
      */
     @Override
-    public List<TemperatureMaxMinMonthly> getMonthlyTemperatures() {
-        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusMonths(1)));
-        Instant endTime = Instant.now();
-        Flux fluxQueryDaily = Flux.from(BUCKET_NAME)
-                .range(startTime, endTime)
-                .filter(measurement().equal("temperature_daily"))
-                .filter(or(
-                        field().equal("max_temperature"),
-                        field().equal("min_temperature")
-                ))
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
+    public List<TemperatureMaxMin> getMonthlyTemperatures() {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusMonths(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.DAYS)
-                .filter(measurement().equal("temperature_hourly"))
-                .last()
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
-
-
-        List<TemperatureMaxMinMonthly> temperatures = influxDBClient.getQueryApi()
-                .query(fluxQueryDaily.toString(), TemperatureMaxMinMonthly.class);
-        TemperatureMaxMinDaily temperatureMaxMinDaily = influxDBClient.getQueryApi()
-                .query(fluxQueryHourly.toString(), TemperatureMaxMinDaily.class)
-                .stream()
-                .findFirst()
+        List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", TemperatureMaxMin.class);
+        TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, TemperatureMaxMin.class)
                 .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
-            temperatures.add(new TemperatureMaxMinMonthly(
+            temperatures.add(new TemperatureMaxMin(
                     temperatureMaxMinDaily.getTime(),
                     temperatureMaxMinDaily.getMaxTemperature(),
                     temperatureMaxMinDaily.getMinTemperature())

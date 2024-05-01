@@ -2,9 +2,7 @@ package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.exception.IlluminationNotFoundException;
 import com.nhnacademy.sensordata.measurement.illumination.Illumination;
-import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMin;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,8 +76,8 @@ class IlluminationRestControllerTest {
         Instant time = Instant.now();
         Integer maxIllumination = 100;
         Integer minIllumination = 50;
-        IlluminationMaxMinDaily illuminationMaxMinDaily = new IlluminationMaxMinDaily(time, maxIllumination, minIllumination);
-        List<IlluminationMaxMinDaily> illuminations = List.of(illuminationMaxMinDaily);
+        IlluminationMaxMin illuminationMaxMinDaily = new IlluminationMaxMin(time, maxIllumination, minIllumination);
+        List<IlluminationMaxMin> illuminations = List.of(illuminationMaxMinDaily);
 
         // when
         given(illuminationService.getDailyIlluminations())
@@ -100,8 +98,8 @@ class IlluminationRestControllerTest {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
         Integer maxIllumination = 100;
         Integer minIllumination = 50;
-        IlluminationMaxMinWeekly illuminationMaxMinDaily = new IlluminationMaxMinWeekly(time, maxIllumination, minIllumination);
-        List<IlluminationMaxMinWeekly> illuminations = List.of(illuminationMaxMinDaily);
+        IlluminationMaxMin illuminationMaxMinDaily = new IlluminationMaxMin(time, maxIllumination, minIllumination);
+        List<IlluminationMaxMin> illuminations = List.of(illuminationMaxMinDaily);
 
         // when
         given(illuminationService.getWeeklyIlluminations())
@@ -137,8 +135,8 @@ class IlluminationRestControllerTest {
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
         Integer maxIllumination = 100;
         Integer minIllumination = 50;
-        IlluminationMaxMinMonthly illuminationMaxMinDaily = new IlluminationMaxMinMonthly(time, maxIllumination, minIllumination);
-        List<IlluminationMaxMinMonthly> illuminations = List.of(illuminationMaxMinDaily);
+        IlluminationMaxMin illuminationMaxMinDaily = new IlluminationMaxMin(time, maxIllumination, minIllumination);
+        List<IlluminationMaxMin> illuminations = List.of(illuminationMaxMinDaily);
 
         // when
         given(illuminationService.getMonthlyIlluminations())

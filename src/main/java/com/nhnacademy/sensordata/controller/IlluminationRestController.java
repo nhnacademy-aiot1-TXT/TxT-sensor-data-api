@@ -1,9 +1,7 @@
 package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.measurement.illumination.Illumination;
-import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMin;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,8 +46,8 @@ public class IlluminationRestController {
      */
     @GetMapping("/day")
     @Operation(summary = "조도 일간 조회")
-    public ResponseEntity<List<IlluminationMaxMinDaily>> getDailyIlluminations() {
-        List<IlluminationMaxMinDaily> illuminations = illuminationService.getDailyIlluminations();
+    public ResponseEntity<List<IlluminationMaxMin>> getDailyIlluminations() {
+        List<IlluminationMaxMin> illuminations = illuminationService.getDailyIlluminations();
 
         return ResponseEntity.ok(illuminations);
     }
@@ -61,8 +59,8 @@ public class IlluminationRestController {
      */
     @GetMapping("/week")
     @Operation(summary = "조도 주간 조회")
-    public ResponseEntity<List<IlluminationMaxMinWeekly>> getWeeklyIlluminations() {
-        List<IlluminationMaxMinWeekly> illuminations = illuminationService.getWeeklyIlluminations();
+    public ResponseEntity<List<IlluminationMaxMin>> getWeeklyIlluminations() {
+        List<IlluminationMaxMin> illuminations = illuminationService.getWeeklyIlluminations();
 
         return ResponseEntity.ok(illuminations);
     }
@@ -74,8 +72,8 @@ public class IlluminationRestController {
      */
     @GetMapping("/month")
     @Operation(summary = "조도 월간 조회")
-    public ResponseEntity<List<IlluminationMaxMinMonthly>> getMonthlyIlluminations() {
-        List<IlluminationMaxMinMonthly> illuminations = illuminationService.getMonthlyIlluminations();
+    public ResponseEntity<List<IlluminationMaxMin>> getMonthlyIlluminations() {
+        List<IlluminationMaxMin> illuminations = illuminationService.getMonthlyIlluminations();
 
         return ResponseEntity.ok(illuminations);
     }

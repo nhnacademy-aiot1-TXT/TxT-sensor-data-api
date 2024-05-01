@@ -1,2 +1,2 @@
-### 단일 데이터
+### people count 단일 데이터
 GET localhost:8300/api/sensor/people-count

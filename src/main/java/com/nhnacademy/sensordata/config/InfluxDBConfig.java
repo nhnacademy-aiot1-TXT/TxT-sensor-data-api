@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * InfluxDB 관련 설정 class
+ *
+ * @author parksangwon
+ * @version 1.0.0
  */
 @Configuration
 @RequiredArgsConstructor

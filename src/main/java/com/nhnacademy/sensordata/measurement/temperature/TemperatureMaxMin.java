@@ -1,7 +1,6 @@
 package com.nhnacademy.sensordata.measurement.temperature;
 
 import com.influxdb.annotations.Column;
-import com.influxdb.annotations.Measurement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 
 /**
- * 온도 월별 조회 measurement class
+ * 온도 일별 조회 measurement class
  *
  * @author parksangwon
  * @version 1.0.0
@@ -17,8 +16,7 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Measurement(name = "temperature_daily")
-public class TemperatureMaxMinMonthly {
+public class TemperatureMaxMin {
     @Column(name = "time")
     private Instant time;
     @Column(name = "max_temperature")

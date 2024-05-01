@@ -1,9 +1,7 @@
 package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.measurement.co2.Co2;
-import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinDaily;
-import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMin;
 import com.nhnacademy.sensordata.service.Co2Service;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,7 +44,7 @@ public class Co2RestController {
      */
     @GetMapping("/day")
     @Operation(summary = "일별 Co2 조회")
-    public ResponseEntity<List<Co2MaxMinDaily>> getDailyHumidity() {
+    public ResponseEntity<List<Co2MaxMin>> getDailyHumidity() {
         return ResponseEntity.ok(co2Service.getDailyCo2());
     }
 
@@ -57,7 +55,7 @@ public class Co2RestController {
      */
     @GetMapping("/week")
     @Operation(summary = "주별 Co2 조회")
-    public ResponseEntity<List<Co2MaxMinWeekly>> getWeeklyHumidity() {
+    public ResponseEntity<List<Co2MaxMin>> getWeeklyHumidity() {
         return ResponseEntity.ok(co2Service.getWeeklyCo2());
     }
 
@@ -68,7 +66,7 @@ public class Co2RestController {
      */
     @GetMapping("/month")
     @Operation(summary = "월별 Co2 조회")
-    public ResponseEntity<List<Co2MaxMinMonthly>> getMonthlyHumidity() {
+    public ResponseEntity<List<Co2MaxMin>> getMonthlyHumidity() {
         return ResponseEntity.ok(co2Service.getMonthlyCo2());
     }
 }

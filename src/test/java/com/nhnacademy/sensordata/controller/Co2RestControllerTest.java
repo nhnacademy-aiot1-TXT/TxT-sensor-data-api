@@ -2,9 +2,7 @@ package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.measurement.co2.Co2;
-import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinDaily;
-import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.co2.Co2MaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.co2.Co2MaxMin;
 import com.nhnacademy.sensordata.service.Co2Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +72,8 @@ class Co2RestControllerTest {
         Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
         Integer maxCo2 = 80;
         Integer minCo2 = 60;
-        Co2MaxMinDaily co2MaxMinDaily = new Co2MaxMinDaily(time, maxCo2, minCo2);
-        List<Co2MaxMinDaily> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
+        Co2MaxMin co2MaxMinDaily = new Co2MaxMin(time, maxCo2, minCo2);
+        List<Co2MaxMin> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
 
         given(co2Service.getDailyCo2()).willReturn(co2MaxMinList);
 
@@ -94,8 +92,8 @@ class Co2RestControllerTest {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
         Integer maxCo2 = 80;
         Integer minCo2 = 60;
-        Co2MaxMinWeekly co2MaxMinDaily = new Co2MaxMinWeekly(time, maxCo2, minCo2);
-        List<Co2MaxMinWeekly> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
+        Co2MaxMin co2MaxMinDaily = new Co2MaxMin(time, maxCo2, minCo2);
+        List<Co2MaxMin> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
 
         given(co2Service.getWeeklyCo2()).willReturn(co2MaxMinList);
 
@@ -127,8 +125,8 @@ class Co2RestControllerTest {
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
         Integer maxCo2 = 80;
         Integer minCo2 = 60;
-        Co2MaxMinMonthly co2MaxMinDaily = new Co2MaxMinMonthly(time, maxCo2, minCo2);
-        List<Co2MaxMinMonthly> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
+        Co2MaxMin co2MaxMinDaily = new Co2MaxMin(time, maxCo2, minCo2);
+        List<Co2MaxMin> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
 
         given(co2Service.getMonthlyCo2()).willReturn(co2MaxMinList);
 

@@ -1,9 +1,7 @@
 package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.measurement.temperature.Temperature;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMinWeekly;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMin;
 
 import java.util.List;
 
@@ -26,19 +24,19 @@ public interface TemperatureService {
      *
      * @return 일간 온도 리스트
      */
-    List<TemperatureMaxMinDaily> getDailyTemperatures();
+    List<TemperatureMaxMin> getDailyTemperatures();
 
     /**
      * 주간 하루 주기로 만들어진 온도 리스트 조회 메서드
      *
      * @return 주간 온도 리스트
      */
-    List<TemperatureMaxMinWeekly> getWeeklyTemperatures();
+    List<TemperatureMaxMin> getWeeklyTemperatures();
 
     /**
      * 월간 하루 주기로 만들어진 온도 리스트 조회 메서드
      *
      * @return 월간 온도 리스트
      */
-    List<TemperatureMaxMinMonthly> getMonthlyTemperatures();
+    List<TemperatureMaxMin> getMonthlyTemperatures();
 }

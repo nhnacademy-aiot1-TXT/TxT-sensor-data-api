@@ -1,24 +1,20 @@
 package com.nhnacademy.sensordata.service.impl;
 
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.query.dsl.Flux;
-import com.nhnacademy.sensordata.measurement.illumination.Illumination;
-import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinDaily;
-import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinMonthly;
-import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMinWeekly;
 import com.nhnacademy.sensordata.exception.IlluminationNotFoundException;
+import com.nhnacademy.sensordata.measurement.illumination.Illumination;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMin;
 import com.nhnacademy.sensordata.service.IlluminationService;
+import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 
 /**
  * 조도 서비스 class
@@ -29,11 +25,9 @@ import static com.influxdb.query.dsl.functions.restriction.Restrictions.*;
 @Service
 @RequiredArgsConstructor
 public class IlluminationServiceImpl implements IlluminationService {
-    private final InfluxDBClient influxDBClient;
-    private static final String BUCKET_NAME = "TxT-iot";
-    private static final String ROW_KEY = "_time";
-    private static final String COLUMN_KEY = "_field";
-    private static final String COLUMN_VALUE = "_value";
+    private final InfluxDBUtil influxDBUtil;
+    private static final String COLLECTION_TYPE = "illumination";
+    private static final String MIDNIGHT_UNIX_TIME = "%sT15:00:00Z";
 
     /**
      * influxdb에서 최신 조도를 조회 후 반환하는 메서드
@@ -42,26 +36,7 @@ public class IlluminationServiceImpl implements IlluminationService {
      */
     @Override
     public Illumination getIllumination() {
-        Flux fluxQuery = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.DAYS)
-                .filter(measurement().equal("illumination"))
-                .filter(or(
-                        field().equal("device"),
-                        field().equal("place"),
-                        field().equal("topic"),
-                        field().equal("value")
-                ))
-                .last()
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
-
-        return influxDBClient.getQueryApi()
-                .query(fluxQuery.toString(), Illumination.class)
-                .stream()
-                .findFirst()
+        return influxDBUtil.getSensorData(COLLECTION_TYPE, Illumination.class)
                 .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
     }
 
@@ -71,23 +46,13 @@ public class IlluminationServiceImpl implements IlluminationService {
      * @return 일간 조도 리스트
      */
     @Override
-    public List<IlluminationMaxMinDaily> getDailyIlluminations() {
-        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusDays(1)));
-        Instant endTime = Instant.now();
-        Flux fluxQuery = Flux.from(BUCKET_NAME)
-                .range(startTime, endTime)
-                .filter(measurement().equal("illumination_hourly"))
-                .filter(or(
-                        field().equal("max_illumination"),
-                        field().equal("min_illumination")
-                ))
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
+    public List<IlluminationMaxMin> getDailyIlluminations() {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        List<IlluminationMaxMinDaily> illuminations = influxDBClient.getQueryApi().query(fluxQuery.toString(), IlluminationMaxMinDaily.class);
+        List<IlluminationMaxMin> illuminations = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", IlluminationMaxMin.class);
 
         return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
     }
@@ -98,43 +63,19 @@ public class IlluminationServiceImpl implements IlluminationService {
      * @return 주간 조도 리스트
      */
     @Override
-    public List<IlluminationMaxMinWeekly> getWeeklyIlluminations() {
-        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusWeeks(1)));
-        Instant endTime = Instant.now();
-        Flux fluxQueryDaily = Flux.from(BUCKET_NAME)
-                .range(startTime, endTime)
-                .filter(measurement().equal("illumination_daily"))
-                .filter(or(
-                        field().equal("max_illumination"),
-                        field().equal("min_illumination")
-                ))
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
+    public List<IlluminationMaxMin> getWeeklyIlluminations() {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusWeeks(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.DAYS)
-                .filter(measurement().equal("illumination_hourly"))
-                .last()
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
-
-
-        List<IlluminationMaxMinWeekly> illuminations = influxDBClient.getQueryApi()
-                .query(fluxQueryDaily.toString(), IlluminationMaxMinWeekly.class);
-        IlluminationMaxMinDaily illuminationMaxMinDaily = influxDBClient.getQueryApi()
-                .query(fluxQueryHourly.toString(), IlluminationMaxMinDaily.class)
-                .stream()
-                .findFirst()
+        List<IlluminationMaxMin> illuminations = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", IlluminationMaxMin.class);
+        ;
+        IlluminationMaxMin illuminationMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, IlluminationMaxMin.class)
                 .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(illuminationMaxMinDaily)) {
-            illuminations.add(new IlluminationMaxMinWeekly(
+            illuminations.add(new IlluminationMaxMin(
                     illuminationMaxMinDaily.getTime(),
                     illuminationMaxMinDaily.getMaxIllumination(),
                     illuminationMaxMinDaily.getMinIllumination())
@@ -150,43 +91,18 @@ public class IlluminationServiceImpl implements IlluminationService {
      * @return 월간 조도 리스트
      */
     @Override
-    public List<IlluminationMaxMinMonthly> getMonthlyIlluminations() {
-        Instant startTime = Instant.parse(String.format("%sT15:00:00Z", LocalDate.now().minusMonths(1)));
-        Instant endTime = Instant.now();
-        Flux fluxQueryDaily = Flux.from(BUCKET_NAME)
-                .range(startTime, endTime)
-                .filter(measurement().equal("illumination_daily"))
-                .filter(or(
-                        field().equal("max_illumination"),
-                        field().equal("min_illumination")
-                ))
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
+    public List<IlluminationMaxMin> getMonthlyIlluminations() {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusMonths(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.DAYS)
-                .filter(measurement().equal("illumination_hourly"))
-                .last()
-                .pivot()
-                .withRowKey(new String[]{ROW_KEY})
-                .withColumnKey(new String[]{COLUMN_KEY})
-                .withValueColumn(COLUMN_VALUE)
-                .timeShift(9L, ChronoUnit.HOURS);
-
-
-        List<IlluminationMaxMinMonthly> illuminations = influxDBClient.getQueryApi()
-                .query(fluxQueryDaily.toString(), IlluminationMaxMinMonthly.class);
-        IlluminationMaxMinDaily illuminationMaxMinDaily = influxDBClient.getQueryApi()
-                .query(fluxQueryHourly.toString(), IlluminationMaxMinDaily.class)
-                .stream()
-                .findFirst()
+        List<IlluminationMaxMin> illuminations = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", IlluminationMaxMin.class);
+        IlluminationMaxMin illuminationMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, IlluminationMaxMin.class)
                 .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(illuminationMaxMinDaily)) {
-            illuminations.add(new IlluminationMaxMinMonthly(
+            illuminations.add(new IlluminationMaxMin(
                     illuminationMaxMinDaily.getTime(),
                     illuminationMaxMinDaily.getMaxIllumination(),
                     illuminationMaxMinDaily.getMinIllumination())
