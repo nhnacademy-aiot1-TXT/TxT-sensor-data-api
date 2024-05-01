@@ -3,6 +3,8 @@ package com.nhnacademy.sensordata.util;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.dsl.Flux;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -46,9 +48,15 @@ public class InfluxDBUtil {
                 .findFirst();
     }
 
-    public <M> Optional<M> getLastSensorData(String collectionType, Class<M> clazz) {
+    @Cacheable(
+            value = "getLastSensorData",
+            key = "#collectionType.concat('-').concat(#start.toString())",
+            cacheManager = "cacheManagerHourly",
+            unless = "#result == null"
+    )
+    public <M> Optional<M> getLastSensorData(Instant start, String collectionType, Class<M> clazz) {
         Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.DAYS)
+                .range(start.minus(1L, ChronoUnit.DAYS))
                 .filter(measurement().equal(collectionType.concat("_hourly")))
                 .last()
                 .pivot()
@@ -63,6 +71,23 @@ public class InfluxDBUtil {
                 .findFirst();
     }
 
+
+    @Caching(cacheable = {
+            @Cacheable(
+                    value = "getSensorDataList",
+                    condition = "#intervalType == '_hourly'",
+                    key = "#collectionType.concat(#intervalType).concat('-').concat(#startTime.toString()).concat('-').concat(#endTime.toString())",
+                    cacheManager = "cacheManagerHourly",
+                    unless = "#result == null"
+            ),
+            @Cacheable(
+                    value = "getSensorDataList",
+                    condition = "#intervalType == '_daily'",
+                    key = "#collectionType.concat(#intervalType).concat('-').concat(#startTime.toString()).concat('-').concat(#endTime.toString())",
+                    cacheManager = "cacheManagerDaily",
+                    unless = "#result == null"
+            )
+    })
     public <M> List<M> getSensorDataList(Instant startTime, Instant endTime, String collectionType, String intervalType, Class<M> clazz) {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)

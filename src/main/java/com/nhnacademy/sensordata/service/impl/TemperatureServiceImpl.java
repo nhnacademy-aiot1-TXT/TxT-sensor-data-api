@@ -70,7 +70,7 @@ public class TemperatureServiceImpl implements TemperatureService {
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
         List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", TemperatureMaxMin.class);
-        TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(COLLECTION_TYPE, TemperatureMaxMin.class)
+        TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, TemperatureMaxMin.class)
                 .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
@@ -97,7 +97,7 @@ public class TemperatureServiceImpl implements TemperatureService {
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
         List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", TemperatureMaxMin.class);
-        TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(COLLECTION_TYPE, TemperatureMaxMin.class)
+        TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, TemperatureMaxMin.class)
                 .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {

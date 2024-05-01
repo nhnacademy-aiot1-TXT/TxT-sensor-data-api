@@ -9,6 +9,11 @@ spring:
     name: sensor-data
   profiles:
     active: prod
+  redis:
+    host: 133.186.244.96
+    password: '*N2vya7H@muDTwdNMR!'
+    database: 14
+    port: 6379
 springdoc:
   default-produces-media-type: application/json
   show-actuator: 'true'

@@ -98,7 +98,7 @@ class IlluminationServiceTest {
 
         // when
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(IlluminationMaxMin.class))).willReturn(new ArrayList<>(List.of(illuminationMaxMinWeekly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.of(illuminationMaxMinDaily));
+        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.of(illuminationMaxMinDaily));
 
         // then
         List<IlluminationMaxMin> weeklyIlluminations = illuminationService.getWeeklyIlluminations();
@@ -125,7 +125,7 @@ class IlluminationServiceTest {
         IlluminationMaxMin illuminationMaxMinWeekly = new IlluminationMaxMin(time, weeklyMaxIllumination, weeklyMinIllumination);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(IlluminationMaxMin.class))).willReturn(new ArrayList<>(List.of(illuminationMaxMinWeekly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.empty());
 
         assertThrows(IlluminationNotFoundException.class, () -> illuminationService.getWeeklyIlluminations());
     }
@@ -144,7 +144,7 @@ class IlluminationServiceTest {
 
         // when
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(IlluminationMaxMin.class))).willReturn(new ArrayList<>(List.of(illuminationMaxMinMonthly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.of(illuminationMaxMinDaily));
+        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.of(illuminationMaxMinDaily));
 
         // then
         List<IlluminationMaxMin> monthlyIlluminations = illuminationService.getMonthlyIlluminations();
@@ -171,7 +171,7 @@ class IlluminationServiceTest {
         IlluminationMaxMin illuminationMaxMinMonthly = new IlluminationMaxMin(time, weeklyMaxIllumination, weeklyMinIllumination);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(IlluminationMaxMin.class))).willReturn(new ArrayList<>(List.of(illuminationMaxMinMonthly)));
-        given(influxDBUtil.getLastSensorData(anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.empty());
 
         assertThrows(IlluminationNotFoundException.class, () -> illuminationService.getMonthlyIlluminations());
     }

@@ -71,7 +71,7 @@ public class HumidityServiceImpl implements HumidityService {
 
         List<HumidityMaxMin> weeklyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", HumidityMaxMin.class);
 
-        HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(COLLECTION_TYPE, HumidityMaxMin.class)
+        HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, HumidityMaxMin.class)
                 .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
 
         if (Objects.nonNull(lastHour)) {
@@ -95,7 +95,7 @@ public class HumidityServiceImpl implements HumidityService {
 
         List<HumidityMaxMin> monthlyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", HumidityMaxMin.class);
 
-        HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(COLLECTION_TYPE, HumidityMaxMin.class)
+        HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, HumidityMaxMin.class)
                 .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
 
         if (Objects.nonNull(lastHour)) {
