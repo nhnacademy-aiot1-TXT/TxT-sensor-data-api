@@ -36,13 +36,7 @@ class InfluxDBUtilTest {
         String place = "test place";
         String topic = "test topic";
         Float value = 25.0f;
-        Temperature temperature = new Temperature();
-
-        temperature.setTime(time);
-        temperature.setDevice(device);
-        temperature.setPlace(place);
-        temperature.setTopic(topic);
-        temperature.setValue(value);
+        Temperature temperature = new Temperature(time, device, place, topic, value);
 
         given(influxDBClient.getQueryApi()).willReturn(queryApi);
         given(queryApi.query(anyString(), eq(Temperature.class))).willReturn(List.of(temperature));
@@ -66,11 +60,7 @@ class InfluxDBUtilTest {
         Instant time = Instant.now();
         Float maxValue = 25.0f;
         Float minValue = 20.0f;
-        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin();
-
-        temperatureMaxMinDaily.setTime(time);
-        temperatureMaxMinDaily.setMaxTemperature(maxValue);
-        temperatureMaxMinDaily.setMinTemperature(minValue);
+        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, maxValue, minValue);
 
         given(influxDBClient.getQueryApi()).willReturn(queryApi);
         given(queryApi.query(anyString(), eq(TemperatureMaxMin.class))).willReturn(List.of(temperatureMaxMinDaily));
@@ -92,11 +82,7 @@ class InfluxDBUtilTest {
         Instant time = Instant.now();
         Float maxValue = 25.0f;
         Float minValue = 20.0f;
-        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin();
-
-        temperatureMaxMinDaily.setTime(time);
-        temperatureMaxMinDaily.setMaxTemperature(maxValue);
-        temperatureMaxMinDaily.setMinTemperature(minValue);
+        TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, maxValue, minValue);
 
         given(influxDBClient.getQueryApi()).willReturn(queryApi);
         given(queryApi.query(anyString(), eq(TemperatureMaxMin.class))).willReturn(List.of(temperatureMaxMinDaily));
