@@ -4,6 +4,7 @@ import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
@@ -17,6 +18,7 @@ import java.time.Instant;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Measurement(name = "tvoc")
 public class Voc {
