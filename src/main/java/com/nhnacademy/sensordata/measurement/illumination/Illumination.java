@@ -3,8 +3,8 @@ package com.nhnacademy.sensordata.measurement.illumination;
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 
@@ -15,8 +15,8 @@ import java.time.Instant;
  * @author parksangwon
  * @version 1.0.0
  */
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
 @Measurement(name = "illumination")
 public class Illumination {
