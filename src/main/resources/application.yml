@@ -35,3 +35,12 @@ eureka:
   client:
     fetch-registry: 'true'
     register-with-eureka: 'true'
+management:
+  endpoints:
+    web:
+      exposure:
+        include: beans, conditions, configprops, env, health, httpexchanges, info, loggers, metrics, mappings, threaddump, shutdown
+      base-path: /sensor-data-api-server/manage
+  endpoint:
+    health:
+      show-details: always
