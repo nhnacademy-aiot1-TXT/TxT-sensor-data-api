@@ -65,7 +65,7 @@ class InfluxDBUtilTest {
         given(influxDBClient.getQueryApi()).willReturn(queryApi);
         given(queryApi.query(anyString(), eq(TemperatureMaxMin.class))).willReturn(List.of(temperatureMaxMinDaily));
 
-        Optional<TemperatureMaxMin> temperatureOptional = influxDBUtil.getLastSensorData(Instant.now(), "temperature", TemperatureMaxMin.class);
+        Optional<TemperatureMaxMin> temperatureOptional = influxDBUtil.getLastSensorData(Instant.now(), "temperature", "class_a", TemperatureMaxMin.class);
         TemperatureMaxMin result = temperatureOptional.orElseThrow();
 
         assertAll(
@@ -87,7 +87,7 @@ class InfluxDBUtilTest {
         given(influxDBClient.getQueryApi()).willReturn(queryApi);
         given(queryApi.query(anyString(), eq(TemperatureMaxMin.class))).willReturn(List.of(temperatureMaxMinDaily));
 
-        List<TemperatureMaxMin> temperatureMaxMinDailies = influxDBUtil.getSensorDataList(Instant.now().minus(1L, ChronoUnit.DAYS), Instant.now(), "temperature", "_daily", TemperatureMaxMin.class);
+        List<TemperatureMaxMin> temperatureMaxMinDailies = influxDBUtil.getSensorDataList(Instant.now().minus(1L, ChronoUnit.DAYS), Instant.now(), "temperature", "_daily", "class_a", TemperatureMaxMin.class);
         TemperatureMaxMin result = temperatureMaxMinDailies.get(0);
 
         assertAll(
