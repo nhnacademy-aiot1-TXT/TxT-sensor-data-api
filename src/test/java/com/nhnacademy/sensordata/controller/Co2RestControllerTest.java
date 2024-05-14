@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,9 +41,10 @@ class Co2RestControllerTest {
         Integer value = 20;
         Co2 co2 = new Co2(time, device, place, topic, value);
 
-        given(co2Service.getCo2()).willReturn(co2);
+        given(co2Service.getCo2(anyString())).willReturn(co2);
 
-        mockMvc.perform(get("/api/sensor/co2"))
+        mockMvc.perform(get("/api/sensor/co2")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -57,10 +59,12 @@ class Co2RestControllerTest {
     @Test
     void getCo2Exception() throws Exception {
         String message = "Co2를 찾을수 없습니다.";
-        given(co2Service.getCo2())
+        String place = "test place";
+        given(co2Service.getCo2(anyString()))
                 .willThrow(new HumidityNotFoundException(message));
 
-        mockMvc.perform(get("/api/sensor/co2"))
+        mockMvc.perform(get("/api/sensor/co2")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

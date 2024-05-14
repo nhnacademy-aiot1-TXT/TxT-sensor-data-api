@@ -35,9 +35,9 @@ class Co2ServiceImplTest {
         Integer value = 20;
         Co2 co2 = new Co2(time, device, place, topic, value);
 
-        given(influxDBUtil.getSensorData(anyString(), eq(Co2.class))).willReturn(Optional.of(co2));
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Co2.class))).willReturn(Optional.of(co2));
 
-        Co2 resultCo2 = co2Service.getCo2();
+        Co2 resultCo2 = co2Service.getCo2(place);
 
         assertAll(
                 () -> assertEquals(co2.getTime(), resultCo2.getTime()),
@@ -50,9 +50,11 @@ class Co2ServiceImplTest {
 
     @Test
     void getCo2Exception() {
-        given(influxDBUtil.getSensorData(anyString(), eq(Co2.class))).willReturn(Optional.empty());
+        String place = "test place";
 
-        assertThrows(Co2NotFoundException.class, () -> co2Service.getCo2());
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Co2.class))).willReturn(Optional.empty());
+
+        assertThrows(Co2NotFoundException.class, () -> co2Service.getCo2(place));
     }
 
     @Test

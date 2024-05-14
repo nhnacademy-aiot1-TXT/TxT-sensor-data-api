@@ -41,7 +41,7 @@ class InfluxDBUtilTest {
         given(influxDBClient.getQueryApi()).willReturn(queryApi);
         given(queryApi.query(anyString(), eq(Temperature.class))).willReturn(List.of(temperature));
 
-        Optional<Temperature> temperatureOptional = influxDBUtil.getSensorData("temperature", Temperature.class);
+        Optional<Temperature> temperatureOptional = influxDBUtil.getSensorData("temperature", place, Temperature.class);
         Temperature result = temperatureOptional.orElseThrow();
 
         assertAll(

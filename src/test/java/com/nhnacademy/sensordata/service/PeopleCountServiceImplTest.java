@@ -29,7 +29,7 @@ class PeopleCountServiceImplTest {
         Integer count = 6;
         PeopleCount peopleCount = new PeopleCount(time, count);
 
-        given(influxDBUtil.getSensorData(anyString(), eq(PeopleCount.class))).willReturn(Optional.of(peopleCount));
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(PeopleCount.class))).willReturn(Optional.of(peopleCount));
 
         PeopleCount resultPeopleCount = peopleCountService.getPeopleCount();
 
@@ -41,7 +41,7 @@ class PeopleCountServiceImplTest {
 
     @Test
     void getPeopleCountException() {
-        given(influxDBUtil.getSensorData(anyString(), eq(PeopleCount.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(PeopleCount.class))).willReturn(Optional.empty());
 
         assertThrows(PeopleCountNotFoundException.class, () -> peopleCountService.getPeopleCount());
     }

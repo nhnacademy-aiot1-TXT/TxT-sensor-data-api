@@ -17,6 +17,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,12 +43,13 @@ class TemperatureRestControllerTest {
         Float value = 20.0f;
         Temperature temperature = new Temperature(time, device, place, topic, value);
 
-        given(temperatureService.getTemperature())
+        given(temperatureService.getTemperature(anyString()))
                 .willReturn(temperature);
 
         // when
         //then
-        mockMvc.perform(get("/api/sensor/temperature"))
+        mockMvc.perform(get("/api/sensor/temperature")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -61,11 +63,13 @@ class TemperatureRestControllerTest {
     @Test
     void getTemperatureException() throws Exception {
         String message = "온도를 찾을 수 없습니다.";
+        String place = "test place";
         TemperatureNotFoundException exception = new TemperatureNotFoundException(message);
-        given(temperatureService.getTemperature())
+        given(temperatureService.getTemperature(place))
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/sensor/temperature"))
+        mockMvc.perform(get("/api/sensor/temperature")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

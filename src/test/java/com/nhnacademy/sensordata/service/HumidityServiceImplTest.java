@@ -34,9 +34,9 @@ class HumidityServiceImplTest {
         float value = 20.0f;
         Humidity humidity = new Humidity(time, device, place, topic, value);
 
-        given(influxDBUtil.getSensorData(anyString(), eq(Humidity.class))).willReturn(Optional.of(humidity));
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Humidity.class))).willReturn(Optional.of(humidity));
 
-        Humidity resultHumidity = humidityService.getHumidity();
+        Humidity resultHumidity = humidityService.getHumidity(place);
 
         assertAll(
                 () -> assertEquals(humidity.getTime(), resultHumidity.getTime()),
@@ -49,9 +49,11 @@ class HumidityServiceImplTest {
 
     @Test
     void getHumidityException() {
-        given(influxDBUtil.getSensorData(anyString(), eq(Humidity.class))).willReturn(Optional.empty());
+        String place = "test place";
 
-        assertThrows(HumidityNotFoundException.class, () -> humidityService.getHumidity());
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Humidity.class))).willReturn(Optional.empty());
+
+        assertThrows(HumidityNotFoundException.class, () -> humidityService.getHumidity(place));
     }
 
     @Test

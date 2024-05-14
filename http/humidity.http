@@ -4,26 +4,26 @@ GET localhost:8300/api/sensor/humidity?place=class_a
 ### 습도 단일 데이터 class_b
 GET localhost:8300/api/sensor/humidity?place=class_b
 
-### 습도 일간 데이터
+### 습도 일간 데이터 class_a
 GET localhost:8300/api/sensor/humidity/day?place=class_a
 
-### 습도 일간 데이터
+### 습도 일간 데이터 class_b
 GET localhost:8300/api/sensor/humidity/day?place=class_b
 
-### 습도 일간 시간별 평균 데이터
+### 습도 일간 시간별 평균 데이터 class_a
 GET localhost:8300/api/sensor/humidity/day-mean?place=class_a
 
-### 습도 일간 시간별 평균 데이터
+### 습도 일간 시간별 평균 데이터 class_b
 GET localhost:8300/api/sensor/humidity/day-mean?place=class_b
 
-### 습도 주간 데이터
+### 습도 주간 데이터 class_a
 GET localhost:8300/api/sensor/humidity/week?place=class_a
 
-### 습도 주간 데이터
+### 습도 주간 데이터 class_b
 GET localhost:8300/api/sensor/humidity/week?place=class_b
 
-### 습도 월간 데이터
+### 습도 월간 데이터 class_a
 GET localhost:8300/api/sensor/humidity/month?place=class_a
 
-### 습도 월간 데이터
+### 습도 월간 데이터 class_b
 GET localhost:8300/api/sensor/humidity/month?place=class_b

@@ -17,6 +17,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -41,11 +42,12 @@ class IlluminationRestControllerTest {
         Illumination illumination = new Illumination(time, device, place, topic, value);
 
         // when
-        given(illuminationService.getIllumination())
+        given(illuminationService.getIllumination(anyString()))
                 .willReturn(illumination);
 
         //then
-        mockMvc.perform(get("/api/sensor/illumination"))
+        mockMvc.perform(get("/api/sensor/illumination")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -59,11 +61,14 @@ class IlluminationRestControllerTest {
     @Test
     void getIlluminationException() throws Exception {
         String message = "조도를 찾을 수 없습니다.";
+        String place = "test place";
         IlluminationNotFoundException exception = new IlluminationNotFoundException(message);
-        given(illuminationService.getIllumination())
+
+        given(illuminationService.getIllumination(anyString()))
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/sensor/illumination"))
+        mockMvc.perform(get("/api/sensor/illumination")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

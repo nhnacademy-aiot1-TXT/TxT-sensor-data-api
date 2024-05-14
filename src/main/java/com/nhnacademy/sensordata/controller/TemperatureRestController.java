@@ -35,8 +35,8 @@ public class TemperatureRestController {
      */
     @GetMapping
     @Operation(summary = "온도 단일 조회")
-    public ResponseEntity<Temperature> getTemperature() {
-        Temperature temperature = temperatureService.getTemperature();
+    public ResponseEntity<Temperature> getTemperature(@RequestParam String place) {
+        Temperature temperature = temperatureService.getTemperature(place);
 
         return ResponseEntity.ok(temperature);
     }

@@ -30,8 +30,8 @@ public class VocRestController {
      */
     @GetMapping
     @Operation(summary = "voc 단일 조회")
-    public ResponseEntity<Voc> getVoc() {
-        Voc voc = vocService.getVoc();
+    public ResponseEntity<Voc> getVoc(String place) {
+        Voc voc = vocService.getVoc(place);
 
         return ResponseEntity.ok(voc);
     }

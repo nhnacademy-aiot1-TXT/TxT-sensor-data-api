@@ -18,7 +18,7 @@ public interface TemperatureService {
      *
      * @return 단일 온도
      */
-    Temperature getTemperature();
+    Temperature getTemperature(String place);
 
     /**
      * 일간 1시간 주기로 만들어진 온도 리스트 조회 메서드
