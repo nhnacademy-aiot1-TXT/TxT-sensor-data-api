@@ -6,6 +6,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+/**
+ * illumination 평균 조회 measurement class
+ *
+ * @author parksangwon
+ * @version 1.0.0
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
