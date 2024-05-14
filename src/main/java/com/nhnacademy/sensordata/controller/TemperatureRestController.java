@@ -74,8 +74,8 @@ public class TemperatureRestController {
      */
     @GetMapping("/week")
     @Operation(summary = "온도 주간 조회")
-    public ResponseEntity<List<TemperatureMaxMin>> getWeeklyTemperatures() {
-        List<TemperatureMaxMin> temperatures = temperatureService.getWeeklyTemperatures();
+    public ResponseEntity<List<TemperatureMaxMin>> getWeeklyTemperatures(@RequestParam String place) {
+        List<TemperatureMaxMin> temperatures = temperatureService.getWeeklyTemperatures(place);
 
         return ResponseEntity.ok(temperatures);
     }

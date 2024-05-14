@@ -95,6 +95,7 @@ class IlluminationServiceTest {
         Integer dailyMinIllumination = 50;
         Integer weeklyMaxIllumination = 90;
         Integer weeklyMinIllumination = 60;
+        String place = "test place";
 
         IlluminationMaxMin illuminationMaxMinDaily = new IlluminationMaxMin(time, dailyMaxIllumination, dailyMinIllumination);
         IlluminationMaxMin illuminationMaxMinWeekly = new IlluminationMaxMin(time, weeklyMaxIllumination, weeklyMinIllumination);
@@ -104,7 +105,7 @@ class IlluminationServiceTest {
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.of(illuminationMaxMinDaily));
 
         // then
-        List<IlluminationMaxMin> weeklyIlluminations = illuminationService.getWeeklyIlluminations();
+        List<IlluminationMaxMin> weeklyIlluminations = illuminationService.getWeeklyIlluminations(place);
 
         assertAll(
                 () -> assertNotNull(weeklyIlluminations),
@@ -124,13 +125,14 @@ class IlluminationServiceTest {
         Instant time = Instant.now();
         Integer weeklyMaxIllumination = 100;
         Integer weeklyMinIllumination = 50;
+        String place = "test place";
 
         IlluminationMaxMin illuminationMaxMinWeekly = new IlluminationMaxMin(time, weeklyMaxIllumination, weeklyMinIllumination);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(IlluminationMaxMin.class))).willReturn(new ArrayList<>(List.of(illuminationMaxMinWeekly)));
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(IlluminationMaxMin.class))).willReturn(Optional.empty());
 
-        assertThrows(IlluminationNotFoundException.class, () -> illuminationService.getWeeklyIlluminations());
+        assertThrows(IlluminationNotFoundException.class, () -> illuminationService.getWeeklyIlluminations(place));
     }
 
     @Test

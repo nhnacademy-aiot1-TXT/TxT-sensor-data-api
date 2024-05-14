@@ -40,7 +40,7 @@ public interface Co2Service {
      *
      * @return 주별 co2 list
      */
-    List<Co2MaxMin> getWeeklyCo2();
+    List<Co2MaxMin> getWeeklyCo2(String place);
 
     /**
      * 월별(한달간 1일 간격) co2 list 조회 메서드

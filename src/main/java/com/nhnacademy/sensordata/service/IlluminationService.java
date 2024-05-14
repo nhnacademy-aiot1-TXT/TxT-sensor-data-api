@@ -39,7 +39,7 @@ public interface IlluminationService {
      *
      * @return 주간 조도 리스트
      */
-    List<IlluminationMaxMin> getWeeklyIlluminations();
+    List<IlluminationMaxMin> getWeeklyIlluminations(String place);
 
     /**
      * 월간 하루 주기로 만들어진 조도 리스트 조회 메서드

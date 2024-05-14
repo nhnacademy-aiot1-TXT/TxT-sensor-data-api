@@ -39,7 +39,7 @@ public interface TemperatureService {
      *
      * @return 주간 온도 리스트
      */
-    List<TemperatureMaxMin> getWeeklyTemperatures();
+    List<TemperatureMaxMin> getWeeklyTemperatures(String place);
 
     /**
      * 월간 하루 주기로 만들어진 온도 리스트 조회 메서드

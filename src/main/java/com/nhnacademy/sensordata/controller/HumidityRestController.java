@@ -68,8 +68,8 @@ public class HumidityRestController {
      */
     @GetMapping("/week")
     @Operation(summary = "주별 습도 조회")
-    public ResponseEntity<List<HumidityMaxMin>> getWeeklyHumidity() {
-        return ResponseEntity.ok(humidityService.getWeeklyHumidity());
+    public ResponseEntity<List<HumidityMaxMin>> getWeeklyHumidity(@RequestParam String place) {
+        return ResponseEntity.ok(humidityService.getWeeklyHumidity(place));
     }
 
     /**

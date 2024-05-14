@@ -82,13 +82,14 @@ class HumidityServiceImplTest {
         float weeklyMinHumidity = 60.0f;
         float dailyMaxHumidity = 80.0f;
         float dailyMinHumidity = 60.0f;
+        String place = "test place";
         HumidityMaxMin humidityWeekly = new HumidityMaxMin(time, weeklyMaxHumidity, weeklyMinHumidity);
         HumidityMaxMin humidityDaily = new HumidityMaxMin(time, dailyMaxHumidity, dailyMinHumidity);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(new ArrayList<>(List.of(humidityWeekly)));
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
 
-        List<HumidityMaxMin> resultHumidity = humidityService.getWeeklyHumidity();
+        List<HumidityMaxMin> resultHumidity = humidityService.getWeeklyHumidity(place);
 
         assertAll(
                 () -> assertEquals(humidityWeekly.getTime(), resultHumidity.get(0).getTime()),
@@ -102,9 +103,11 @@ class HumidityServiceImplTest {
 
     @Test
     void getWeeklyHumidityException() {
+        String place = "test place";
+
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
 
-        assertThrows(HumidityNotFoundException.class, () -> humidityService.getWeeklyHumidity());
+        assertThrows(HumidityNotFoundException.class, () -> humidityService.getWeeklyHumidity(place));
     }
 
     @Test

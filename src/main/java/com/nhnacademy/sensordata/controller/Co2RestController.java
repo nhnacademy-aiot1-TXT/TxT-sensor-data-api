@@ -68,8 +68,8 @@ public class Co2RestController {
      */
     @GetMapping("/week")
     @Operation(summary = "주별 Co2 조회")
-    public ResponseEntity<List<Co2MaxMin>> getWeeklyHumidity() {
-        return ResponseEntity.ok(co2Service.getWeeklyCo2());
+    public ResponseEntity<List<Co2MaxMin>> getWeeklyHumidity(@RequestParam String place) {
+        return ResponseEntity.ok(co2Service.getWeeklyCo2(place));
     }
 
     /**
