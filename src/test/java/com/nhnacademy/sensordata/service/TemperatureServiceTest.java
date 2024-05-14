@@ -65,13 +65,14 @@ class TemperatureServiceTest {
         Instant time = Instant.now();
         Float maxTemperature = 24.0f;
         Float minTemperature = 20.0f;
+        String place = "test place";
 
         TemperatureMaxMin temperature = new TemperatureMaxMin(time, maxTemperature, minTemperature);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMin.class))).willReturn(List.of(temperature));
 
         // when
-        List<TemperatureMaxMin> dailyTemperatures = temperatureService.getDailyTemperatures();
+        List<TemperatureMaxMin> dailyTemperatures = temperatureService.getDailyTemperatures(place);
 
         // then
         assertAll(
