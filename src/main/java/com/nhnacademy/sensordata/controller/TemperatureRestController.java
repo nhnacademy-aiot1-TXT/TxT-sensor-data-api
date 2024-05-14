@@ -87,8 +87,8 @@ public class TemperatureRestController {
      */
     @GetMapping("/month")
     @Operation(summary = "온도 월간 조회")
-    public ResponseEntity<List<TemperatureMaxMin>> getMonthlyTemperatures() {
-        List<TemperatureMaxMin> temperatures = temperatureService.getMonthlyTemperatures();
+    public ResponseEntity<List<TemperatureMaxMin>> getMonthlyTemperatures(@RequestParam String place) {
+        List<TemperatureMaxMin> temperatures = temperatureService.getMonthlyTemperatures(place);
 
         return ResponseEntity.ok(temperatures);
     }

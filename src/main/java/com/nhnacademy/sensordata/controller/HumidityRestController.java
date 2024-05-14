@@ -79,7 +79,7 @@ public class HumidityRestController {
      */
     @GetMapping("/month")
     @Operation(summary = "월별 습도 조회")
-    public ResponseEntity<List<HumidityMaxMin>> getMonthlyHumidity() {
-        return ResponseEntity.ok(humidityService.getMonthlyHumidity());
+    public ResponseEntity<List<HumidityMaxMin>> getMonthlyHumidity(@RequestParam String place) {
+        return ResponseEntity.ok(humidityService.getMonthlyHumidity(place));
     }
 }
