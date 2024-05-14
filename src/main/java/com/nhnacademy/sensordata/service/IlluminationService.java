@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.measurement.illumination.Illumination;
 import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMin;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMean;
 
 import java.util.List;
 
@@ -25,6 +26,13 @@ public interface IlluminationService {
      * @return 일간 조도 리스트
      */
     List<IlluminationMaxMin> getDailyIlluminations();
+
+    /**
+     * 일간 1시간 주기 평균으로 만들어진 조도 리스트 조회 메서드
+     *
+     * @return 일간 조도 리스트
+     */
+    List<IlluminationMean> getDailyIlluminationsMean(String place);
 
     /**
      * 주간 하루 주기로 만들어진 조도 리스트 조회 메서드

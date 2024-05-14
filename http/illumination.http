@@ -4,6 +4,12 @@ GET http://localhost:8300/api/sensor/illumination
 ### 조도 일별 조회
 GET http://localhost:8300/api/sensor/illumination/day
 
+### 조도 일별 평균 조회 class_a
+GET http://localhost:8300/api/sensor/illumination/day-mean?place=class_a
+
+### 조도 일별 평균 조회 class_b
+GET http://localhost:8300/api/sensor/illumination/day-mean?place=class_b
+
 ### 조도 주별 조회
 GET http://localhost:8300/api/sensor/illumination/week
 

@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.controller;
 
 import com.nhnacademy.sensordata.measurement.illumination.Illumination;
 import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMin;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMean;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -48,6 +50,19 @@ public class IlluminationRestController {
     @Operation(summary = "조도 일간 조회")
     public ResponseEntity<List<IlluminationMaxMin>> getDailyIlluminations() {
         List<IlluminationMaxMin> illuminations = illuminationService.getDailyIlluminations();
+
+        return ResponseEntity.ok(illuminations);
+    }
+
+    /**
+     * 당일 0시부터 현재 시간까지 1시간 주기로 평균 조도를 조회하는 api
+     *
+     * @return 당일 조도 리스트 응답
+     */
+    @GetMapping("/day-mean")
+    @Operation(summary = "조도 일간 1시간 집계 조회")
+    public ResponseEntity<List<IlluminationMean>> getDailyIlluminationMean(@RequestParam String place) {
+        List<IlluminationMean> illuminations = illuminationService.getDailyIlluminationsMean(place);
 
         return ResponseEntity.ok(illuminations);
     }
