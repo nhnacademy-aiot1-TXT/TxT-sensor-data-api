@@ -48,8 +48,8 @@ public class IlluminationRestController {
      */
     @GetMapping("/day")
     @Operation(summary = "조도 일간 조회")
-    public ResponseEntity<List<IlluminationMaxMin>> getDailyIlluminations() {
-        List<IlluminationMaxMin> illuminations = illuminationService.getDailyIlluminations();
+    public ResponseEntity<List<IlluminationMaxMin>> getDailyIlluminations(@RequestParam String place) {
+        List<IlluminationMaxMin> illuminations = illuminationService.getDailyIlluminations(place);
 
         return ResponseEntity.ok(illuminations);
     }
