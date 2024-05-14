@@ -31,6 +31,7 @@ public class IlluminationRestController {
     /**
      * 가장 최신 조도를 단일로 조회하는 api
      *
+     * @param place 장소
      * @return 최신 조도 응답
      */
     @GetMapping
@@ -44,6 +45,7 @@ public class IlluminationRestController {
     /**
      * 당일 0시부터 현재 시간까지 1시간 주기로 조도를 조회하는 api
      *
+     * @param place 장소
      * @return 당일 조도 리스트 응답
      */
     @GetMapping("/day")
@@ -57,6 +59,7 @@ public class IlluminationRestController {
     /**
      * 당일 0시부터 현재 시간까지 1시간 주기로 평균 조도를 조회하는 api
      *
+     * @param place 장소
      * @return 당일 조도 리스트 응답
      */
     @GetMapping("/day-mean")
@@ -70,6 +73,7 @@ public class IlluminationRestController {
     /**
      * 일주일 전부터 오늘까지 하루 단위로 조도를 조회하는 api
      *
+     * @param place 장소
      * @return 일주일 조도 리스트 응답
      */
     @GetMapping("/week")
@@ -83,6 +87,7 @@ public class IlluminationRestController {
     /**
      * 한달 전부터 오늘까지 하루 단위로 조도를 조회하는 api
      *
+     * @param place 장소
      * @return 한달 조도 리스트 응답
      */
     @GetMapping("/month")

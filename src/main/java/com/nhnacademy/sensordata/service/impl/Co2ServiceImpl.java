@@ -33,6 +33,7 @@ public class Co2ServiceImpl implements Co2Service {
     /**
      * 가장 최신 co2 조회 메서드
      *
+     * @param place 장소
      * @return 단일 co2
      */
     @Override
@@ -44,6 +45,7 @@ public class Co2ServiceImpl implements Co2Service {
     /**
      * 일별(00시 ~ 현재시간) 1시간 간격 co2 list
      *
+     * @param place 장소
      * @return 일별 co2 list
      */
     @Override
@@ -52,7 +54,7 @@ public class Co2ServiceImpl implements Co2Service {
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
-        List<Co2MaxMin> co2List = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", Co2MaxMin.class);
+        List<Co2MaxMin> co2List = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", place, Co2MaxMin.class);
 
         return co2List.isEmpty() ? Collections.emptyList() : co2List;
     }
@@ -60,6 +62,7 @@ public class Co2ServiceImpl implements Co2Service {
     /**
      * 일별(00시 ~ 현재시간) 1시간 간격 평균 co2 list
      *
+     * @param place 장소
      * @return 일별 평균 co2 list
      */
     @Override
@@ -77,6 +80,7 @@ public class Co2ServiceImpl implements Co2Service {
     /**
      * 주별(일주일간 1일 간격) co2 list
      *
+     * @param place 장소
      * @return 주별 co2 list
      */
     @Override
@@ -87,9 +91,9 @@ public class Co2ServiceImpl implements Co2Service {
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
 
-        List<Co2MaxMin> weeklyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", Co2MaxMin.class);
+        List<Co2MaxMin> weeklyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, Co2MaxMin.class);
 
-        Co2MaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, Co2MaxMin.class)
+        Co2MaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, Co2MaxMin.class)
                 .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
 
         if (Objects.nonNull(lastHour)) {
@@ -102,6 +106,7 @@ public class Co2ServiceImpl implements Co2Service {
     /**
      * 월별(한달간 1일 간격) co2 list
      *
+     * @param place 장소
      * @return 월별 co2 list
      */
     @Override
@@ -111,9 +116,9 @@ public class Co2ServiceImpl implements Co2Service {
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        List<Co2MaxMin> monthlyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", Co2MaxMin.class);
+        List<Co2MaxMin> monthlyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, Co2MaxMin.class);
 
-        Co2MaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, Co2MaxMin.class)
+        Co2MaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, Co2MaxMin.class)
                 .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
 
         if (Objects.nonNull(lastHour)) {

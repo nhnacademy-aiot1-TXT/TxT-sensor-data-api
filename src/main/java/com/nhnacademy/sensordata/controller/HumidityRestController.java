@@ -31,6 +31,7 @@ public class HumidityRestController {
     /**
      * 가장 최신 humidity 값 조회 api
      *
+     * @param place 장소
      * @return 최신 humidity 응답
      */
     @GetMapping
@@ -42,6 +43,7 @@ public class HumidityRestController {
     /**
      * 일별(00시 ~ 현재시간) 1시간 간격 humidity 값 조회 api
      *
+     * @param place 장소
      * @return 시간별 humidity list 응답
      */
     @GetMapping("/day")
@@ -53,6 +55,7 @@ public class HumidityRestController {
     /**
      * 일별(00시 ~ 현재시간) 1시간 간격 평균 humidity 값 조회 api
      *
+     * @param place 장소
      * @return 시간별 humidity 평균 list 응답
      */
     @GetMapping("/day-mean")
@@ -64,6 +67,7 @@ public class HumidityRestController {
     /**
      * 주별(일주일간 1일 간격) humidity 값 조회 api
      *
+     * @param place 장소
      * @return 일별 humidity list 응답
      */
     @GetMapping("/week")
@@ -75,6 +79,7 @@ public class HumidityRestController {
     /**
      * 월별(한달간 1일 간격) humidity 값 조회 api
      *
+     * @param place 장소
      * @return 최신 humidity 응답
      */
     @GetMapping("/month")

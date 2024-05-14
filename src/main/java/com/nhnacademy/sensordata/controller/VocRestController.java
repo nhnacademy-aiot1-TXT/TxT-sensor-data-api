@@ -27,6 +27,7 @@ public class VocRestController {
     /**
      * 가장 최신 voc를 단일로 조회하는 api
      *
+     * @param place 장소
      * @return 최신 온도 응답
      */
     @GetMapping

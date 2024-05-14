@@ -22,6 +22,7 @@ public class VocServiceImpl implements VocService {
     /**
      * influxdb에서 최신 voc를 조회 후 반환하는 메서드
      *
+     * @param place 장소
      * @return 단일 온도
      */
     @Override

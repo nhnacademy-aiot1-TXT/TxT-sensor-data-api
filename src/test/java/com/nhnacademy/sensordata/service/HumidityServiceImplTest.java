@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.service;
 import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.measurement.humidity.Humidity;
 import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMin;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMean;
 import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ class HumidityServiceImplTest {
         String place = "test place";
         HumidityMaxMin humidityDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
 
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(List.of(humidityDaily));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(List.of(humidityDaily));
 
         HumidityMaxMin resultHumidity = humidityService.getDailyHumidity(place).get(0);
 
@@ -72,6 +73,24 @@ class HumidityServiceImplTest {
                 () -> assertEquals(humidityDaily.getTime(), resultHumidity.getTime()),
                 () -> assertEquals(humidityDaily.getMaxHumidity(), resultHumidity.getMaxHumidity()),
                 () -> assertEquals(humidityDaily.getMinHumidity(), resultHumidity.getMinHumidity())
+        );
+    }
+
+    @Test
+    void getDailyMeanHumidity() {
+        Instant time = Instant.now();
+        Float value = 70.0F;
+        String place = "test place";
+        HumidityMean humidityMean = new HumidityMean(time, value);
+
+        given(influxDBUtil.getHourlyMeanData(any(), any(), anyString(), anyString(), eq(HumidityMean.class))).willReturn(List.of(humidityMean));
+
+        HumidityMean resultHumidity = humidityService.getDailyMeanHumidity(place).get(0);
+
+        assertAll(
+                () -> assertNotNull(resultHumidity),
+                () -> assertEquals(time, resultHumidity.getTime()),
+                () -> assertEquals(value, resultHumidity.getValue())
         );
     }
 
@@ -86,8 +105,8 @@ class HumidityServiceImplTest {
         HumidityMaxMin humidityWeekly = new HumidityMaxMin(time, weeklyMaxHumidity, weeklyMinHumidity);
         HumidityMaxMin humidityDaily = new HumidityMaxMin(time, dailyMaxHumidity, dailyMinHumidity);
 
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(new ArrayList<>(List.of(humidityWeekly)));
-        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(new ArrayList<>(List.of(humidityWeekly)));
+        given(influxDBUtil.getLastSensorData(any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
 
         List<HumidityMaxMin> resultHumidity = humidityService.getWeeklyHumidity(place);
 
@@ -105,7 +124,7 @@ class HumidityServiceImplTest {
     void getWeeklyHumidityException() {
         String place = "test place";
 
-        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getLastSensorData(any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
 
         assertThrows(HumidityNotFoundException.class, () -> humidityService.getWeeklyHumidity(place));
     }
@@ -121,8 +140,8 @@ class HumidityServiceImplTest {
         HumidityMaxMin humidityMonthly = new HumidityMaxMin(time, monthlyMaxHumidity, monthlyMinHumidity);
         HumidityMaxMin humidityDaily = new HumidityMaxMin(time, dailyMaxHumidity, dailyMinHumidity);
 
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(new ArrayList<>(List.of(humidityMonthly)));
-        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(new ArrayList<>(List.of(humidityMonthly)));
+        given(influxDBUtil.getLastSensorData(any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
 
         List<HumidityMaxMin> resultHumidity = humidityService.getMonthlyHumidity(place);
 
@@ -139,7 +158,7 @@ class HumidityServiceImplTest {
     @Test
     void getMonthlyHumidityException() {
         String place = "test place";
-        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getLastSensorData(any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
 
         assertThrows(HumidityNotFoundException.class, () -> humidityService.getMonthlyHumidity(place));
     }

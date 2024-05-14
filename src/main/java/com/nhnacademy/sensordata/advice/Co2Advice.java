@@ -1,5 +1,6 @@
 package com.nhnacademy.sensordata.advice;
 
+import com.nhnacademy.sensordata.controller.Co2RestController;
 import com.nhnacademy.sensordata.dto.ApiExceptionDto;
 import com.nhnacademy.sensordata.exception.Co2NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  * @author jongsikk
  * @version 1.0.0
  */
-@RestControllerAdvice(basePackageClasses = {Co2NotFoundException.class})
+@RestControllerAdvice(basePackageClasses = {Co2RestController.class})
 public class Co2Advice {
     /**
      * Co2NotFoundException Handler
