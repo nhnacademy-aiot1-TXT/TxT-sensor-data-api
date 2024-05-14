@@ -114,13 +114,14 @@ class HumidityServiceImplTest {
         float monthlyMinHumidity = 60.0f;
         float dailyMaxHumidity = 80.0f;
         float dailyMinHumidity = 60.0f;
+        String place = "test place";
         HumidityMaxMin humidityMonthly = new HumidityMaxMin(time, monthlyMaxHumidity, monthlyMinHumidity);
         HumidityMaxMin humidityDaily = new HumidityMaxMin(time, dailyMaxHumidity, dailyMinHumidity);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(new ArrayList<>(List.of(humidityMonthly)));
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.of(humidityDaily));
 
-        List<HumidityMaxMin> resultHumidity = humidityService.getMonthlyHumidity();
+        List<HumidityMaxMin> resultHumidity = humidityService.getMonthlyHumidity(place);
 
         assertAll(
                 () -> assertEquals(humidityMonthly.getTime(), resultHumidity.get(0).getTime()),
@@ -134,8 +135,9 @@ class HumidityServiceImplTest {
 
     @Test
     void getMonthlyHumidityException() {
+        String place = "test place";
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(HumidityMaxMin.class))).willReturn(Optional.empty());
 
-        assertThrows(HumidityNotFoundException.class, () -> humidityService.getMonthlyHumidity());
+        assertThrows(HumidityNotFoundException.class, () -> humidityService.getMonthlyHumidity(place));
     }
 }

@@ -46,5 +46,5 @@ public interface IlluminationService {
      *
      * @return 월간 조도 리스트
      */
-    List<IlluminationMaxMin> getMonthlyIlluminations();
+    List<IlluminationMaxMin> getMonthlyIlluminations(String place);
 }

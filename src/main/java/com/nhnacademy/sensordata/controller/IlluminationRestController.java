@@ -87,8 +87,8 @@ public class IlluminationRestController {
      */
     @GetMapping("/month")
     @Operation(summary = "조도 월간 조회")
-    public ResponseEntity<List<IlluminationMaxMin>> getMonthlyIlluminations() {
-        List<IlluminationMaxMin> illuminations = illuminationService.getMonthlyIlluminations();
+    public ResponseEntity<List<IlluminationMaxMin>> getMonthlyIlluminations(@RequestParam String place) {
+        List<IlluminationMaxMin> illuminations = illuminationService.getMonthlyIlluminations(place);
 
         return ResponseEntity.ok(illuminations);
     }

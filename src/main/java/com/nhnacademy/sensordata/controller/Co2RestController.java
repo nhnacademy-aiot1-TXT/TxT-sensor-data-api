@@ -79,7 +79,7 @@ public class Co2RestController {
      */
     @GetMapping("/month")
     @Operation(summary = "월별 Co2 조회")
-    public ResponseEntity<List<Co2MaxMin>> getMonthlyHumidity() {
-        return ResponseEntity.ok(co2Service.getMonthlyCo2());
+    public ResponseEntity<List<Co2MaxMin>> getMonthlyHumidity(@RequestParam String place) {
+        return ResponseEntity.ok(co2Service.getMonthlyCo2(place));
     }
 }

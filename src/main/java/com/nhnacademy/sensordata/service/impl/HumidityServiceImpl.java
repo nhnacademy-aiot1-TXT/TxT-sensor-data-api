@@ -105,7 +105,7 @@ public class HumidityServiceImpl implements HumidityService {
      * @return 월별 humidity list
      */
     @Override
-    public List<HumidityMaxMin> getMonthlyHumidity() {
+    public List<HumidityMaxMin> getMonthlyHumidity(String place) {
         Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusMonths(1)));
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
