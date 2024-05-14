@@ -33,6 +33,7 @@ public class HumidityServiceImpl implements HumidityService {
     /**
      * 가장 최신 humidity 조회 메서드
      *
+     * @param place 장소
      * @return 단일 humidity
      */
     @Override
@@ -44,6 +45,7 @@ public class HumidityServiceImpl implements HumidityService {
     /**
      * 일별(00시 ~ 현재시간) 1시간 간격 humidity list
      *
+     * @param place 장소
      * @return 일별 humidity list
      */
     @Override
@@ -53,7 +55,7 @@ public class HumidityServiceImpl implements HumidityService {
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        List<HumidityMaxMin> dailyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", HumidityMaxMin.class);
+        List<HumidityMaxMin> dailyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", place, HumidityMaxMin.class);
 
         return dailyList.isEmpty() ? Collections.emptyList() : dailyList;
     }
@@ -61,6 +63,7 @@ public class HumidityServiceImpl implements HumidityService {
     /**
      * 일별(00시 ~ 현재시간) 1시간 간격 평균 humidity list
      *
+     * @param place 장소
      * @return 일별 평균 humidity list
      */
     @Override
@@ -78,6 +81,7 @@ public class HumidityServiceImpl implements HumidityService {
     /**
      * 주별(일주일간 1일 간격) humidity list
      *
+     * @param place 장소
      * @return 주별 humidity list
      */
     @Override
@@ -87,9 +91,9 @@ public class HumidityServiceImpl implements HumidityService {
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        List<HumidityMaxMin> weeklyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", HumidityMaxMin.class);
+        List<HumidityMaxMin> weeklyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, HumidityMaxMin.class);
 
-        HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, HumidityMaxMin.class)
+        HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, HumidityMaxMin.class)
                 .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
 
         if (Objects.nonNull(lastHour)) {
@@ -102,6 +106,7 @@ public class HumidityServiceImpl implements HumidityService {
     /**
      * 월별(한달간 1일 간격) humidity list
      *
+     * @param place 장소
      * @return 월별 humidity list
      */
     @Override
@@ -111,9 +116,9 @@ public class HumidityServiceImpl implements HumidityService {
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        List<HumidityMaxMin> monthlyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", HumidityMaxMin.class);
+        List<HumidityMaxMin> monthlyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, HumidityMaxMin.class);
 
-        HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, HumidityMaxMin.class)
+        HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, HumidityMaxMin.class)
                 .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
 
         if (Objects.nonNull(lastHour)) {

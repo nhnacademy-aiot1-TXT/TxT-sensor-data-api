@@ -16,6 +16,7 @@ public interface HumidityService {
     /**
      * humidity 단일 조회 메서드
      *
+     * @param place 장소
      * @return 단일 humidity
      */
     Humidity getHumidity(String place);
@@ -23,6 +24,7 @@ public interface HumidityService {
     /**
      * 일별(00시 ~ 현재시간) humidity list 조회 메서드
      *
+     * @param place 장소
      * @return 일별 humidity list
      */
     List<HumidityMaxMin> getDailyHumidity(String place);
@@ -30,7 +32,7 @@ public interface HumidityService {
     /**
      * 일별(00시 ~ 현재시간) 평균 humidity list 조회 메서드
      *
-     * @param place
+     * @param place 장소
      * @return 일별 평균 humidity list
      */
     List<HumidityMean> getDailyMeanHumidity(String place);
@@ -38,6 +40,7 @@ public interface HumidityService {
     /**
      * 주별(일주일간 1일 간격) humidity list 조회 메서드
      *
+     * @param place 장소
      * @return 주별 humidity list
      */
     List<HumidityMaxMin> getWeeklyHumidity(String place);
@@ -45,6 +48,7 @@ public interface HumidityService {
     /**
      * 월별(한달간 1일 간격) humidity list 조회 메서드
      *
+     * @param place 장소
      * @return 월별 humidity list
      */
     List<HumidityMaxMin> getMonthlyHumidity(String place);
