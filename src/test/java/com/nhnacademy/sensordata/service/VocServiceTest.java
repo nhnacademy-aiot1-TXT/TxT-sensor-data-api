@@ -51,7 +51,7 @@ class VocServiceTest {
     void getVocException() {
         String place = "test place";
 
-        given(influxDBUtil.getSensorData(anyString(), place, eq(Voc.class))).willReturn(Optional.empty());
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Voc.class))).willReturn(Optional.empty());
 
         assertThrows(VocNotFoundException.class, () -> vocService.getVoc(place));
     }
