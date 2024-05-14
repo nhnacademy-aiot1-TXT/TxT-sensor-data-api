@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.service.impl;
 import com.nhnacademy.sensordata.exception.IlluminationNotFoundException;
 import com.nhnacademy.sensordata.measurement.illumination.Illumination;
 import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMin;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMean;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,23 @@ public class IlluminationServiceImpl implements IlluminationService {
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
         List<IlluminationMaxMin> illuminations = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", IlluminationMaxMin.class);
+
+        return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
+    }
+
+    /**
+     * influxdb에서 당일 0시부터 1시간 간격으로 현재까지의 조도 평균을 조회 후 반환하는 메서드
+     *
+     * @return 일간 조도 리스트
+     */
+    @Override
+    public List<IlluminationMean> getDailyIlluminationsMean(String place) {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 0);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
+
+        List<IlluminationMean> illuminations = influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, IlluminationMean.class);
 
         return illuminations.isEmpty() ? Collections.emptyList() : illuminations;
     }
