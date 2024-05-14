@@ -31,28 +31,31 @@ public class Co2RestController {
     /**
      * 가장 최신 co2 값 조회 api
      *
+     * @param place 장소
      * @return 최신 co2 응답
      */
     @GetMapping
     @Operation(summary = "단일 Co2 조회")
-    public ResponseEntity<Co2> getHumidity(@RequestParam String place) {
+    public ResponseEntity<Co2> getCo2(@RequestParam String place) {
         return ResponseEntity.ok(co2Service.getCo2(place));
     }
 
     /**
      * 일별(00시 ~ 현재시간) 1시간 간격 co2 값 조회 api
      *
+     * @param place 장소
      * @return 시간별 co2 list 응답
      */
     @GetMapping("/day")
     @Operation(summary = "일별 Co2 조회")
-    public ResponseEntity<List<Co2MaxMin>> getDailyHumidity(@RequestParam String place) {
+    public ResponseEntity<List<Co2MaxMin>> getDailyCo2(@RequestParam String place) {
         return ResponseEntity.ok(co2Service.getDailyCo2(place));
     }
 
     /**
      * 일별(00시 ~ 현재시간) 1시간 간격 평균 co2 값 조회 api
      *
+     * @param place 장소
      * @return 시간별 co2 평균 list 응답
      */
     @GetMapping("/day-mean")
@@ -64,22 +67,24 @@ public class Co2RestController {
     /**
      * 주별(일주일간 1일 간격) co2 값 조회 api
      *
+     * @param place 장소
      * @return 일별 co2 list 응답
      */
     @GetMapping("/week")
     @Operation(summary = "주별 Co2 조회")
-    public ResponseEntity<List<Co2MaxMin>> getWeeklyHumidity(@RequestParam String place) {
+    public ResponseEntity<List<Co2MaxMin>> getWeeklyCo2(@RequestParam String place) {
         return ResponseEntity.ok(co2Service.getWeeklyCo2(place));
     }
 
     /**
      * 월별(한달간 1일 간격) co2 값 조회 api
      *
+     * @param place 장소
      * @return 최신 co2 응답
      */
     @GetMapping("/month")
     @Operation(summary = "월별 Co2 조회")
-    public ResponseEntity<List<Co2MaxMin>> getMonthlyHumidity(@RequestParam String place) {
+    public ResponseEntity<List<Co2MaxMin>> getMonthlyCo2(@RequestParam String place) {
         return ResponseEntity.ok(co2Service.getMonthlyCo2(place));
     }
 }
