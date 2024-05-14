@@ -16,6 +16,7 @@ public interface IlluminationService {
     /**
      * 조도 단일 조회 메서드
      *
+     * @param place 장소
      * @return 단일 조도
      */
     Illumination getIllumination(String place);
@@ -23,6 +24,7 @@ public interface IlluminationService {
     /**
      * 일간 1시간 주기로 만들어진 조도 리스트 조회 메서드
      *
+     * @param place 장소
      * @return 일간 조도 리스트
      */
     List<IlluminationMaxMin> getDailyIlluminations(String place);
@@ -30,6 +32,7 @@ public interface IlluminationService {
     /**
      * 일간 1시간 주기 평균으로 만들어진 조도 리스트 조회 메서드
      *
+     * @param place 장소
      * @return 일간 조도 리스트
      */
     List<IlluminationMean> getDailyIlluminationsMean(String place);
@@ -37,6 +40,7 @@ public interface IlluminationService {
     /**
      * 주간 하루 주기로 만들어진 조도 리스트 조회 메서드
      *
+     * @param place 장소
      * @return 주간 조도 리스트
      */
     List<IlluminationMaxMin> getWeeklyIlluminations(String place);
@@ -44,6 +48,7 @@ public interface IlluminationService {
     /**
      * 월간 하루 주기로 만들어진 조도 리스트 조회 메서드
      *
+     * @param place 장소
      * @return 월간 조도 리스트
      */
     List<IlluminationMaxMin> getMonthlyIlluminations(String place);
