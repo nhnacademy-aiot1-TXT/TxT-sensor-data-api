@@ -105,7 +105,7 @@ public class Co2ServiceImpl implements Co2Service {
      * @return 월별 co2 list
      */
     @Override
-    public List<Co2MaxMin> getMonthlyCo2() {
+    public List<Co2MaxMin> getMonthlyCo2(String place) {
         Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusMonths(1)));
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);

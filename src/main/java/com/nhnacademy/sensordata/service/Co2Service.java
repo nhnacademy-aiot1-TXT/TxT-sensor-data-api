@@ -47,5 +47,5 @@ public interface Co2Service {
      *
      * @return 월별 co2 list
      */
-    List<Co2MaxMin> getMonthlyCo2();
+    List<Co2MaxMin> getMonthlyCo2(String place);
 }

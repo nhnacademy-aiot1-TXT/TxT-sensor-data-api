@@ -47,5 +47,5 @@ public interface HumidityService {
      *
      * @return 월별 humidity list
      */
-    List<HumidityMaxMin> getMonthlyHumidity();
+    List<HumidityMaxMin> getMonthlyHumidity(String place);
 }

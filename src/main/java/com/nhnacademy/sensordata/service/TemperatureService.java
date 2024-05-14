@@ -46,5 +46,5 @@ public interface TemperatureService {
      *
      * @return 월간 온도 리스트
      */
-    List<TemperatureMaxMin> getMonthlyTemperatures();
+    List<TemperatureMaxMin> getMonthlyTemperatures(String place);
 }
