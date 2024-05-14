@@ -67,13 +67,14 @@ class IlluminationServiceTest {
         Instant time = Instant.now();
         Integer maxIllumination = 100;
         Integer minIllumination = 50;
+        String place = "test place";
 
         IlluminationMaxMin illumination = new IlluminationMaxMin(time, maxIllumination, minIllumination);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(IlluminationMaxMin.class))).willReturn(List.of(illumination));
 
         // when
-        List<IlluminationMaxMin> dailyIlluminations = illuminationService.getDailyIlluminations();
+        List<IlluminationMaxMin> dailyIlluminations = illuminationService.getDailyIlluminations(place);
 
         // then
         assertAll(

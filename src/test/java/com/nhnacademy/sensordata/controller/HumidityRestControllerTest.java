@@ -80,9 +80,9 @@ class HumidityRestControllerTest {
         HumidityMaxMin humidityMaxMinDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
         List<HumidityMaxMin> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
-        given(humidityService.getDailyHumidity()).willReturn(humidityMaxMinList);
+        given(humidityService.getDailyHumidity(anyString())).willReturn(humidityMaxMinList);
 
-        mockMvc.perform(get("/api/sensor/humidity/day"))
+        mockMvc.perform(get("/api/sensor/humidity/day?place=class_a"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

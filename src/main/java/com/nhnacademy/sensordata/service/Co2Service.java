@@ -25,7 +25,7 @@ public interface Co2Service {
      *
      * @return 일별 co2 list
      */
-    List<Co2MaxMin> getDailyCo2();
+    List<Co2MaxMin> getDailyCo2(String place);
 
     /**
      * 일별(00시 ~ 현재시간) 평균 co2 list 조회 메서드

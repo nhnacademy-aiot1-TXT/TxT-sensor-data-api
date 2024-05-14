@@ -79,9 +79,9 @@ class Co2RestControllerTest {
         Co2MaxMin co2MaxMinDaily = new Co2MaxMin(time, maxCo2, minCo2);
         List<Co2MaxMin> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
 
-        given(co2Service.getDailyCo2()).willReturn(co2MaxMinList);
+        given(co2Service.getDailyCo2(anyString())).willReturn(co2MaxMinList);
 
-        mockMvc.perform(get("/api/sensor/co2/day"))
+        mockMvc.perform(get("/api/sensor/co2/day?place=class_a"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

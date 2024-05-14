@@ -62,11 +62,12 @@ class Co2ServiceImplTest {
         Instant time = Instant.now();
         Integer maxCo2 = 80;
         Integer minCo2 = 60;
+        String place = "test place";
         Co2MaxMin co2Daily = new Co2MaxMin(time, maxCo2, minCo2);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(List.of(co2Daily));
 
-        Co2MaxMin resultCo2 = co2Service.getDailyCo2().get(0);
+        Co2MaxMin resultCo2 = co2Service.getDailyCo2(place).get(0);
 
         assertAll(
                 () -> assertEquals(co2Daily.getTime(), resultCo2.getTime()),

@@ -85,12 +85,12 @@ class TemperatureRestControllerTest {
         TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, maxTemperature, minTemperature);
         List<TemperatureMaxMin> temperatures = List.of(temperatureMaxMinDaily);
 
-        given(temperatureService.getDailyTemperatures())
+        given(temperatureService.getDailyTemperatures(anyString()))
                 .willReturn(temperatures);
 
         // when
         // then
-        mockMvc.perform(get("/api/sensor/temperature/day"))
+        mockMvc.perform(get("/api/sensor/temperature/day?place=class_a"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))

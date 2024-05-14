@@ -46,8 +46,8 @@ public class HumidityRestController {
      */
     @GetMapping("/day")
     @Operation(summary = "일별 습도 조회")
-    public ResponseEntity<List<HumidityMaxMin>> getDailyHumidity() {
-        return ResponseEntity.ok(humidityService.getDailyHumidity());
+    public ResponseEntity<List<HumidityMaxMin>> getDailyHumidity(@RequestParam String place) {
+        return ResponseEntity.ok(humidityService.getDailyHumidity(place));
     }
 
     /**

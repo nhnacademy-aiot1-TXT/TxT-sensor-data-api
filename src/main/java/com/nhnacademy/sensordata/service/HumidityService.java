@@ -25,7 +25,7 @@ public interface HumidityService {
      *
      * @return 일별 humidity list
      */
-    List<HumidityMaxMin> getDailyHumidity();
+    List<HumidityMaxMin> getDailyHumidity(String place);
 
     /**
      * 일별(00시 ~ 현재시간) 평균 humidity list 조회 메서드

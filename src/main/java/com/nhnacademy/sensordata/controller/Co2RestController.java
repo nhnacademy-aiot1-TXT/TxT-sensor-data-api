@@ -46,8 +46,8 @@ public class Co2RestController {
      */
     @GetMapping("/day")
     @Operation(summary = "일별 Co2 조회")
-    public ResponseEntity<List<Co2MaxMin>> getDailyHumidity() {
-        return ResponseEntity.ok(co2Service.getDailyCo2());
+    public ResponseEntity<List<Co2MaxMin>> getDailyHumidity(@RequestParam String place) {
+        return ResponseEntity.ok(co2Service.getDailyCo2(place));
     }
 
     /**

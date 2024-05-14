@@ -48,8 +48,8 @@ public class TemperatureRestController {
      */
     @GetMapping("/day")
     @Operation(summary = "온도 일간 조회")
-    public ResponseEntity<List<TemperatureMaxMin>> getDailyTemperatures() {
-        List<TemperatureMaxMin> temperatures = temperatureService.getDailyTemperatures();
+    public ResponseEntity<List<TemperatureMaxMin>> getDailyTemperatures(@RequestParam String place) {
+        List<TemperatureMaxMin> temperatures = temperatureService.getDailyTemperatures(place);
 
         return ResponseEntity.ok(temperatures);
     }

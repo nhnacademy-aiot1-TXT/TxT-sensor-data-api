@@ -85,11 +85,11 @@ class IlluminationRestControllerTest {
         List<IlluminationMaxMin> illuminations = List.of(illuminationMaxMinDaily);
 
         // when
-        given(illuminationService.getDailyIlluminations())
+        given(illuminationService.getDailyIlluminations(anyString()))
                 .willReturn(illuminations);
 
         //then
-        mockMvc.perform(get("/api/sensor/illumination/day"))
+        mockMvc.perform(get("/api/sensor/illumination/day?place=class_a"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))

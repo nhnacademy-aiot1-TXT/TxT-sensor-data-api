@@ -61,11 +61,12 @@ class HumidityServiceImplTest {
         Instant time = Instant.now();
         float maxHumidity = 80.0f;
         float minHumidity = 60.0f;
+        String place = "test place";
         HumidityMaxMin humidityDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(HumidityMaxMin.class))).willReturn(List.of(humidityDaily));
 
-        HumidityMaxMin resultHumidity = humidityService.getDailyHumidity().get(0);
+        HumidityMaxMin resultHumidity = humidityService.getDailyHumidity(place).get(0);
 
         assertAll(
                 () -> assertEquals(humidityDaily.getTime(), resultHumidity.getTime()),
