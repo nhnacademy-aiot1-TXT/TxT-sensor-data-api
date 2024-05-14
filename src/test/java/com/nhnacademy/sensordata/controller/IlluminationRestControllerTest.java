@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.controller;
 import com.nhnacademy.sensordata.exception.IlluminationNotFoundException;
 import com.nhnacademy.sensordata.measurement.illumination.Illumination;
 import com.nhnacademy.sensordata.measurement.illumination.IlluminationMaxMin;
+import com.nhnacademy.sensordata.measurement.illumination.IlluminationMean;
 import com.nhnacademy.sensordata.service.IlluminationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -81,6 +83,7 @@ class IlluminationRestControllerTest {
         Instant time = Instant.now();
         Integer maxIllumination = 100;
         Integer minIllumination = 50;
+        String place = "test place";
         IlluminationMaxMin illuminationMaxMinDaily = new IlluminationMaxMin(time, maxIllumination, minIllumination);
         List<IlluminationMaxMin> illuminations = List.of(illuminationMaxMinDaily);
 
@@ -89,12 +92,32 @@ class IlluminationRestControllerTest {
                 .willReturn(illuminations);
 
         //then
-        mockMvc.perform(get("/api/sensor/illumination/day?place=class_a"))
+        mockMvc.perform(get("/api/sensor/illumination/day")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
                 .andExpect(jsonPath("$[0].maxIllumination", equalTo(maxIllumination)))
                 .andExpect(jsonPath("$[0].minIllumination", equalTo(minIllumination)));
+    }
+
+    @Test
+    void getDailyMeanIllumination() throws Exception {
+        Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
+        Float value = 70.0F;
+        String place = "test place";
+        IlluminationMean illuminationMean = new IlluminationMean(time, value);
+        List<IlluminationMean> illuminationMeanList = Collections.singletonList(illuminationMean);
+
+        given(illuminationService.getDailyIlluminationsMean(anyString())).willReturn(illuminationMeanList);
+
+        mockMvc.perform(get("/api/sensor/illumination/day-mean")
+                        .param("place", place))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
+                .andExpect(jsonPath("$[0].value", equalTo(value.doubleValue())));
     }
 
     @Test
