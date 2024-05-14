@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.service.impl;
 import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import com.nhnacademy.sensordata.measurement.temperature.Temperature;
 import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMin;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMean;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,23 @@ public class TemperatureServiceImpl implements TemperatureService {
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
         List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", TemperatureMaxMin.class);
+
+        return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
+    }
+
+    /**
+     * influxdb에서 당일 0시부터 1시간 간격으로 현재까지의 온도 평균을 조회 후 반환하는 메서드
+     *
+     * @return 일간 온도 리스트
+     */
+    @Override
+    public List<TemperatureMean> getDailyTemperaturesMean(String place) {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 0);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
+
+        List<TemperatureMean> temperatures = influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, TemperatureMean.class);
 
         return temperatures.isEmpty() ? Collections.emptyList() : temperatures;
     }
