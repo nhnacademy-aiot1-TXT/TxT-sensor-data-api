@@ -1,11 +1,29 @@
-### 온도 단일 조회
-GET http://localhost:8300/api/sensor/temperature
+### 온도 단일 조회 class_a
+GET http://localhost:8300/api/sensor/temperature?place=class_a
 
-### 온도 일별 조회
-GET http://localhost:8300/api/sensor/temperature/day
+### 온도 단일 조회 class_b
+GET http://localhost:8300/api/sensor/temperature?place=class_b
 
-### 온도 주별 조회
-GET http://localhost:8300/api/sensor/temperature/week
+### 온도 일별 조회 class_a
+GET http://localhost:8300/api/sensor/temperature/day?place=class_a
 
-### 온도 월별 조회
-GET http://localhost:8300/api/sensor/temperature/month
+### 온도 일별 조회 class_b
+GET http://localhost:8300/api/sensor/temperature/day?place=class_b
+
+### 온도 일별 평균 조회 class_a
+GET http://localhost:8300/api/sensor/temperature/day-mean?place=class_a
+
+### 온도 일별 평균 조회 class_b
+GET http://localhost:8300/api/sensor/temperature/day-mean?place=class_b
+
+### 온도 주별 조회 class_a
+GET http://localhost:8300/api/sensor/temperature/week?place=class_a
+
+### 온도 주별 조회 class_b
+GET http://localhost:8300/api/sensor/temperature/week?place=class_b
+
+### 온도 월별 조회 class_a
+GET http://localhost:8300/api/sensor/temperature/month?place=class_a
+
+### 온도 월별 조회 class_b
+GET http://localhost:8300/api/sensor/temperature/month?place=class_b

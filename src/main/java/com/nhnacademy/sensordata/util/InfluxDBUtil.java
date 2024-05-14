@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -143,10 +142,23 @@ public class InfluxDBUtil {
                 .query(fluxQuery.toString(), clazz);
     }
 
-    public <M> List<M> getHourlyMeanData(String collectionType, Class<M> clazz) {
-        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
-        Instant endTime = Instant.now();
-
+    /**
+     * 수집 종류에 대한 일간 평균 리스트 조회
+     *
+     * @param startTime      the start time
+     * @param endTime        the end time
+     * @param collectionType the collection type
+     * @param clazz          the clazz
+     * @param <M>            the type parameter
+     * @return the hourly mean data
+     */
+    @Cacheable(
+            value = "getHourlyMeanData",
+            key = "#collectionType.concat('-').concat(#startTime.toString()).concat('-').concat(#endTime.toString()).concat('-').concat(#place)",
+            cacheManager = "cacheManagerHourly",
+            unless = "#result == null"
+    )
+    public <M> List<M> getHourlyMeanData(Instant startTime, Instant endTime, String collectionType, String place, Class<M> clazz) {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)
                 .filter(measurement().equal(collectionType))
@@ -160,7 +172,7 @@ public class InfluxDBUtil {
                 .withRowKey(new String[]{ROW_KEY})
                 .withColumnKey(new String[]{COLUMN_KEY})
                 .withValueColumn(COLUMN_VALUE)
-                .filter(column("place").equal("class_a"))
+                .filter(column("place").equal(place))
                 .aggregateWindow(1L, ChronoUnit.HOURS, "mean")
                 .withColumn("value")
                 .timeShift(9L, ChronoUnit.HOURS);
