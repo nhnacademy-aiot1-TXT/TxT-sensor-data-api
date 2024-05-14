@@ -36,10 +36,10 @@ class IlluminationServiceTest {
 
         Illumination illumination = new Illumination(time, device, place, topic, value);
 
-        given(influxDBUtil.getSensorData(anyString(), eq(Illumination.class))).willReturn(Optional.of(illumination));
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Illumination.class))).willReturn(Optional.of(illumination));
 
         // when
-        Illumination resultIllumination = illuminationService.getIllumination();
+        Illumination resultIllumination = illuminationService.getIllumination(place);
 
         // then
         assertAll(
@@ -54,9 +54,11 @@ class IlluminationServiceTest {
 
     @Test
     void getIlluminationException() {
-        given(influxDBUtil.getSensorData(anyString(), eq(Illumination.class))).willReturn(Optional.empty());
+        String place = "test place";
 
-        assertThrows(IlluminationNotFoundException.class, () -> illuminationService.getIllumination());
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Illumination.class))).willReturn(Optional.empty());
+
+        assertThrows(IlluminationNotFoundException.class, () -> illuminationService.getIllumination(place));
     }
 
     @Test

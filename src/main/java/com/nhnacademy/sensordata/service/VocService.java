@@ -9,5 +9,5 @@ import com.nhnacademy.sensordata.measurement.voc.Voc;
  * @version 1.0.0
  */
 public interface VocService {
-    Voc getVoc();
+    Voc getVoc(String place);
 }

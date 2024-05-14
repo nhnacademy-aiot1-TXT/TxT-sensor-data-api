@@ -18,7 +18,7 @@ public interface IlluminationService {
      *
      * @return 단일 조도
      */
-    Illumination getIllumination();
+    Illumination getIllumination(String place);
 
     /**
      * 일간 1시간 주기로 만들어진 조도 리스트 조회 메서드

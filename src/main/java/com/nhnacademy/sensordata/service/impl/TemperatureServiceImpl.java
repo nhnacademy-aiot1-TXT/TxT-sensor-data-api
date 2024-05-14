@@ -36,8 +36,8 @@ public class TemperatureServiceImpl implements TemperatureService {
      * @return 단일 온도
      */
     @Override
-    public Temperature getTemperature() {
-        return influxDBUtil.getSensorData(COLLECTION_TYPE, Temperature.class)
+    public Temperature getTemperature(String place) {
+        return influxDBUtil.getSensorData(COLLECTION_TYPE, place, Temperature.class)
                 .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
     }
 

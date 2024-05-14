@@ -36,8 +36,8 @@ public class IlluminationServiceImpl implements IlluminationService {
      * @return 단일조도
      */
     @Override
-    public Illumination getIllumination() {
-        return influxDBUtil.getSensorData(COLLECTION_TYPE, Illumination.class)
+    public Illumination getIllumination(String place) {
+        return influxDBUtil.getSensorData(COLLECTION_TYPE, place, Illumination.class)
                 .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
     }
 

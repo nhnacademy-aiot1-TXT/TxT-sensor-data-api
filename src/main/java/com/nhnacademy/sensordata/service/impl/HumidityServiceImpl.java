@@ -36,8 +36,8 @@ public class HumidityServiceImpl implements HumidityService {
      * @return 단일 humidity
      */
     @Override
-    public Humidity getHumidity() {
-        return influxDBUtil.getSensorData(COLLECTION_TYPE, Humidity.class)
+    public Humidity getHumidity(String place) {
+        return influxDBUtil.getSensorData(COLLECTION_TYPE, place, Humidity.class)
                 .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
     }
 

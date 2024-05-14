@@ -35,8 +35,8 @@ public class IlluminationRestController {
      */
     @GetMapping
     @Operation(summary = "조도 단일 조회")
-    public ResponseEntity<Illumination> getIllumination() {
-        Illumination illumination = illuminationService.getIllumination();
+    public ResponseEntity<Illumination> getIllumination(@RequestParam String place) {
+        Illumination illumination = illuminationService.getIllumination(place);
 
         return ResponseEntity.ok(illumination);
     }

@@ -30,7 +30,6 @@ public class InfluxDBUtil {
     private static final String COLUMN_VALUE = "_value";
     private static final String MAX = "max_";
     private static final String MIN = "min_";
-    private static final String MIDNIGHT_UNIX_TIME = "%sT15:00:00Z";
 
     /**
      * 수집 종류에 대한 단일 조회
@@ -40,7 +39,7 @@ public class InfluxDBUtil {
      * @param clazz          the clazz
      * @return the sensor data
      */
-    public <M> Optional<M> getSensorData(String collectionType, Class<M> clazz) {
+    public <M> Optional<M> getSensorData(String collectionType, String place, Class<M> clazz) {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
                 .range(-5L, ChronoUnit.MINUTES)
                 .filter(measurement().equal(collectionType))
@@ -54,7 +53,7 @@ public class InfluxDBUtil {
                 .withRowKey(new String[]{ROW_KEY})
                 .withColumnKey(new String[]{COLUMN_KEY})
                 .withValueColumn(COLUMN_VALUE)
-                .filter(column("place").equal("class_a"))
+                .filter(column("place").equal(place))
                 .last("value")
                 .timeShift(9L, ChronoUnit.HOURS);
 

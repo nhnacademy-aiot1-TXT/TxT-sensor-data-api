@@ -18,7 +18,7 @@ public interface HumidityService {
      *
      * @return 단일 humidity
      */
-    Humidity getHumidity();
+    Humidity getHumidity(String place);
 
     /**
      * 일별(00시 ~ 현재시간) humidity list 조회 메서드

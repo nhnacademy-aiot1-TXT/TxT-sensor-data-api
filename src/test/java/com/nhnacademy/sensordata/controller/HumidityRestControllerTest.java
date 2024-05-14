@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,9 +41,10 @@ class HumidityRestControllerTest {
         Float value = 20.0f;
         Humidity humidity = new Humidity(time, device, place, topic, value);
 
-        given(humidityService.getHumidity()).willReturn(humidity);
+        given(humidityService.getHumidity(anyString())).willReturn(humidity);
 
-        mockMvc.perform(get("/api/sensor/humidity"))
+        mockMvc.perform(get("/api/sensor/humidity")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -57,10 +59,13 @@ class HumidityRestControllerTest {
     @Test
     void getHumidityException() throws Exception {
         String message = "습도를 찾을수 없습니다.";
-        given(humidityService.getHumidity())
+        String place = "test place";
+
+        given(humidityService.getHumidity(anyString()))
                 .willThrow(new HumidityNotFoundException(message));
 
-        mockMvc.perform(get("/api/sensor/humidity"))
+        mockMvc.perform(get("/api/sensor/humidity")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

@@ -35,8 +35,8 @@ public class HumidityRestController {
      */
     @GetMapping
     @Operation(summary = "단일 습도 조회")
-    public ResponseEntity<Humidity> getHumidity() {
-        return ResponseEntity.ok(humidityService.getHumidity());
+    public ResponseEntity<Humidity> getHumidity(@RequestParam String place) {
+        return ResponseEntity.ok(humidityService.getHumidity(place));
     }
 
     /**

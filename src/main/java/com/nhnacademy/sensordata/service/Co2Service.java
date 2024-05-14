@@ -18,7 +18,7 @@ public interface Co2Service {
      *
      * @return 단일 co2
      */
-    Co2 getCo2();
+    Co2 getCo2(String place);
 
     /**
      * 일별(00시 ~ 현재시간) co2 list 조회 메서드

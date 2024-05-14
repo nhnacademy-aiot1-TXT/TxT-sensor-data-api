@@ -35,8 +35,8 @@ public class Co2RestController {
      */
     @GetMapping
     @Operation(summary = "단일 Co2 조회")
-    public ResponseEntity<Co2> getHumidity() {
-        return ResponseEntity.ok(co2Service.getCo2());
+    public ResponseEntity<Co2> getHumidity(@RequestParam String place) {
+        return ResponseEntity.ok(co2Service.getCo2(place));
     }
 
     /**

@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.Instant;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -37,11 +38,12 @@ class VocRestControllerTest {
         Integer value = 20;
         Voc voc = new Voc(time, device, place, topic, value);
 
-        given(vocService.getVoc()).willReturn(voc);
+        given(vocService.getVoc(anyString())).willReturn(voc);
 
         // when
         // then
-        mockMvc.perform(get("/api/sensor/voc"))
+        mockMvc.perform(get("/api/sensor/voc")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.time", equalTo(time.toString())))
@@ -53,12 +55,14 @@ class VocRestControllerTest {
 
     @Test
     void getVocException() throws Exception {
+        String place = "test place";
         String message = "voc를 찾을 수 없습니다.";
         VocNotFoundException exception = new VocNotFoundException(message);
-        given(vocService.getVoc())
+        given(vocService.getVoc(anyString()))
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/sensor/voc"))
+        mockMvc.perform(get("/api/sensor/voc")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

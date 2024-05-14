@@ -34,9 +34,9 @@ class VocServiceTest {
 
         Voc voc = new Voc(time, device, place, topic, value);
 
-        given(influxDBUtil.getSensorData(anyString(), eq(Voc.class))).willReturn(Optional.of(voc));
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Voc.class))).willReturn(Optional.of(voc));
 
-        Voc resultVoc = vocService.getVoc();
+        Voc resultVoc = vocService.getVoc(place);
 
         assertAll(
                 () -> assertEquals(voc.getTime(), resultVoc.getTime()),
@@ -49,8 +49,10 @@ class VocServiceTest {
 
     @Test
     void getVocException() {
-        given(influxDBUtil.getSensorData(anyString(), eq(Voc.class))).willReturn(Optional.empty());
+        String place = "test place";
 
-        assertThrows(VocNotFoundException.class, () -> vocService.getVoc());
+        given(influxDBUtil.getSensorData(anyString(), place, eq(Voc.class))).willReturn(Optional.empty());
+
+        assertThrows(VocNotFoundException.class, () -> vocService.getVoc(place));
     }
 }

@@ -36,10 +36,10 @@ class TemperatureServiceTest {
 
         Temperature temperature = new Temperature(time, device, place, topic, value);
 
-        given(influxDBUtil.getSensorData(anyString(), eq(Temperature.class))).willReturn(Optional.of(temperature));
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Temperature.class))).willReturn(Optional.of(temperature));
 
         // when
-        Temperature resultTemperature = temperatureService.getTemperature();
+        Temperature resultTemperature = temperatureService.getTemperature(place);
 
         // then
         assertAll(
@@ -54,9 +54,11 @@ class TemperatureServiceTest {
 
     @Test
     void getTemperatureException() {
-        given(influxDBUtil.getSensorData(anyString(), eq(Temperature.class))).willReturn(Optional.empty());
+        String place = "test place";
 
-        assertThrows(TemperatureNotFoundException.class, () -> temperatureService.getTemperature());
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Temperature.class))).willReturn(Optional.empty());
+
+        assertThrows(TemperatureNotFoundException.class, () -> temperatureService.getTemperature(place));
     }
 
     @Test

@@ -36,8 +36,8 @@ public class Co2ServiceImpl implements Co2Service {
      * @return 단일 co2
      */
     @Override
-    public Co2 getCo2() {
-        return influxDBUtil.getSensorData(COLLECTION_TYPE, Co2.class)
+    public Co2 getCo2(String place) {
+        return influxDBUtil.getSensorData(COLLECTION_TYPE, place, Co2.class)
                 .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
     }
 
@@ -68,7 +68,7 @@ public class Co2ServiceImpl implements Co2Service {
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 0);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
-        
+
         List<Co2Mean> co2List = influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, Co2Mean.class);
 
         return co2List.isEmpty() ? Collections.emptyList() : co2List;
