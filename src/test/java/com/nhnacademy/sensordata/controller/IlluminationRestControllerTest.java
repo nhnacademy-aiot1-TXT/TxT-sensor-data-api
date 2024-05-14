@@ -103,15 +103,17 @@ class IlluminationRestControllerTest {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
         Integer maxIllumination = 100;
         Integer minIllumination = 50;
+        String place = "test place";
         IlluminationMaxMin illuminationMaxMinDaily = new IlluminationMaxMin(time, maxIllumination, minIllumination);
         List<IlluminationMaxMin> illuminations = List.of(illuminationMaxMinDaily);
 
         // when
-        given(illuminationService.getWeeklyIlluminations())
+        given(illuminationService.getWeeklyIlluminations(anyString()))
                 .willReturn(illuminations);
 
         //then
-        mockMvc.perform(get("/api/sensor/illumination/week"))
+        mockMvc.perform(get("/api/sensor/illumination/week")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
@@ -122,11 +124,14 @@ class IlluminationRestControllerTest {
     @Test
     void getWeeklyIlluminationsException() throws Exception {
         String message = "조도를 찾을 수 없습니다.";
+        String place = "test place";
         IlluminationNotFoundException exception = new IlluminationNotFoundException(message);
-        given(illuminationService.getWeeklyIlluminations())
+
+        given(illuminationService.getWeeklyIlluminations(anyString()))
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/sensor/illumination/week"))
+        mockMvc.perform(get("/api/sensor/illumination/week")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

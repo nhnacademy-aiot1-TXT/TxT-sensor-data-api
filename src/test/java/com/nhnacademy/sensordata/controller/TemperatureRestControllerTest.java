@@ -104,15 +104,17 @@ class TemperatureRestControllerTest {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
         Float maxTemperature = 24.0f;
         Float minTemperature = 20.0f;
+        String place = "test place";
         TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, maxTemperature, minTemperature);
         List<TemperatureMaxMin> temperatures = List.of(temperatureMaxMinDaily);
 
-        given(temperatureService.getWeeklyTemperatures())
+        given(temperatureService.getWeeklyTemperatures(anyString()))
                 .willReturn(temperatures);
 
         // when
         // then
-        mockMvc.perform(get("/api/sensor/temperature/week"))
+        mockMvc.perform(get("/api/sensor/temperature/week")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
@@ -123,11 +125,14 @@ class TemperatureRestControllerTest {
     @Test
     void getWeeklyTemperaturesException() throws Exception {
         String message = "온도를 찾을 수 없습니다.";
+        String place = "test place";
         TemperatureNotFoundException exception = new TemperatureNotFoundException(message);
-        given(temperatureService.getWeeklyTemperatures())
+
+        given(temperatureService.getWeeklyTemperatures(anyString()))
                 .willThrow(exception);
 
-        mockMvc.perform(get("/api/sensor/temperature/week"))
+        mockMvc.perform(get("/api/sensor/temperature/week")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

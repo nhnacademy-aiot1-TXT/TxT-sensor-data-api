@@ -81,7 +81,7 @@ public class TemperatureServiceImpl implements TemperatureService {
      * @return 주간 온도 리스트
      */
     @Override
-    public List<TemperatureMaxMin> getWeeklyTemperatures() {
+    public List<TemperatureMaxMin> getWeeklyTemperatures(String place) {
         Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusWeeks(1)));
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);

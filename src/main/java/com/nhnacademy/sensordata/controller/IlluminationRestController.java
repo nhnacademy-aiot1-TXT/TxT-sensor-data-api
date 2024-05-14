@@ -74,8 +74,8 @@ public class IlluminationRestController {
      */
     @GetMapping("/week")
     @Operation(summary = "조도 주간 조회")
-    public ResponseEntity<List<IlluminationMaxMin>> getWeeklyIlluminations() {
-        List<IlluminationMaxMin> illuminations = illuminationService.getWeeklyIlluminations();
+    public ResponseEntity<List<IlluminationMaxMin>> getWeeklyIlluminations(@RequestParam String place) {
+        List<IlluminationMaxMin> illuminations = illuminationService.getWeeklyIlluminations(place);
 
         return ResponseEntity.ok(illuminations);
     }

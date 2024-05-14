@@ -40,7 +40,7 @@ public interface HumidityService {
      *
      * @return 주별 humidity list
      */
-    List<HumidityMaxMin> getWeeklyHumidity();
+    List<HumidityMaxMin> getWeeklyHumidity(String place);
 
     /**
      * 월별(한달간 1일 간격) humidity list 조회 메서드

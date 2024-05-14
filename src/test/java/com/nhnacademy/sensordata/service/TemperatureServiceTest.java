@@ -94,6 +94,7 @@ class TemperatureServiceTest {
         Float dailyMinTemperature = 18.0f;
         Float weeklyMaxTemperature = 24.0f;
         Float weeklyMinTemperature = 20.0f;
+        String place = "test place";
 
         TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, dailyMaxTemperature, dailyMinTemperature);
         TemperatureMaxMin temperatureMaxMinWeekly = new TemperatureMaxMin(time, weeklyMaxTemperature, weeklyMinTemperature);
@@ -103,7 +104,7 @@ class TemperatureServiceTest {
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(TemperatureMaxMin.class))).willReturn(Optional.of(temperatureMaxMinDaily));
 
         // then
-        List<TemperatureMaxMin> weeklyTemperatures = temperatureService.getWeeklyTemperatures();
+        List<TemperatureMaxMin> weeklyTemperatures = temperatureService.getWeeklyTemperatures(place);
 
         assertAll(
                 () -> assertNotNull(weeklyTemperatures),
@@ -123,13 +124,14 @@ class TemperatureServiceTest {
         Instant time = Instant.now();
         Float weeklyMaxTemperature = 24.0f;
         Float weeklyMinTemperature = 20.0f;
+        String place = "test place";
 
         TemperatureMaxMin temperatureMaxMinWeekly = new TemperatureMaxMin(time, weeklyMaxTemperature, weeklyMinTemperature);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(TemperatureMaxMin.class))).willReturn(new ArrayList<>(List.of(temperatureMaxMinWeekly)));
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(TemperatureMaxMin.class))).willReturn(Optional.empty());
 
-        assertThrows(TemperatureNotFoundException.class, () -> temperatureService.getWeeklyTemperatures());
+        assertThrows(TemperatureNotFoundException.class, () -> temperatureService.getWeeklyTemperatures(place));
     }
 
     @Test

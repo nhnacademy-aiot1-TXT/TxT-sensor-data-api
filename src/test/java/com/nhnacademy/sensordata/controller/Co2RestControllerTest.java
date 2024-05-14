@@ -96,12 +96,14 @@ class Co2RestControllerTest {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
         Integer maxCo2 = 80;
         Integer minCo2 = 60;
+        String place = "test place";
         Co2MaxMin co2MaxMinDaily = new Co2MaxMin(time, maxCo2, minCo2);
         List<Co2MaxMin> co2MaxMinList = Collections.singletonList(co2MaxMinDaily);
 
-        given(co2Service.getWeeklyCo2()).willReturn(co2MaxMinList);
+        given(co2Service.getWeeklyCo2(anyString())).willReturn(co2MaxMinList);
 
-        mockMvc.perform(get("/api/sensor/co2/week"))
+        mockMvc.perform(get("/api/sensor/co2/week")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -114,10 +116,12 @@ class Co2RestControllerTest {
     @Test
     void getWeeklyCo2Exception() throws Exception {
         String message = "Co2를 찾을수 없습니다.";
-        given(co2Service.getWeeklyCo2())
+        String place = "test place";
+        given(co2Service.getWeeklyCo2(anyString()))
                 .willThrow(new HumidityNotFoundException(message));
 
-        mockMvc.perform(get("/api/sensor/co2/week"))
+        mockMvc.perform(get("/api/sensor/co2/week")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
