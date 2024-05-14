@@ -1,8 +1,14 @@
-### 조도 단일 조회
-GET http://localhost:8300/api/sensor/illumination
+### 조도 단일 조회 class_a
+GET http://localhost:8300/api/sensor/illumination?place=class_a
 
-### 조도 일별 조회
-GET http://localhost:8300/api/sensor/illumination/day
+### 조도 단일 조회 class_b
+GET http://localhost:8300/api/sensor/illumination?place=class_b
+
+### 조도 일별 조회 class_a
+GET http://localhost:8300/api/sensor/illumination/day?place=class_a
+
+### 조도 일별 조회 class_b
+GET http://localhost:8300/api/sensor/illumination/day?place=class_b
 
 ### 조도 일별 평균 조회 class_a
 GET http://localhost:8300/api/sensor/illumination/day-mean?place=class_a
@@ -10,8 +16,14 @@ GET http://localhost:8300/api/sensor/illumination/day-mean?place=class_a
 ### 조도 일별 평균 조회 class_b
 GET http://localhost:8300/api/sensor/illumination/day-mean?place=class_b
 
-### 조도 주별 조회
-GET http://localhost:8300/api/sensor/illumination/week
+### 조도 주별 조회 class_a
+GET http://localhost:8300/api/sensor/illumination/week?place=class_a
 
-### 조도 월별 조회
-GET http://localhost:8300/api/sensor/illumination/month
+### 조도 주별 조회 class_b
+GET http://localhost:8300/api/sensor/illumination/week?place=class_b
+
+### 조도 월별 조회 class_a
+GET http://localhost:8300/api/sensor/illumination/month?place=class_a
+
+### 조도 월별 조회 class_b
+GET http://localhost:8300/api/sensor/illumination/month?place=class_b
