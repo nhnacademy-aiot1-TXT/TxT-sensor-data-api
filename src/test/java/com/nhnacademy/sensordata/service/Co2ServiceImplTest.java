@@ -115,13 +115,14 @@ class Co2ServiceImplTest {
         Integer monthlyMinCo2 = 60;
         Integer dailyMaxCo2 = 80;
         Integer dailyMinCo2 = 60;
+        String place = "test place";
         Co2MaxMin co2Monthly = new Co2MaxMin(time, monthlyMaxCo2, monthlyMinCo2);
         Co2MaxMin co2Daily = new Co2MaxMin(time, dailyMaxCo2, dailyMinCo2);
 
         given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(new ArrayList<>(List.of(co2Monthly)));
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.of(co2Daily));
 
-        List<Co2MaxMin> resultCo2 = co2Service.getMonthlyCo2();
+        List<Co2MaxMin> resultCo2 = co2Service.getMonthlyCo2(place);
 
         assertAll(
                 () -> assertEquals(co2Monthly.getTime(), resultCo2.get(0).getTime()),
@@ -135,8 +136,9 @@ class Co2ServiceImplTest {
 
     @Test
     void getMonthlyCo2Exception() {
+        String place = "test place";
         given(influxDBUtil.getLastSensorData(any(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.empty());
 
-        assertThrows(Co2NotFoundException.class, () -> co2Service.getMonthlyCo2());
+        assertThrows(Co2NotFoundException.class, () -> co2Service.getMonthlyCo2(place));
     }
 }
