@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.controller;
 import com.nhnacademy.sensordata.exception.TemperatureNotFoundException;
 import com.nhnacademy.sensordata.measurement.temperature.Temperature;
 import com.nhnacademy.sensordata.measurement.temperature.TemperatureMaxMin;
+import com.nhnacademy.sensordata.measurement.temperature.TemperatureMean;
 import com.nhnacademy.sensordata.service.TemperatureService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -82,6 +84,7 @@ class TemperatureRestControllerTest {
         Instant time = Instant.now();
         Float maxTemperature = 24.0f;
         Float minTemperature = 20.0f;
+        String place = "test place";
         TemperatureMaxMin temperatureMaxMinDaily = new TemperatureMaxMin(time, maxTemperature, minTemperature);
         List<TemperatureMaxMin> temperatures = List.of(temperatureMaxMinDaily);
 
@@ -90,12 +93,32 @@ class TemperatureRestControllerTest {
 
         // when
         // then
-        mockMvc.perform(get("/api/sensor/temperature/day?place=class_a"))
+        mockMvc.perform(get("/api/sensor/temperature/day")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
                 .andExpect(jsonPath("$[0].maxTemperature", equalTo(maxTemperature.doubleValue())))
                 .andExpect(jsonPath("$[0].minTemperature", equalTo(minTemperature.doubleValue())));
+    }
+
+    @Test
+    void getDailyMeanTemperature() throws Exception {
+        Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
+        Float value = 70.0F;
+        String place = "test place";
+        TemperatureMean temperatureMean = new TemperatureMean(time, value);
+        List<TemperatureMean> temperatureMeanList = Collections.singletonList(temperatureMean);
+
+        given(temperatureService.getDailyTemperaturesMean(anyString())).willReturn(temperatureMeanList);
+
+        mockMvc.perform(get("/api/sensor/temperature/day-mean")
+                        .param("place", place))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
+                .andExpect(jsonPath("$[0].value", equalTo(value.doubleValue())));
     }
 
     @Test
