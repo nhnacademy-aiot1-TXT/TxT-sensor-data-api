@@ -70,7 +70,9 @@ public class HumidityServiceImpl implements HumidityService {
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 0);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
 
-        return influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, HumidityMean.class);
+        List<HumidityMean> humidityList = influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, HumidityMean.class);
+
+        return humidityList.isEmpty() ? Collections.emptyList() : humidityList;
     }
 
     /**

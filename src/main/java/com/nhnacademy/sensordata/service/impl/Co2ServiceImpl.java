@@ -68,8 +68,10 @@ public class Co2ServiceImpl implements Co2Service {
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 0);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
+        
+        List<Co2Mean> co2List = influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, Co2Mean.class);
 
-        return influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, Co2Mean.class);
+        return co2List.isEmpty() ? Collections.emptyList() : co2List;
     }
 
     /**
