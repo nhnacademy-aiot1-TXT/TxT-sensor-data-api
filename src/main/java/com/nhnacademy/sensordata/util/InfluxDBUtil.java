@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class InfluxDBUtil {
     private static final String COLUMN_VALUE = "_value";
     private static final String MAX = "max_";
     private static final String MIN = "min_";
+    private static final String MIDNIGHT_UNIX_TIME = "%sT15:00:00Z";
 
     /**
      * 수집 종류에 대한 단일 조회
@@ -41,7 +43,7 @@ public class InfluxDBUtil {
      */
     public <M> Optional<M> getSensorData(String collectionType, Class<M> clazz) {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.MINUTES)
+                .range(-5L, ChronoUnit.MINUTES)
                 .filter(measurement().equal(collectionType))
                 .filter(or(
                         field().equal("device"),
@@ -49,11 +51,12 @@ public class InfluxDBUtil {
                         field().equal("topic"),
                         field().equal("value")
                 ))
-                .last()
                 .pivot()
                 .withRowKey(new String[]{ROW_KEY})
                 .withColumnKey(new String[]{COLUMN_KEY})
                 .withValueColumn(COLUMN_VALUE)
+                .filter(column("place").equal("class_a"))
+                .last("value")
                 .timeShift(9L, ChronoUnit.HOURS);
 
         return influxDBClient.getQueryApi()
@@ -134,6 +137,32 @@ public class InfluxDBUtil {
                 .withRowKey(new String[]{ROW_KEY})
                 .withColumnKey(new String[]{COLUMN_KEY})
                 .withValueColumn(COLUMN_VALUE)
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        return influxDBClient.getQueryApi()
+                .query(fluxQuery.toString(), clazz);
+    }
+
+    public <M> List<M> getHourlyMeanData(String collectionType, Class<M> clazz) {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
+        Instant endTime = Instant.now();
+
+        Flux fluxQuery = Flux.from(BUCKET_NAME)
+                .range(startTime, endTime)
+                .filter(measurement().equal(collectionType))
+                .filter(or(
+                        field().equal("device"),
+                        field().equal("place"),
+                        field().equal("topic"),
+                        field().equal("value")
+                ))
+                .pivot()
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
+                .filter(column("place").equal("class_a"))
+                .aggregateWindow(1L, ChronoUnit.HOURS, "mean")
+                .withColumn("value")
                 .timeShift(9L, ChronoUnit.HOURS);
 
         return influxDBClient.getQueryApi()
