@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.measurement.co2.Co2;
 import com.nhnacademy.sensordata.measurement.co2.Co2MaxMin;
+import com.nhnacademy.sensordata.measurement.co2.Co2Mean;
 
 import java.util.List;
 
@@ -25,6 +26,14 @@ public interface Co2Service {
      * @return 일별 co2 list
      */
     List<Co2MaxMin> getDailyCo2();
+
+    /**
+     * 일별(00시 ~ 현재시간) 평균 co2 list 조회 메서드
+     *
+     * @param place
+     * @return 일별 평균 co2 list
+     */
+    List<Co2Mean> getDailyMeanCo2(String place);
 
     /**
      * 주별(일주일간 1일 간격) co2 list 조회 메서드
