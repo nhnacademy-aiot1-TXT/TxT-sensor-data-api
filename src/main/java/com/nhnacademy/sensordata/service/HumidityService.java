@@ -2,6 +2,7 @@ package com.nhnacademy.sensordata.service;
 
 import com.nhnacademy.sensordata.measurement.humidity.Humidity;
 import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMin;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMean;
 
 import java.util.List;
 
@@ -25,6 +26,8 @@ public interface HumidityService {
      * @return 일별 humidity list
      */
     List<HumidityMaxMin> getDailyHumidity();
+
+    List<HumidityMean> getDailyMeanHumidity(String place);
 
     /**
      * 주별(일주일간 1일 간격) humidity list 조회 메서드

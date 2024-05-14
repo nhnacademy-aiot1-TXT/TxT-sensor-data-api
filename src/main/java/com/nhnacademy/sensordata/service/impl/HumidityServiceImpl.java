@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.service.impl;
 import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.measurement.humidity.Humidity;
 import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMin;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMean;
 import com.nhnacademy.sensordata.service.HumidityService;
 import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,21 @@ public class HumidityServiceImpl implements HumidityService {
         List<HumidityMaxMin> dailyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", HumidityMaxMin.class);
 
         return dailyList.isEmpty() ? Collections.emptyList() : dailyList;
+    }
+
+    /**
+     * 일별(00시 ~ 현재시간) 1시간 간격 평균 humidity list
+     *
+     * @return 일별 평균 humidity list
+     */
+    @Override
+    public List<HumidityMean> getDailyMeanHumidity(String place) {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 0);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
+
+        return influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, HumidityMean.class);
     }
 
     /**
