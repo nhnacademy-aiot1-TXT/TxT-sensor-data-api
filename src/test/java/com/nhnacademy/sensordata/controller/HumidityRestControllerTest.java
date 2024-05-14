@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -75,9 +76,9 @@ class HumidityRestControllerTest {
         HumidityMaxMin humidityMaxMinDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
         List<HumidityMaxMin> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
-        given(humidityService.getDailyHumidity()).willReturn(humidityMaxMinList);
+        given(humidityService.getDailyHumidity(anyString())).willReturn(humidityMaxMinList);
 
-        mockMvc.perform(get("/api/sensor/humidity/day"))
+        mockMvc.perform(get("/api/sensor/humidity/day?place=class_a"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
