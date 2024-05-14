@@ -47,7 +47,7 @@ public class Co2ServiceImpl implements Co2Service {
      * @return 일별 co2 list
      */
     @Override
-    public List<Co2MaxMin> getDailyCo2() {
+    public List<Co2MaxMin> getDailyCo2(String place) {
         Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
@@ -68,7 +68,7 @@ public class Co2ServiceImpl implements Co2Service {
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 0);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
-        
+
         List<Co2Mean> co2List = influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, Co2Mean.class);
 
         return co2List.isEmpty() ? Collections.emptyList() : co2List;

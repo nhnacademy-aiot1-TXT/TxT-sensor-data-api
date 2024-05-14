@@ -25,7 +25,7 @@ public interface IlluminationService {
      *
      * @return 일간 조도 리스트
      */
-    List<IlluminationMaxMin> getDailyIlluminations();
+    List<IlluminationMaxMin> getDailyIlluminations(String place);
 
     /**
      * 일간 1시간 주기 평균으로 만들어진 조도 리스트 조회 메서드

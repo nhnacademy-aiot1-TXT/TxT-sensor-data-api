@@ -25,7 +25,7 @@ public interface TemperatureService {
      *
      * @return 일간 온도 리스트
      */
-    List<TemperatureMaxMin> getDailyTemperatures();
+    List<TemperatureMaxMin> getDailyTemperatures(String place);
 
     /**
      * 일간 1시간 주기 평균으로 만들어진 온도 리스트 조회 메서드

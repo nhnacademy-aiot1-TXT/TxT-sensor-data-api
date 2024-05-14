@@ -47,7 +47,7 @@ public class IlluminationServiceImpl implements IlluminationService {
      * @return 일간 조도 리스트
      */
     @Override
-    public List<IlluminationMaxMin> getDailyIlluminations() {
+    public List<IlluminationMaxMin> getDailyIlluminations(String place) {
         Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
         LocalDateTime now = LocalDateTime.now().minusHours(9);
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
