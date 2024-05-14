@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.service.impl;
 import com.nhnacademy.sensordata.exception.Co2NotFoundException;
 import com.nhnacademy.sensordata.measurement.co2.Co2;
 import com.nhnacademy.sensordata.measurement.co2.Co2MaxMin;
+import com.nhnacademy.sensordata.measurement.co2.Co2Mean;
 import com.nhnacademy.sensordata.service.Co2Service;
 import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,23 @@ public class Co2ServiceImpl implements Co2Service {
         LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 1);
         Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
         List<Co2MaxMin> co2List = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_hourly", Co2MaxMin.class);
+
+        return co2List.isEmpty() ? Collections.emptyList() : co2List;
+    }
+
+    /**
+     * 일별(00시 ~ 현재시간) 1시간 간격 평균 co2 list
+     *
+     * @return 일별 평균 co2 list
+     */
+    @Override
+    public List<Co2Mean> getDailyMeanCo2(String place) {
+        Instant startTime = Instant.parse(String.format(MIDNIGHT_UNIX_TIME, LocalDate.now().minusDays(1)));
+        LocalDateTime now = LocalDateTime.now().minusHours(9);
+        LocalDateTime end = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), now.getHour(), 0, 0);
+        Instant endTime = Instant.ofEpochSecond(end.toEpochSecond(ZoneOffset.UTC));
+        
+        List<Co2Mean> co2List = influxDBUtil.getHourlyMeanData(startTime, endTime, COLLECTION_TYPE, place, Co2Mean.class);
 
         return co2List.isEmpty() ? Collections.emptyList() : co2List;
     }
