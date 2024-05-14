@@ -142,6 +142,22 @@ public class InfluxDBUtil {
                 .query(fluxQuery.toString(), clazz);
     }
 
+    /**
+     * 수집 종류에 대한 일간 평균 리스트 조회
+     *
+     * @param startTime      the start time
+     * @param endTime        the end time
+     * @param collectionType the collection type
+     * @param clazz          the clazz
+     * @param <M>            the type parameter
+     * @return the hourly mean data
+     */
+    @Cacheable(
+            value = "getHourlyMeanData",
+            key = "#collectionType.concat('-').concat(#startTime.toString()).concat('-').concat(#endTime.toString()).concat('-').concat(#place)",
+            cacheManager = "cacheManagerHourly",
+            unless = "#result == null"
+    )
     public <M> List<M> getHourlyMeanData(Instant startTime, Instant endTime, String collectionType, String place, Class<M> clazz) {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)
