@@ -1,7 +1,7 @@
 ### 습도 단일 데이터 class_a
 GET localhost:8300/api/sensor/humidity?place=class_a
 
-### 습도 단일 데이터 class_a
+### 습도 단일 데이터 class_b
 GET localhost:8300/api/sensor/humidity?place=class_b
 
 ### 습도 일간 데이터
