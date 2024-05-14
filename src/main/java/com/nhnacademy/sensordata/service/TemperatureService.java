@@ -16,6 +16,7 @@ public interface TemperatureService {
     /**
      * 온도 단일 조회 메서드
      *
+     * @param place 장소
      * @return 단일 온도
      */
     Temperature getTemperature(String place);
@@ -23,6 +24,7 @@ public interface TemperatureService {
     /**
      * 일간 1시간 주기로 만들어진 온도 리스트 조회 메서드
      *
+     * @param place 장소
      * @return 일간 온도 리스트
      */
     List<TemperatureMaxMin> getDailyTemperatures(String place);
@@ -30,6 +32,7 @@ public interface TemperatureService {
     /**
      * 일간 1시간 주기 평균으로 만들어진 온도 리스트 조회 메서드
      *
+     * @param place 장소
      * @return 일간 온도 리스트
      */
     List<TemperatureMean> getDailyTemperaturesMean(String place);
@@ -37,6 +40,7 @@ public interface TemperatureService {
     /**
      * 주간 하루 주기로 만들어진 온도 리스트 조회 메서드
      *
+     * @param place 장소
      * @return 주간 온도 리스트
      */
     List<TemperatureMaxMin> getWeeklyTemperatures(String place);
@@ -44,6 +48,7 @@ public interface TemperatureService {
     /**
      * 월간 하루 주기로 만들어진 온도 리스트 조회 메서드
      *
+     * @param place 장소
      * @return 월간 온도 리스트
      */
     List<TemperatureMaxMin> getMonthlyTemperatures(String place);
