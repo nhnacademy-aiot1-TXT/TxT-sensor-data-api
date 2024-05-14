@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.controller;
 import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.measurement.humidity.Humidity;
 import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMin;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMean;
 import com.nhnacademy.sensordata.service.HumidityService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,12 +78,14 @@ class HumidityRestControllerTest {
         Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
         Float maxHumidity = 80.0f;
         Float minHumidity = 60.0f;
+        String place = "test place";
         HumidityMaxMin humidityMaxMinDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
         List<HumidityMaxMin> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
         given(humidityService.getDailyHumidity(anyString())).willReturn(humidityMaxMinList);
 
-        mockMvc.perform(get("/api/sensor/humidity/day?place=class_a"))
+        mockMvc.perform(get("/api/sensor/humidity/day")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -90,6 +93,25 @@ class HumidityRestControllerTest {
                 .andExpect(jsonPath("$[0].maxHumidity", equalTo(maxHumidity.doubleValue())))
                 .andExpect(jsonPath("$[0].minHumidity", equalTo(minHumidity.doubleValue())))
                 .andReturn();
+    }
+
+    @Test
+    void getDailyMeanHumidity() throws Exception {
+        Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
+        Float value = 70.0F;
+        String place = "test place";
+        HumidityMean humidityMean = new HumidityMean(time, value);
+        List<HumidityMean> humidityMeanList = Collections.singletonList(humidityMean);
+
+        given(humidityService.getDailyMeanHumidity(anyString())).willReturn(humidityMeanList);
+
+        mockMvc.perform(get("/api/sensor/humidity/day-mean")
+                        .param("place", place))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
+                .andExpect(jsonPath("$[0].value", equalTo(value.doubleValue())));
     }
 
     @Test
