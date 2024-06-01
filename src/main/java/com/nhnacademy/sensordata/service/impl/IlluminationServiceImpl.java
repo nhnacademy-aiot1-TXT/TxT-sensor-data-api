@@ -29,6 +29,7 @@ public class IlluminationServiceImpl implements IlluminationService {
     private final InfluxDBUtil influxDBUtil;
     private static final String COLLECTION_TYPE = "illumination";
     private static final String MIDNIGHT_UNIX_TIME = "%sT15:00:00Z";
+    private static final String ILLUMINATION_NOT_FOUND_MESSAGE = "조도를 찾을 수 없습니다.";
 
     /**
      * influxdb에서 최신 조도를 조회 후 반환하는 메서드
@@ -39,7 +40,7 @@ public class IlluminationServiceImpl implements IlluminationService {
     @Override
     public Illumination getIllumination(String place) {
         return influxDBUtil.getSensorData(COLLECTION_TYPE, place, Illumination.class)
-                .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IlluminationNotFoundException(ILLUMINATION_NOT_FOUND_MESSAGE));
     }
 
     /**
@@ -94,7 +95,7 @@ public class IlluminationServiceImpl implements IlluminationService {
         List<IlluminationMaxMin> illuminations = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, IlluminationMaxMin.class);
         ;
         IlluminationMaxMin illuminationMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, IlluminationMaxMin.class)
-                .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IlluminationNotFoundException(ILLUMINATION_NOT_FOUND_MESSAGE));
 
         if (Objects.nonNull(illuminationMaxMinDaily)) {
             illuminations.add(new IlluminationMaxMin(
@@ -122,7 +123,7 @@ public class IlluminationServiceImpl implements IlluminationService {
 
         List<IlluminationMaxMin> illuminations = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, IlluminationMaxMin.class);
         IlluminationMaxMin illuminationMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, IlluminationMaxMin.class)
-                .orElseThrow(() -> new IlluminationNotFoundException("조도를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IlluminationNotFoundException(ILLUMINATION_NOT_FOUND_MESSAGE));
 
         if (Objects.nonNull(illuminationMaxMinDaily)) {
             illuminations.add(new IlluminationMaxMin(

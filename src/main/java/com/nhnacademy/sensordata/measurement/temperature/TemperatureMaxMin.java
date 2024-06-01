@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.Instant;
 
 /**
- * 온도 일별 조회 measurement class
+ * 온도 최댓값, 최솟값 조회 measurement class
  *
  * @author parksangwon
  * @version 1.0.0

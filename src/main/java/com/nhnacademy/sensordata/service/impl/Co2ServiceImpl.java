@@ -29,6 +29,7 @@ public class Co2ServiceImpl implements Co2Service {
     private final InfluxDBUtil influxDBUtil;
     private static final String COLLECTION_TYPE = "co2";
     private static final String MIDNIGHT_UNIX_TIME = "%sT15:00:00Z";
+    private static final String CO2_NOT_FOUND_MESSAGE = "Co2 정보를 찾을 수 없습니다";
 
     /**
      * 가장 최신 co2 조회 메서드
@@ -39,7 +40,7 @@ public class Co2ServiceImpl implements Co2Service {
     @Override
     public Co2 getCo2(String place) {
         return influxDBUtil.getSensorData(COLLECTION_TYPE, place, Co2.class)
-                .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
+                .orElseThrow(() -> new Co2NotFoundException(CO2_NOT_FOUND_MESSAGE));
     }
 
     /**
@@ -94,7 +95,7 @@ public class Co2ServiceImpl implements Co2Service {
         List<Co2MaxMin> weeklyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, Co2MaxMin.class);
 
         Co2MaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, Co2MaxMin.class)
-                .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
+                .orElseThrow(() -> new Co2NotFoundException(CO2_NOT_FOUND_MESSAGE));
 
         if (Objects.nonNull(lastHour)) {
             weeklyList.add(new Co2MaxMin(lastHour.getTime(), lastHour.getMaxCo2(), lastHour.getMinCo2()));
@@ -119,7 +120,7 @@ public class Co2ServiceImpl implements Co2Service {
         List<Co2MaxMin> monthlyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, Co2MaxMin.class);
 
         Co2MaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, Co2MaxMin.class)
-                .orElseThrow(() -> new Co2NotFoundException("Co2 정보를 찾을 수 없습니다"));
+                .orElseThrow(() -> new Co2NotFoundException(CO2_NOT_FOUND_MESSAGE));
 
         if (Objects.nonNull(lastHour)) {
             monthlyList.add(new Co2MaxMin(lastHour.getTime(), lastHour.getMaxCo2(), lastHour.getMinCo2()));

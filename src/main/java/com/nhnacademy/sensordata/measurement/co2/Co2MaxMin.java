@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.Instant;
 
 /**
- * co2 일별 조회 measurement class
+ * co2 최댓값, 최솟값 조회 measurement class
  *
  * @author jongsikk
  * @version 1.0.0

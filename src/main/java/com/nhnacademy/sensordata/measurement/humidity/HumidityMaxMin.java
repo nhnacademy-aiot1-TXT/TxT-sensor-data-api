@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.Instant;
 
 /**
- * humidity 일별 조회 measurement class
+ * humidity 최댓값, 최솟값 조회 measurement class
  *
  * @author jongsikk
  * @version 1.0.0

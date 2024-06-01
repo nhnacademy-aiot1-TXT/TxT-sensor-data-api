@@ -29,6 +29,7 @@ public class HumidityServiceImpl implements HumidityService {
     private final InfluxDBUtil influxDBUtil;
     private static final String COLLECTION_TYPE = "humidity";
     private static final String MIDNIGHT_UNIX_TIME = "%sT15:00:00Z";
+    private static final String HUMIDITY_NOT_FOUND_MESSAGE = "습도 정보를 찾을 수 없습니다.";
 
     /**
      * 가장 최신 humidity 조회 메서드
@@ -39,7 +40,7 @@ public class HumidityServiceImpl implements HumidityService {
     @Override
     public Humidity getHumidity(String place) {
         return influxDBUtil.getSensorData(COLLECTION_TYPE, place, Humidity.class)
-                .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new HumidityNotFoundException(HUMIDITY_NOT_FOUND_MESSAGE));
     }
 
     /**
@@ -94,7 +95,7 @@ public class HumidityServiceImpl implements HumidityService {
         List<HumidityMaxMin> weeklyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, HumidityMaxMin.class);
 
         HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, HumidityMaxMin.class)
-                .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new HumidityNotFoundException(HUMIDITY_NOT_FOUND_MESSAGE));
 
         if (Objects.nonNull(lastHour)) {
             weeklyList.add(new HumidityMaxMin(lastHour.getTime(), lastHour.getMaxHumidity(), lastHour.getMinHumidity()));
@@ -119,7 +120,7 @@ public class HumidityServiceImpl implements HumidityService {
         List<HumidityMaxMin> monthlyList = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, HumidityMaxMin.class);
 
         HumidityMaxMin lastHour = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, HumidityMaxMin.class)
-                .orElseThrow(() -> new HumidityNotFoundException("습도 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new HumidityNotFoundException(HUMIDITY_NOT_FOUND_MESSAGE));
 
         if (Objects.nonNull(lastHour)) {
             monthlyList.add(new HumidityMaxMin(lastHour.getTime(), lastHour.getMaxHumidity(), lastHour.getMinHumidity()));
