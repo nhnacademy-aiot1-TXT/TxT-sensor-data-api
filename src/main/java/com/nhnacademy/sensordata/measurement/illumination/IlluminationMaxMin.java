@@ -10,7 +10,7 @@ import java.time.Instant;
 
 
 /**
- * 조도 일별 조회 measurement class
+ * 조도 최댓값, 최솟값 조회 measurement class
  *
  * @author parksangwon
  * @version 1.0.0
