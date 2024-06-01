@@ -29,6 +29,7 @@ public class TemperatureServiceImpl implements TemperatureService {
     private final InfluxDBUtil influxDBUtil;
     private static final String COLLECTION_TYPE = "temperature";
     private static final String MIDNIGHT_UNIX_TIME = "%sT15:00:00Z";
+    private static final String TEMPERATURE_NOT_FOUND_MESSAGE = "온도를 찾을 수 없습니다.";
 
     /**
      * influxdb에서 최신 온도를 조회 후 반환하는 메서드
@@ -39,7 +40,7 @@ public class TemperatureServiceImpl implements TemperatureService {
     @Override
     public Temperature getTemperature(String place) {
         return influxDBUtil.getSensorData(COLLECTION_TYPE, place, Temperature.class)
-                .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TemperatureNotFoundException(TEMPERATURE_NOT_FOUND_MESSAGE));
     }
 
     /**
@@ -93,7 +94,7 @@ public class TemperatureServiceImpl implements TemperatureService {
 
         List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, TemperatureMaxMin.class);
         TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, TemperatureMaxMin.class)
-                .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TemperatureNotFoundException(TEMPERATURE_NOT_FOUND_MESSAGE));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
             temperatures.add(new TemperatureMaxMin(
@@ -121,7 +122,7 @@ public class TemperatureServiceImpl implements TemperatureService {
 
         List<TemperatureMaxMin> temperatures = influxDBUtil.getSensorDataList(startTime, endTime, COLLECTION_TYPE, "_daily", place, TemperatureMaxMin.class);
         TemperatureMaxMin temperatureMaxMinDaily = influxDBUtil.getLastSensorData(endTime, COLLECTION_TYPE, place, TemperatureMaxMin.class)
-                .orElseThrow(() -> new TemperatureNotFoundException("온도를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TemperatureNotFoundException(TEMPERATURE_NOT_FOUND_MESSAGE));
 
         if (Objects.nonNull(temperatureMaxMinDaily)) {
             temperatures.add(new TemperatureMaxMin(

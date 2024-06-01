@@ -19,6 +19,7 @@ public class PeopleCountServiceImpl implements PeopleCountService {
     private final InfluxDBUtil influxDBUtil;
     private static final String COLLECTION_TYPE = "total_people_count";
     private static final String PLACE = "class_a";
+    private static final String PEOPLE_COUNT_NOT_FOUND_MESSAGE = "People Count 정보를 찾을 수 없습니다.";
 
     /**
      * 가장 최신 people-count 조회 메서드
@@ -28,6 +29,6 @@ public class PeopleCountServiceImpl implements PeopleCountService {
     @Override
     public PeopleCount getPeopleCount() {
         return influxDBUtil.getSensorData(COLLECTION_TYPE, PLACE, PeopleCount.class)
-                .orElseThrow(() -> new PeopleCountNotFoundException("People Count 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new PeopleCountNotFoundException(PEOPLE_COUNT_NOT_FOUND_MESSAGE));
     }
 }
