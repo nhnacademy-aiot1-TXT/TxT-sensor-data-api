@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,12 +27,13 @@ public class VocRestController {
     /**
      * 가장 최신 voc를 단일로 조회하는 api
      *
+     * @param place 장소
      * @return 최신 온도 응답
      */
     @GetMapping
     @Operation(summary = "voc 단일 조회")
-    public ResponseEntity<Voc> getVoc() {
-        Voc voc = vocService.getVoc();
+    public ResponseEntity<Voc> getVoc(@RequestParam String place) {
+        Voc voc = vocService.getVoc(place);
 
         return ResponseEntity.ok(voc);
     }

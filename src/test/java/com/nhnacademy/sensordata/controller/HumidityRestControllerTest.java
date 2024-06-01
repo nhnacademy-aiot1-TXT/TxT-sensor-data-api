@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.controller;
 import com.nhnacademy.sensordata.exception.HumidityNotFoundException;
 import com.nhnacademy.sensordata.measurement.humidity.Humidity;
 import com.nhnacademy.sensordata.measurement.humidity.HumidityMaxMin;
+import com.nhnacademy.sensordata.measurement.humidity.HumidityMean;
 import com.nhnacademy.sensordata.service.HumidityService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,9 +42,10 @@ class HumidityRestControllerTest {
         Float value = 20.0f;
         Humidity humidity = new Humidity(time, device, place, topic, value);
 
-        given(humidityService.getHumidity()).willReturn(humidity);
+        given(humidityService.getHumidity(anyString())).willReturn(humidity);
 
-        mockMvc.perform(get("/api/sensor/humidity"))
+        mockMvc.perform(get("/api/sensor/humidity")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -57,10 +60,13 @@ class HumidityRestControllerTest {
     @Test
     void getHumidityException() throws Exception {
         String message = "습도를 찾을수 없습니다.";
-        given(humidityService.getHumidity())
+        String place = "test place";
+
+        given(humidityService.getHumidity(anyString()))
                 .willThrow(new HumidityNotFoundException(message));
 
-        mockMvc.perform(get("/api/sensor/humidity"))
+        mockMvc.perform(get("/api/sensor/humidity")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -72,12 +78,14 @@ class HumidityRestControllerTest {
         Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
         Float maxHumidity = 80.0f;
         Float minHumidity = 60.0f;
+        String place = "test place";
         HumidityMaxMin humidityMaxMinDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
         List<HumidityMaxMin> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
-        given(humidityService.getDailyHumidity()).willReturn(humidityMaxMinList);
+        given(humidityService.getDailyHumidity(anyString())).willReturn(humidityMaxMinList);
 
-        mockMvc.perform(get("/api/sensor/humidity/day"))
+        mockMvc.perform(get("/api/sensor/humidity/day")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -88,16 +96,37 @@ class HumidityRestControllerTest {
     }
 
     @Test
+    void getDailyMeanHumidity() throws Exception {
+        Instant time = Instant.now().minus(1, ChronoUnit.DAYS);
+        Float value = 70.0F;
+        String place = "test place";
+        HumidityMean humidityMean = new HumidityMean(time, value);
+        List<HumidityMean> humidityMeanList = Collections.singletonList(humidityMean);
+
+        given(humidityService.getDailyMeanHumidity(anyString())).willReturn(humidityMeanList);
+
+        mockMvc.perform(get("/api/sensor/humidity/day-mean")
+                        .param("place", place))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].time", equalTo(time.toString())))
+                .andExpect(jsonPath("$[0].value", equalTo(value.doubleValue())));
+    }
+
+    @Test
     void getWeeklyHumidity() throws Exception {
         Instant time = Instant.now().minus(7, ChronoUnit.DAYS);
         Float maxHumidity = 80.0f;
         Float minHumidity = 60.0f;
+        String place = "test place";
         HumidityMaxMin humidityMaxMinDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
         List<HumidityMaxMin> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
-        given(humidityService.getWeeklyHumidity()).willReturn(humidityMaxMinList);
+        given(humidityService.getWeeklyHumidity(anyString())).willReturn(humidityMaxMinList);
 
-        mockMvc.perform(get("/api/sensor/humidity/week"))
+        mockMvc.perform(get("/api/sensor/humidity/week")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -110,10 +139,13 @@ class HumidityRestControllerTest {
     @Test
     void getWeeklyHumidityException() throws Exception {
         String message = "습도를 찾을수 없습니다.";
-        given(humidityService.getWeeklyHumidity())
+        String place = "test place";
+
+        given(humidityService.getWeeklyHumidity(anyString()))
                 .willThrow(new HumidityNotFoundException(message));
 
-        mockMvc.perform(get("/api/sensor/humidity/week"))
+        mockMvc.perform(get("/api/sensor/humidity/week")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -125,12 +157,14 @@ class HumidityRestControllerTest {
         Instant time = Instant.now().minus(30, ChronoUnit.DAYS);
         Float maxHumidity = 80.0f;
         Float minHumidity = 60.0f;
+        String place = "test place";
         HumidityMaxMin humidityMaxMinDaily = new HumidityMaxMin(time, maxHumidity, minHumidity);
         List<HumidityMaxMin> humidityMaxMinList = Collections.singletonList(humidityMaxMinDaily);
 
-        given(humidityService.getMonthlyHumidity()).willReturn(humidityMaxMinList);
+        given(humidityService.getMonthlyHumidity(anyString())).willReturn(humidityMaxMinList);
 
-        mockMvc.perform(get("/api/sensor/humidity/month"))
+        mockMvc.perform(get("/api/sensor/humidity/month")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -143,10 +177,12 @@ class HumidityRestControllerTest {
     @Test
     void getMonthlyHumidityException() throws Exception {
         String message = "습도를 찾을수 없습니다.";
-        given(humidityService.getMonthlyHumidity())
+        String place = "test place";
+        given(humidityService.getMonthlyHumidity(anyString()))
                 .willThrow(new HumidityNotFoundException(message));
 
-        mockMvc.perform(get("/api/sensor/humidity/month"))
+        mockMvc.perform(get("/api/sensor/humidity/month")
+                        .param("place", place))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

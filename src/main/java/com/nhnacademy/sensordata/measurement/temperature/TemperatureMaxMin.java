@@ -2,18 +2,20 @@ package com.nhnacademy.sensordata.measurement.temperature;
 
 import com.influxdb.annotations.Column;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 
 /**
- * 온도 일별 조회 measurement class
+ * 온도 최댓값, 최솟값 조회 measurement class
  *
  * @author parksangwon
  * @version 1.0.0
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TemperatureMaxMin {

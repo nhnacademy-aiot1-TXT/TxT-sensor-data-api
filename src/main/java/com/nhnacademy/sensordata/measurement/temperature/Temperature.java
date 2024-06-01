@@ -3,8 +3,9 @@ package com.nhnacademy.sensordata.measurement.temperature;
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 
@@ -15,7 +16,8 @@ import java.time.Instant;
  * @author parksangwon
  * @version 1.0.0
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Measurement(name = "temperature")

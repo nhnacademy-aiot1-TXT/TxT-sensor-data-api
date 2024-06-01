@@ -3,6 +3,7 @@ package com.nhnacademy.sensordata.service;
 import com.nhnacademy.sensordata.exception.Co2NotFoundException;
 import com.nhnacademy.sensordata.measurement.co2.Co2;
 import com.nhnacademy.sensordata.measurement.co2.Co2MaxMin;
+import com.nhnacademy.sensordata.measurement.co2.Co2Mean;
 import com.nhnacademy.sensordata.util.InfluxDBUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,9 @@ class Co2ServiceImplTest {
         Integer value = 20;
         Co2 co2 = new Co2(time, device, place, topic, value);
 
-        given(influxDBUtil.getSensorData(anyString(), eq(Co2.class))).willReturn(Optional.of(co2));
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Co2.class))).willReturn(Optional.of(co2));
 
-        Co2 resultCo2 = co2Service.getCo2();
+        Co2 resultCo2 = co2Service.getCo2(place);
 
         assertAll(
                 () -> assertEquals(co2.getTime(), resultCo2.getTime()),
@@ -50,9 +51,11 @@ class Co2ServiceImplTest {
 
     @Test
     void getCo2Exception() {
-        given(influxDBUtil.getSensorData(anyString(), eq(Co2.class))).willReturn(Optional.empty());
+        String place = "test place";
 
-        assertThrows(Co2NotFoundException.class, () -> co2Service.getCo2());
+        given(influxDBUtil.getSensorData(anyString(), anyString(), eq(Co2.class))).willReturn(Optional.empty());
+
+        assertThrows(Co2NotFoundException.class, () -> co2Service.getCo2(place));
     }
 
     @Test
@@ -60,16 +63,35 @@ class Co2ServiceImplTest {
         Instant time = Instant.now();
         Integer maxCo2 = 80;
         Integer minCo2 = 60;
+        String place = "test place";
         Co2MaxMin co2Daily = new Co2MaxMin(time, maxCo2, minCo2);
 
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(List.of(co2Daily));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(List.of(co2Daily));
 
-        Co2MaxMin resultCo2 = co2Service.getDailyCo2().get(0);
+        Co2MaxMin resultCo2 = co2Service.getDailyCo2(place).get(0);
 
         assertAll(
                 () -> assertEquals(co2Daily.getTime(), resultCo2.getTime()),
                 () -> assertEquals(co2Daily.getMaxCo2(), resultCo2.getMaxCo2()),
                 () -> assertEquals(co2Daily.getMinCo2(), resultCo2.getMinCo2())
+        );
+    }
+
+    @Test
+    void getDailyMeanCo2() {
+        Instant time = Instant.now();
+        Float value = 70.0F;
+        String place = "test place";
+        Co2Mean co2Mean = new Co2Mean(time, value);
+
+        given(influxDBUtil.getHourlyMeanData(any(), any(), anyString(), anyString(), eq(Co2Mean.class))).willReturn(List.of(co2Mean));
+
+        Co2Mean resultCo2 = co2Service.getDailyMeanCo2(place).get(0);
+
+        assertAll(
+                () -> assertNotNull(resultCo2),
+                () -> assertEquals(time, resultCo2.getTime()),
+                () -> assertEquals(value, resultCo2.getValue())
         );
     }
 
@@ -80,13 +102,14 @@ class Co2ServiceImplTest {
         Integer weeklyMinCo2 = 60;
         Integer dailyMaxCo2 = 80;
         Integer dailyMinCo2 = 60;
+        String place = "test place";
         Co2MaxMin co2Weekly = new Co2MaxMin(time, weeklyMaxCo2, weeklyMinCo2);
         Co2MaxMin co2Daily = new Co2MaxMin(time, dailyMaxCo2, dailyMinCo2);
 
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(new ArrayList<>(List.of(co2Weekly)));
-        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.of(co2Daily));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(new ArrayList<>(List.of(co2Weekly)));
+        given(influxDBUtil.getLastSensorData(any(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.of(co2Daily));
 
-        List<Co2MaxMin> resultCo2 = co2Service.getWeeklyCo2();
+        List<Co2MaxMin> resultCo2 = co2Service.getWeeklyCo2(place);
 
         assertAll(
                 () -> assertEquals(co2Weekly.getTime(), resultCo2.get(0).getTime()),
@@ -100,9 +123,11 @@ class Co2ServiceImplTest {
 
     @Test
     void getWeeklyCo2Exception() {
-        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.empty());
+        String place = "test place";
 
-        assertThrows(Co2NotFoundException.class, () -> co2Service.getWeeklyCo2());
+        given(influxDBUtil.getLastSensorData(any(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.empty());
+
+        assertThrows(Co2NotFoundException.class, () -> co2Service.getWeeklyCo2(place));
     }
 
     @Test
@@ -112,13 +137,14 @@ class Co2ServiceImplTest {
         Integer monthlyMinCo2 = 60;
         Integer dailyMaxCo2 = 80;
         Integer dailyMinCo2 = 60;
+        String place = "test place";
         Co2MaxMin co2Monthly = new Co2MaxMin(time, monthlyMaxCo2, monthlyMinCo2);
         Co2MaxMin co2Daily = new Co2MaxMin(time, dailyMaxCo2, dailyMinCo2);
 
-        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(new ArrayList<>(List.of(co2Monthly)));
-        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.of(co2Daily));
+        given(influxDBUtil.getSensorDataList(any(), any(), anyString(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(new ArrayList<>(List.of(co2Monthly)));
+        given(influxDBUtil.getLastSensorData(any(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.of(co2Daily));
 
-        List<Co2MaxMin> resultCo2 = co2Service.getMonthlyCo2();
+        List<Co2MaxMin> resultCo2 = co2Service.getMonthlyCo2(place);
 
         assertAll(
                 () -> assertEquals(co2Monthly.getTime(), resultCo2.get(0).getTime()),
@@ -132,8 +158,9 @@ class Co2ServiceImplTest {
 
     @Test
     void getMonthlyCo2Exception() {
-        given(influxDBUtil.getLastSensorData(any(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.empty());
+        String place = "test place";
+        given(influxDBUtil.getLastSensorData(any(), anyString(), anyString(), eq(Co2MaxMin.class))).willReturn(Optional.empty());
 
-        assertThrows(Co2NotFoundException.class, () -> co2Service.getMonthlyCo2());
+        assertThrows(Co2NotFoundException.class, () -> co2Service.getMonthlyCo2(place));
     }
 }

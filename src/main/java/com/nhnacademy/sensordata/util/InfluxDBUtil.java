@@ -36,12 +36,13 @@ public class InfluxDBUtil {
      *
      * @param <M>            the type parameter
      * @param collectionType the collection type
+     * @param place          장소
      * @param clazz          the clazz
      * @return the sensor data
      */
-    public <M> Optional<M> getSensorData(String collectionType, Class<M> clazz) {
+    public <M> Optional<M> getSensorData(String collectionType, String place, Class<M> clazz) {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
-                .range(-1L, ChronoUnit.MINUTES)
+                .range(-1L, ChronoUnit.HOURS)
                 .filter(measurement().equal(collectionType))
                 .filter(or(
                         field().equal("device"),
@@ -49,11 +50,12 @@ public class InfluxDBUtil {
                         field().equal("topic"),
                         field().equal("value")
                 ))
-                .last()
                 .pivot()
                 .withRowKey(new String[]{ROW_KEY})
                 .withColumnKey(new String[]{COLUMN_KEY})
                 .withValueColumn(COLUMN_VALUE)
+                .filter(column("place").equal(place))
+                .last("value")
                 .timeShift(9L, ChronoUnit.HOURS);
 
         return influxDBClient.getQueryApi()
@@ -68,19 +70,20 @@ public class InfluxDBUtil {
      * @param <M>            the type parameter
      * @param start          the start
      * @param collectionType the collection type
+     * @param place          장소
      * @param clazz          the clazz
      * @return the last sensor data
      */
     @Cacheable(
             value = "getLastSensorData",
-            key = "#collectionType.concat('-').concat(#start.toString())",
+            key = "#collectionType.concat('-').concat(#start.toString()).concat('-').concat(#place)",
             cacheManager = "cacheManagerHourly",
             unless = "#result == null"
     )
-    public <M> Optional<M> getLastSensorData(Instant start, String collectionType, Class<M> clazz) {
+    public <M> Optional<M> getLastSensorData(Instant start, String collectionType, String place, Class<M> clazz) {
         Flux fluxQueryHourly = Flux.from(BUCKET_NAME)
                 .range(start.minus(1L, ChronoUnit.DAYS))
-                .filter(measurement().equal(collectionType.concat("_hourly")))
+                .filter(measurement().equal(collectionType.concat("_hourly").concat("_").concat(place)))
                 .last()
                 .pivot()
                 .withRowKey(new String[]{ROW_KEY})
@@ -103,6 +106,7 @@ public class InfluxDBUtil {
      * @param endTime        the end time
      * @param collectionType the collection type
      * @param intervalType   the interval type
+     * @param place          장소
      * @param clazz          the clazz
      * @return the sensor data list
      */
@@ -110,22 +114,22 @@ public class InfluxDBUtil {
             @Cacheable(
                     value = "getSensorDataList",
                     condition = "#intervalType == '_hourly'",
-                    key = "#collectionType.concat(#intervalType).concat('-').concat(#startTime.toString()).concat('-').concat(#endTime.toString())",
+                    key = "#collectionType.concat(#intervalType).concat('-').concat(#startTime.toString()).concat('-').concat(#endTime.toString()).concat('-').concat(#place)",
                     cacheManager = "cacheManagerHourly",
-                    unless = "#result == null"
+                    unless = "#result.isEmpty()"
             ),
             @Cacheable(
                     value = "getSensorDataList",
                     condition = "#intervalType == '_daily'",
-                    key = "#collectionType.concat(#intervalType).concat('-').concat(#startTime.toString()).concat('-').concat(#endTime.toString())",
+                    key = "#collectionType.concat(#intervalType).concat('-').concat(#startTime.toString()).concat('-').concat(#endTime.toString()).concat('-').concat(#place)",
                     cacheManager = "cacheManagerDaily",
-                    unless = "#result == null"
+                    unless = "#result.isEmpty()"
             )
     })
-    public <M> List<M> getSensorDataList(Instant startTime, Instant endTime, String collectionType, String intervalType, Class<M> clazz) {
+    public <M> List<M> getSensorDataList(Instant startTime, Instant endTime, String collectionType, String intervalType, String place, Class<M> clazz) {
         Flux fluxQuery = Flux.from(BUCKET_NAME)
                 .range(startTime, endTime)
-                .filter(measurement().equal(collectionType.concat(intervalType)))
+                .filter(measurement().equal(collectionType.concat(intervalType).concat("_").concat(place)))
                 .filter(or(
                         field().equal(MAX.concat(collectionType)),
                         field().equal(MIN.concat(collectionType))
@@ -134,6 +138,46 @@ public class InfluxDBUtil {
                 .withRowKey(new String[]{ROW_KEY})
                 .withColumnKey(new String[]{COLUMN_KEY})
                 .withValueColumn(COLUMN_VALUE)
+                .timeShift(9L, ChronoUnit.HOURS);
+
+        return influxDBClient.getQueryApi()
+                .query(fluxQuery.toString(), clazz);
+    }
+
+    /**
+     * 수집 종류에 대한 일간 평균 리스트 조회
+     *
+     * @param startTime      the start time
+     * @param endTime        the end time
+     * @param collectionType the collection type
+     * @param place          장소
+     * @param clazz          the clazz
+     * @param <M>            the type parameter
+     * @return the hourly mean data
+     */
+    @Cacheable(
+            value = "getHourlyMeanData",
+            key = "#collectionType.concat('-').concat(#startTime.toString()).concat('-').concat(#endTime.toString()).concat('-').concat(#place)",
+            cacheManager = "cacheManagerHourly",
+            unless = "#result.isEmpty()"
+    )
+    public <M> List<M> getHourlyMeanData(Instant startTime, Instant endTime, String collectionType, String place, Class<M> clazz) {
+        Flux fluxQuery = Flux.from(BUCKET_NAME)
+                .range(startTime, endTime)
+                .filter(measurement().equal(collectionType))
+                .filter(or(
+                        field().equal("device"),
+                        field().equal("place"),
+                        field().equal("topic"),
+                        field().equal("value")
+                ))
+                .pivot()
+                .withRowKey(new String[]{ROW_KEY})
+                .withColumnKey(new String[]{COLUMN_KEY})
+                .withValueColumn(COLUMN_VALUE)
+                .filter(column("place").equal(place))
+                .aggregateWindow(1L, ChronoUnit.HOURS, "mean")
+                .withColumn("value")
                 .timeShift(9L, ChronoUnit.HOURS);
 
         return influxDBClient.getQueryApi()
