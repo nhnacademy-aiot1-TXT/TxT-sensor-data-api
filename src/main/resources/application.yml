@@ -10,9 +10,9 @@ spring:
   profiles:
     active: prod
   redis:
-    host: 133.186.244.96
+    host: 133.186.241.167
     password: '*N2vya7H@muDTwdNMR!'
-    database: 14
+    database: 264
     port: 6379
 springdoc:
   default-produces-media-type: application/json
