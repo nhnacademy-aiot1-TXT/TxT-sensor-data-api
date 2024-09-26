@@ -10,7 +10,7 @@ spring:
   profiles:
     active: prod
   redis:
-    host: 133.186.241.167
+    host: 146.56.98.218
     password: '*N2vya7H@muDTwdNMR!'
     database: 264
     port: 6379
