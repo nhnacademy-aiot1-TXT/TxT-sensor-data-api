@@ -28,8 +28,8 @@ springdoc:
   paths-to-match: /api/**
 influxdb:
   bucket: TxT
-  token: noC68n9KNe6HJd20B9HFaRf68SuYV2lLVdGuuj1aFZb9xaJ4wlkL7Wxf02_ajEVxgw8PupjrTAwQo7kX6K65fA==
-  url: http://180.210.81.216:8086
+  token: bfu66OESWmsehUar6VEfABaKLr4RwOklA8ll78l9LRCQWn2DfsTGGcnLVwpVO8H5MFX1jjp3AKGGwrVWC1Wiiw==
+  url: http://146.56.98.218:8086
   org: TXT
 eureka:
   client:
